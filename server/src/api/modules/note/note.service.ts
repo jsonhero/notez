@@ -180,9 +180,6 @@ export class NoteService {
   ) {
     const valuePropPath = `metadata.values.local.${fieldId}`;
 
-    console.log(valuePropPath, '::value');
-    console.log(noteId, 'noteId', fieldValue);
-
     await this.noteModel.findByIdAndUpdate(noteId, {
       $set: {
         [valuePropPath]: fieldValue,

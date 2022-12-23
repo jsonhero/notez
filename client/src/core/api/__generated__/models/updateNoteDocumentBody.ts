@@ -4,5 +4,8 @@
  * Notez
  * OpenAPI spec version: 1.0.0
  */
+import type { UpdateNoteDocumentBodyDocument } from './updateNoteDocumentBodyDocument';
 
-export interface UpdateNoteDocumentBody { [key: string]: any }
+export interface UpdateNoteDocumentBody {
+  document: UpdateNoteDocumentBodyDocument;
+}

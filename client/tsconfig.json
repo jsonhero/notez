@@ -18,11 +18,12 @@
     "jsx": "react-jsx",
     "paths": {
       "@api": ["src/core/api/__generated__/api.ts"],
-      "@api/models": ["src/core/api/__generated__/api/models"],
+      "@api/models": ["src/core/api/__generated__/models"],
       "@lib/*": ["src/core/lib/*"],
       "@layouts/*": ["src/layouts/*"],
       "@views/*": ["src/views/*"],
-      "@features/*": ["src/features/*"]
+      "@features/*": ["src/features/*"],
+      "@stores/*": ["src/core/stores/*"]
     }
   },
   "include": ["src"],

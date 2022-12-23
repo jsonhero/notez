@@ -16,6 +16,7 @@ export * from './updateMetadataFieldValueBody';
 export * from './updateMetadataFieldValueBodyValue';
 export * from './updateMetadataFieldValueResponse';
 export * from './updateNoteDocumentBody';
+export * from './updateNoteDocumentBodyDocument';
 export * from './updateNoteDocumentResponse';
 export * from './updateNoteTitleBody';
 export * from './updateNoteTitleResponse';

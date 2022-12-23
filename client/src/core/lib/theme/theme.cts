@@ -1,5 +1,25 @@
 import { extendTheme } from '@chakra-ui/react'
 
+// type CustomTheme = Theme | {
+//   space: {
+//     xxsm: string,
+//     xxsmall: string,
+//     xsm: string,
+//     xsmall: string,
+//     small: string,
+//     sm: string,
+//     medium: string,
+//     md: string,
+//     large: string,
+//     lg: string,
+//     xlarge: string,
+//     xl: string,
+//     xxlarge: string,
+//     xxl: string
+//   },
+//   colors: any,
+// }
+
 const customTheme = {
   space: {
     xxsm: '4px',
@@ -16,6 +36,11 @@ const customTheme = {
     xl: '40px',
     xxlarge: '64px',
     xxl: '64px'
+  },
+  colors: {
+    app: {
+      gray: '#F9F9F9'
+    }
   }
 }
 

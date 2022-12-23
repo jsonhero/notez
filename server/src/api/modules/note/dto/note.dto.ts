@@ -78,6 +78,7 @@ export class UpdateNoteTitleBody {
 export class UpdateNoteTitleResponse {}
 
 export class UpdateNoteDocumentBody {
+  @ApiProperty()
   document: any;
 }
 

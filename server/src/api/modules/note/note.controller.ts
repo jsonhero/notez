@@ -7,7 +7,7 @@ import {
   Body,
   Param,
 } from '@nestjs/common';
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { MapInterceptor } from '@automapper/nestjs';
 
 import { Note, NoteDocument } from '@database/schemas';
