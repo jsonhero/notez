@@ -39,7 +39,7 @@ const NoteView = () => {
       </Box>
       <VStack spacing="medium" align="flex-start">
         {data?.notes.map((note) => (
-          <Button key={note.id} onClick={() => onClickNote(note.id)} variant="ghost" p="xxsm" m="0px">
+          <Button key={note.id} onClick={() => onClickNote(note.id)} variant="ghost" p="0px" m="0px">
             <Box>
               {note.title || `Untitled :  ${note.id}`}
             </Box>

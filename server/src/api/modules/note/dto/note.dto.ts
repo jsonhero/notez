@@ -72,6 +72,7 @@ export class GetNotesResponse {
 }
 
 export class UpdateNoteTitleBody {
+  @ApiProperty()
   title: string;
 }
 

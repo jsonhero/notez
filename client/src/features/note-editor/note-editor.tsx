@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { GlobalStoreContext } from '@stores/global'
 import { useNoteControllerGetNote } from '@api'
 
-import { DocumentEditor } from './components'
+import { DocumentEditor, TitleEditor, MetadataEditor } from './components'
 
 
 export const NoteEditor = observer(() => {
@@ -37,7 +37,11 @@ const NoteEditorActive = ({ noteId }: NoteEditorActiveProps) => {
         !data || isLoadingNote ? (
           <CircularProgress isIndeterminate color='blue.300' />
         ) : (
-          <DocumentEditor note={data.note}/>
+          <>
+            <TitleEditor note={data.note} />
+            <MetadataEditor />
+            <DocumentEditor note={data.note} />
+          </>
         )
       }
     </Box>

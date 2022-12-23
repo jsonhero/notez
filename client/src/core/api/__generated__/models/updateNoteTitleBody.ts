@@ -5,4 +5,6 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface UpdateNoteTitleBody { [key: string]: any }
+export interface UpdateNoteTitleBody {
+  title: string;
+}
