@@ -39,7 +39,7 @@ const NoteEditorActive = ({ noteId }: NoteEditorActiveProps) => {
         ) : (
           <>
             <TitleEditor note={data.note} />
-            <MetadataEditor />
+            <MetadataEditor note={data.note} />
             <DocumentEditor note={data.note} />
           </>
         )
