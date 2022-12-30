@@ -1,0 +1,7 @@
+mutation addNoteMetadataField($input: AddNoteMetadataFieldInput!) {
+  addNoteMetadataField(input: $input) {
+    field {
+      ...AppNoteMetdataField
+    }
+  } 
+}

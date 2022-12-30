@@ -125,10 +125,7 @@ export class NoteController {
     @Param('noteId') noteId: string,
     @Body() body: DTO.AddMetadataFieldBody,
   ) {
-    await this.noteService.addMetaDataField(noteId, {
-      name: body.name,
-      type: body.type,
-    });
+    await this.noteService.addMetaDataField(noteId);
 
     return {};
   }
@@ -141,10 +138,10 @@ export class NoteController {
     @Param('noteId') noteId: string,
     @Body() body: DTO.UpdateMetadataFieldBody,
   ) {
-    await this.noteService.updateMetaDataField(noteId, body.fieldId, {
-      name: body.name,
-      type: body.type,
-    });
+    // await this.noteService.updateMetaDataField(noteId, body.fieldId, {
+    //   name: body.name,
+    //   type: body.type,
+    // });
 
     return {};
   }

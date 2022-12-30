@@ -6,8 +6,7 @@ import Text from '@tiptap/extension-text'
 import Paragraph from '@tiptap/extension-paragraph'
 import _ from 'lodash'
 
-import { useNoteControllerUpdateNoteDocument } from '@api'
-import { NoteDto } from '@api/models'
+import { AppNoteFragment, useUpdateNoteMutation } from '@gql/operations'
 import './document-style.css'
 
 const CustomDocument = Document.extend({
@@ -15,18 +14,20 @@ const CustomDocument = Document.extend({
 })
 
 interface DocumentEditorProps {
-  note: NoteDto;
+  note: AppNoteFragment;
 }
 
 export const DocumentEditor = ({ note }: DocumentEditorProps) => {
-  const { mutate: mutateUpdateNoteDocument } = useNoteControllerUpdateNoteDocument()
+  const [_result, updateNoteMutation] = useUpdateNoteMutation()
 
   const updateNoteDocument = (docJson: any) => {
-    mutateUpdateNoteDocument({
-      noteId: note.id,
-      data: {
-        document: docJson,
-      },
+    updateNoteMutation({
+      input: {
+        noteId: note.id,
+        note: {
+          document: docJson,
+        }
+      }
     })
   }
   const updateNoteDocumentThrottled = _.throttle(updateNoteDocument, 2000)

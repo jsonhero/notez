@@ -3,7 +3,7 @@ import { Box, CircularProgress } from '@chakra-ui/react'
 import { observer } from 'mobx-react-lite'
 
 import { GlobalStoreContext } from '@stores/global'
-import { useNoteControllerGetNote } from '@api'
+import { AppNoteFragment, useGetNoteByIdQuery } from '@gql/operations'
 
 import { DocumentEditor, TitleEditor, MetadataEditor } from './components'
 
@@ -15,7 +15,7 @@ export const NoteEditor = observer(() => {
     <Box>
       {globalStore.selectedNoteId ? <NoteEditorActive noteId={globalStore.selectedNoteId} /> : (
         <Box bg="red.100" p="md" borderRadius="3xl">
-          No note selected, bitch.
+          No note selected.
         </Box>
       ) } 
     </Box>
@@ -28,19 +28,24 @@ interface NoteEditorActiveProps {
 
 const NoteEditorActive = ({ noteId }: NoteEditorActiveProps) => {
   
-  const { data, isLoading: isLoadingNote } = useNoteControllerGetNote(noteId)
+  const [response] = useGetNoteByIdQuery({
+    variables: {
+      noteId,
+    },
+    requestPolicy: 'cache-first',
+  })
 
   return (
     <Box>
 
       {
-        !data || isLoadingNote ? (
+        !response.data?.node ? (
           <CircularProgress isIndeterminate color='blue.300' />
         ) : (
           <>
-            <TitleEditor note={data.note} />
-            <MetadataEditor note={data.note} />
-            <DocumentEditor note={data.note} />
+            <TitleEditor note={response.data.node} />
+            <MetadataEditor note={response.data.node} />
+            <DocumentEditor note={response.data.node} />
           </>
         )
       }

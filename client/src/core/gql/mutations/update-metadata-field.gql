@@ -1,0 +1,7 @@
+mutation updateNoteMetadataField($input: UpdateNoteMetadataFieldInput!) {
+  updateNoteMetadataField(input: $input) {
+    field {
+      ...AppNoteMetdataField
+    }
+  }
+}

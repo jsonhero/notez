@@ -23,7 +23,14 @@
       "@layouts/*": ["src/layouts/*"],
       "@views/*": ["src/views/*"],
       "@features/*": ["src/features/*"],
-      "@stores/*": ["src/core/stores/*"]
+      "@stores/*": ["src/core/stores/*"],
+      "@gql/operations": ["./src/core/gql/__generated__/schema-and-operations"],
+      "@gql/*": ["./src/core/gql/__generated__/*"],
+    }
+  },
+  "ts-node": {
+    "moduleTypes": {
+      "codegen.ts": "cjs"
     }
   },
   "include": ["src"],

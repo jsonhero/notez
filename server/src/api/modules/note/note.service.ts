@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import * as _ from 'lodash';
 import { Model } from 'mongoose';
 import { nanoid } from 'nanoid';
 
@@ -11,73 +12,21 @@ enum MetaDataFieldType {
   DATE,
 }
 
-interface IAddMetaDataField {
-  name: string;
-  type: MetaDataFieldType | any;
+interface INoteMetadataField {
+  id: string;
+  schema: {
+    type: string;
+    name: string;
+  };
+  value: string;
 }
 
 interface IUpdateMetaDataField {
-  name: string;
-  type: MetaDataFieldType | any;
-}
-
-interface MetaDataFieldValueText {
+  schema: {
+    type: string;
+    name: string;
+  };
   value: string;
-}
-
-interface MetaDataFieldValueText {
-  value: string;
-}
-
-class MetaDataFieldValue {
-  type: string;
-
-  constructor(type: string) {
-    this.type = type;
-  }
-
-  getType(): string {
-    return this.type;
-  }
-
-  getValue(): any {
-    return null;
-  }
-}
-
-class MetaDataFieldValueText extends MetaDataFieldValue {
-  value: string;
-
-  constructor(value: string) {
-    super('text');
-    this.value = value;
-  }
-}
-
-class MetaDataFieldValueNumber extends MetaDataFieldValue {
-  value: number;
-
-  constructor(value: number) {
-    super('number');
-    this.value = value;
-  }
-
-  getValue(): number {
-    return this.value;
-  }
-}
-
-class MetaDataFieldValueDate extends MetaDataFieldValue {
-  value: Date;
-
-  constructor(value: Date) {
-    super('date');
-    this.value = value;
-  }
-
-  getValue(): Date {
-    return this.value;
-  }
 }
 
 @Injectable()
@@ -105,6 +54,12 @@ export class NoteService {
   async getNoteById(id: string) {
     const note = await this.noteModel.findById(id);
     return note;
+  }
+
+  async deleteNoteById(noteId: string): Promise<void> {
+    await this.noteModel.deleteOne({
+      _id: noteId,
+    });
   }
 
   async createNote(): Promise<NoteDocument> {
@@ -142,35 +97,96 @@ export class NoteService {
     });
   }
 
-  async addMetaDataField(
+  async update(
     noteId: string,
-    props: IAddMetaDataField,
-  ): Promise<void> {
+    fields: {
+      document: any;
+      title: string;
+    },
+  ): Promise<NoteDocument> {
+    const updateFields = _.omit(fields);
+
+    const note = await this.noteModel.findByIdAndUpdate(
+      noteId,
+      {
+        $set: {
+          ...updateFields,
+        },
+      },
+      {
+        new: true,
+      },
+    );
+
+    return note;
+  }
+
+  async addMetaDataField(noteId: string): Promise<INoteMetadataField> {
     const fieldId = this._generateFieldId();
 
     const valuePropPath = `metadata.values.local.${fieldId}`;
     const schemaPropPath = `metadata.schema.fields.${fieldId}`;
 
+    const schemaDefault = {
+      type: 'text',
+      name: '',
+    };
+    const valueDefault = null;
+
     await this.noteModel.findByIdAndUpdate(noteId, {
       $set: {
-        [valuePropPath]: null,
-        [schemaPropPath]: props,
+        [valuePropPath]: valueDefault,
+        [schemaPropPath]: schemaDefault,
       },
     });
+
+    return {
+      id: fieldId,
+      schema: schemaDefault,
+      value: valueDefault,
+    };
   }
 
   async updateMetaDataField(
     noteId: string,
     fieldId: string,
     props: IUpdateMetaDataField,
-  ) {
+  ): Promise<INoteMetadataField> {
     const schemaPropPath = `metadata.schema.fields.${fieldId}`;
+    const valuePropPath = `metadata.values.local.${fieldId}`;
 
-    await this.noteModel.findByIdAndUpdate(noteId, {
-      $set: {
-        [schemaPropPath]: props,
+    let schemaValue = null;
+
+    if (props.schema) {
+      schemaValue = {
+        type: 'text',
+        name: props.schema.name,
+      };
+    }
+
+    const $updateSetProps = {};
+
+    if (schemaValue) {
+      $updateSetProps[schemaPropPath] = schemaValue;
+    }
+
+    if (props.value) {
+      $updateSetProps[valuePropPath] = props.value;
+    }
+
+    const note = await this.noteModel.findByIdAndUpdate(
+      noteId,
+      {
+        $set: $updateSetProps,
       },
-    });
+      { new: true },
+    );
+
+    return {
+      id: fieldId,
+      schema: _.get(note, schemaPropPath),
+      value: _.get(note, valuePropPath),
+    };
   }
 
   async updateMetadataFieldValue(
@@ -180,10 +196,22 @@ export class NoteService {
   ) {
     const valuePropPath = `metadata.values.local.${fieldId}`;
 
-    await this.noteModel.findByIdAndUpdate(noteId, {
-      $set: {
-        [valuePropPath]: fieldValue,
+    const note = await this.noteModel.findByIdAndUpdate(
+      noteId,
+      {
+        $set: {
+          [valuePropPath]: fieldValue,
+        },
       },
-    });
+      { new: true },
+    );
+
+    const schemaPropPath = `metadata.schema.fields.${fieldId}`;
+
+    return {
+      id: fieldId,
+      schema: _.get(note, schemaPropPath),
+      value: fieldValue,
+    };
   }
 }

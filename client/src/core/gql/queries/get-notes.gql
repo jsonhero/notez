@@ -1,0 +1,5 @@
+query getNotes {
+  notes {
+    ...AppNote
+  }
+}

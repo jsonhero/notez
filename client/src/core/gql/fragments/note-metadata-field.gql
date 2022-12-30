@@ -1,0 +1,8 @@
+fragment AppNoteMetdataField on MetadataGroupField {
+  id
+  schema {
+    name
+    type
+  }
+  value
+}

@@ -11,14 +11,9 @@ import {
 } from '@tanstack/react-table'
 import { AddIcon } from '@chakra-ui/icons'
 
-import { 
-  useNoteControllerAddMetadataField, 
-  useNoteControllerUpdateMetadataFieldValue, 
-  useNoteControllerUpdateMetadataField 
-} from '@api'
-import { NoteDto, MetadataGroupFieldDto } from '@api/models'
+import { AppNoteFragment, useUpdateNoteMetadataFieldMutation, useAddNoteMetadataFieldMutation, AppNoteMetdataFieldFragment } from '@gql/operations'
 
-interface UpdateMetadataFieldCellProps extends CellContext<MetadataGroupFieldDto, unknown> {
+interface UpdateMetadataFieldCellProps extends CellContext<AppNoteMetdataFieldFragment, unknown> {
   onUpdate: (fieldId: string, name: string, type: string) => void;
 }
 
@@ -65,7 +60,7 @@ const UpdateMetadataFieldCell = ({
 }
 
 
-interface UpdateMetadataValueCellProps extends CellContext<MetadataGroupFieldDto, unknown> {
+interface UpdateMetadataValueCellProps extends CellContext<AppNoteMetdataFieldFragment, unknown> {
   onUpdate: (fieldId: string, value: any) => void;
 }
 
@@ -110,54 +105,56 @@ const UpdateMetadataValueCell = ({
 }
 
 interface MetadataEditorProps {
-  note: NoteDto;
+  note: AppNoteFragment;
 }
 
 export const MetadataEditor = ({ note }: MetadataEditorProps) => {
 
-  const { mutate: mutateAddMetadataField } = useNoteControllerAddMetadataField()
-  const { mutate: mutateUpdateMetadataValue } = useNoteControllerUpdateMetadataFieldValue()
-  const { mutate: mutateUpdateMetadataField } = useNoteControllerUpdateMetadataField()
+  const [, addMetadataFieldMutation] = useAddNoteMetadataFieldMutation()
+  const [, updateMetadataFieldMutation] = useUpdateNoteMetadataFieldMutation()
 
   const data = useMemo(() => {
-    console.log(note, 'note')
     const groups = note.metadata?.groups
     const localGroup = groups?.find((group) => group.context === 'local')
     return localGroup?.fields || []
   }, [note])
 
   const onAddRow = () => {
-    mutateAddMetadataField({
-      noteId: note.id,
-      data: {
-        name: '',
-        type: 'text'
+    addMetadataFieldMutation({
+      input: {
+        noteId: note.id,
       }
     })
   }
 
   const onUpdateValue = (fieldId: string, value: any) => {
-    mutateUpdateMetadataValue({
-      noteId: note.id,
-      data: {
-        fieldId,
-        value,
-      },
-    })
-  }
-
-  const onUpdateField = (fieldId: string, name: string, type: string) => {
-    mutateUpdateMetadataField({
-      noteId: note.id,
-      data: {
-        fieldId,
-        name,
-        type,
+    updateMetadataFieldMutation({
+      input: {
+        noteId: note.id,
+        fieldId: fieldId,
+        field: {
+          value,
+        }
       }
     })
   }
 
-  const columnHelper = createColumnHelper<MetadataGroupFieldDto>()
+  const onUpdateField = (fieldId: string, name: string, type: string) => {
+    updateMetadataFieldMutation({
+      input: {
+        noteId: note.id,
+        fieldId: fieldId,
+        field: {
+          schema: {
+            name,
+            type,
+          }
+        }
+      }
+    })
+  }
+
+  const columnHelper = createColumnHelper<AppNoteMetdataFieldFragment>()
 
   const columns = [
     columnHelper.accessor('schema.name', {

@@ -1,49 +1,23 @@
 import React from 'react'
 import { Input, Box } from '@chakra-ui/react'
 import _ from 'lodash'
-import { useQueryClient } from 'react-query'
 
-import { useNoteControllerUpdateNoteTitle, getNoteControllerGetNotesQueryKey } from '@api'
-import { NoteDto, GetNotesResponse } from '@api/models'
+import { AppNoteFragment, useUpdateNoteMutation } from '@gql/operations'
 
 interface TitleEditorProps {
-  note: NoteDto;
+  note: AppNoteFragment;
 }
 
 export const TitleEditor = ({ note }: TitleEditorProps) => {
-  const queryClient = useQueryClient()
-
-  const { mutate: mutateUpdateNoteTitle } = useNoteControllerUpdateNoteTitle({
-    mutation: {
-      onMutate: async (mutation) => {
-        const key = getNoteControllerGetNotesQueryKey()
-        const previousNotes = queryClient.getQueryData(key) as GetNotesResponse
-
-        queryClient.setQueryData(key, (old: any) => {
-          return {
-            notes: old.notes.map((note: NoteDto) => {
-              if (note.id === mutation.noteId) {
-                return {
-                  ...note,
-                  title: mutation.data.title,
-                }
-              }
-              return note;
-            })
-          }
-        })
-        
-        return { previousNotes };
-      }
-    }
-  })
-
+  const [_result, updateNoteMutation] = useUpdateNoteMutation()
 
   const updateNoteDocument = (title: string) => {
-    mutateUpdateNoteTitle({
-      noteId: note.id,
-      data: {
-        title,
+    updateNoteMutation({
+      input: {
+        noteId: note.id,
+        note: {
+          title,
+        }
       }
     })
   }
@@ -64,7 +38,7 @@ export const TitleEditor = ({ note }: TitleEditorProps) => {
           outline: 'none',
           border: 'none',
         }}
-        defaultValue={note.title}
+        value={note.title || ''}
         borderRadius="none"
         placeholder="Untitled" 
         onChange={(e) => updateNoteTitleThrottled(e.target.value)} 

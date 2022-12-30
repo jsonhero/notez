@@ -1,0 +1,27 @@
+
+watch: true
+# Passed directly through to chokidar's file watch configuration
+watchConfig:
+  usePolling: true
+  interval: 2000
+overwrite: true
+schema: "http://localhost:3000/graphql"
+documents: "src/**/*.gql"
+generates:
+  src/core/gql/__generated__/schema-and-operations.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-urql
+  src/core/gql/__generated__/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-urql-graphcache"
+  src/core/gql/__generated__/fragment-matcher.ts:
+    plugins:
+      - fragment-matcher
+    config:
+      useExplicitTyping: true
+  ./graphql.schema.json:
+    plugins:
+      - urql-introspection

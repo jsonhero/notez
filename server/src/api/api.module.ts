@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { NoteModule } from './modules';
+import { NoteModule } from './modules/note';
+import { NodeModule } from './modules/node';
 
 @Module({
-  imports: [NoteModule],
+  imports: [NodeModule, NoteModule],
   providers: [],
   exports: [],
 })

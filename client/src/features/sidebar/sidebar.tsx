@@ -1,9 +1,10 @@
 import React, { useContext } from 'react'
-import { Box, VStack, Button } from '@chakra-ui/react'
+import { Box, VStack, HStack, Button, IconButton } from '@chakra-ui/react'
+import { DeleteIcon } from '@chakra-ui/icons'
 import { useSearchParams } from 'react-router-dom'
 
 import { GlobalStoreContext  } from '@stores/global'
-import { useNoteControllerGetNotes, useNoteControllerCreateNote } from '@api'
+import { useGetNotesQuery, useCreateNoteMutation, useDeleteNoteMutation } from '@gql/operations'
 
 export const Sidebar = () => {
   const [searchParams] = useSearchParams()
@@ -17,12 +18,13 @@ export const Sidebar = () => {
 
 const NoteView = () => {
   const globalStore = useContext(GlobalStoreContext)
-  const { data, refetch: refetchNotes } = useNoteControllerGetNotes()
-  const { mutateAsync: mutateCreateNote } = useNoteControllerCreateNote()
+  const [_, createNoteMutation] = useCreateNoteMutation()
+  const [, deleteNoteMutation] = useDeleteNoteMutation()
+  const [response, refetchNotes] = useGetNotesQuery()
 
   const onClickCreateNote = async () => {
-    const res = await mutateCreateNote();
-    globalStore.setSelectedNoteId(res.createdNote.id)
+    const res = await createNoteMutation({});
+    globalStore.setSelectedNoteId(res.data?.createNote.note.id as string)
     refetchNotes()
   }
 
@@ -30,20 +32,34 @@ const NoteView = () => {
     globalStore.setSelectedNoteId(noteId)
   }
 
+  const onClickDelete = (noteId: string) => {
+    deleteNoteMutation({
+      input: {
+        noteId,
+      }
+    })
+  }
+
   return (
     <Box p="medium">
       <Box mb="lg">
+        <Button onClick={() => refetchNotes()}>
+          Refresh
+        </Button>
         <Button onClick={onClickCreateNote}>
           Create Note
         </Button>
       </Box>
       <VStack spacing="medium" align="flex-start">
-        {data?.notes.map((note) => (
-          <Button key={note.id} onClick={() => onClickNote(note.id)} variant="ghost" p="0px" m="0px">
-            <Box>
-              {note.title || `Untitled :  ${note.id}`}
-            </Box>
-          </Button>
+        {response.data?.notes.map((note) => (
+          <HStack key={note.id}>
+            <Button onClick={() => onClickNote(note.id)} variant="ghost" p="0px" m="0px">
+              <Box>
+                {note.title || `Untitled :  ${note.id}`}
+              </Box>
+            </Button>
+            <IconButton onClick={() => onClickDelete(note.id)}  variant="ghost" aria-label='Delete' icon={<DeleteIcon />} />
+          </HStack>
         ))}
       </VStack>
     </Box>

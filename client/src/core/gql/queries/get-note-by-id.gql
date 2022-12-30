@@ -1,0 +1,7 @@
+query getNoteById($noteId: ID!) {
+  node(id: $noteId) {
+    ... on Note {
+      ...AppNote
+    }
+  }
+}
