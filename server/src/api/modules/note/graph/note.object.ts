@@ -154,10 +154,37 @@ export class UpdateNoteMetadataFieldPayload {
 export class DeleteNoteInput {
   @Field(() => ID)
   noteId: string;
+
+  @Field({ nullable: true })
+  clientMutationId: string;
 }
 
 @ObjectType()
 export class DeleteNotePayload {
+  @Field({ nullable: true })
+  clientMutationId: string;
+}
+
+@InputType()
+export class DeleteNoteMetadataFieldInput {
+  @Field(() => ID)
+  noteId: string;
+
+  @Field(() => ID)
+  fieldId: string;
+
+  @Field({ nullable: true })
+  clientMutationId: string;
+}
+
+@ObjectType()
+export class DeleteNoteMetadataFieldPayload {
+  @Field({ nullable: true })
+  clientMutationId: string;
+}
+
+@InputType()
+export class NoteSearchInput {
   @Field()
-  success: boolean;
+  title: string;
 }

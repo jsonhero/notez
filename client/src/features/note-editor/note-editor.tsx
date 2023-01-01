@@ -32,12 +32,11 @@ const NoteEditorActive = ({ noteId }: NoteEditorActiveProps) => {
     variables: {
       noteId,
     },
-    requestPolicy: 'cache-first',
+    requestPolicy: 'cache-and-network',
   })
 
   return (
     <Box>
-
       {
         !response.data?.node ? (
           <CircularProgress isIndeterminate color='blue.300' />

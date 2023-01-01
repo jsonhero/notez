@@ -58,8 +58,14 @@ export class NoteResolver {
   }
 
   @Query(() => [Graph.NoteObject])
-  async notes(): Promise<Graph.NoteObject[]> {
-    const notes = await this.noteService.getNotes();
+  async notes(
+    @Args('input', {
+      nullable: true,
+    }) input: Graph.NoteSearchInput,
+  ): Promise<Graph.NoteObject[]> {
+    const notes = await this.noteService.getNotes({
+      title: input?.title,
+    });
 
     return notes.map(NoteResolver._mapNoteDto);
   }
@@ -113,6 +119,20 @@ export class NoteResolver {
     };
   }
 
+  @Mutation(() => Graph.DeleteNoteMetadataFieldPayload)
+  async deleteNoteMetadataField(
+    @Args('input') input: Graph.DeleteNoteMetadataFieldInput,
+  ): Promise<Graph.DeleteNoteMetadataFieldPayload> {
+    await this.noteService.deleteMetadataField(
+      fromGlobalId(input.noteId).id,
+      input.fieldId,
+    );
+
+    return {
+      clientMutationId: input.clientMutationId,
+    };
+  }
+
   @Mutation(() => Graph.DeleteNotePayload)
   async deleteNote(
     @Args('input') input: Graph.DeleteNoteInput,
@@ -120,7 +140,7 @@ export class NoteResolver {
     await this.noteService.deleteNoteById(fromGlobalId(input.noteId).id);
 
     return {
-      success: true,
+      clientMutationId: input.clientMutationId,
     };
   }
 }

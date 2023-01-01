@@ -1,5 +1,5 @@
 mutation deleteNote($input: DeleteNoteInput!) {
   deleteNote(input: $input) {
-    success
+    clientMutationId
   }
 }

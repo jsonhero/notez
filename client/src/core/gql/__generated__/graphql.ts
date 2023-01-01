@@ -30,13 +30,40 @@ export type CreateNotePayload = {
   note: Note;
 };
 
+export type CreateNoteTablePayload = {
+  __typename?: 'CreateNoteTablePayload';
+  noteTable: NoteTable;
+};
+
 export type DeleteNoteInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
   noteId: Scalars['ID'];
+};
+
+export type DeleteNoteMetadataFieldInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  fieldId: Scalars['ID'];
+  noteId: Scalars['ID'];
+};
+
+export type DeleteNoteMetadataFieldPayload = {
+  __typename?: 'DeleteNoteMetadataFieldPayload';
+  clientMutationId?: Maybe<Scalars['String']>;
 };
 
 export type DeleteNotePayload = {
   __typename?: 'DeleteNotePayload';
-  success: Scalars['Boolean'];
+  clientMutationId?: Maybe<Scalars['String']>;
+};
+
+export type DeleteNoteTableInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  noteTableId: Scalars['ID'];
+};
+
+export type DeleteNoteTablePayload = {
+  __typename?: 'DeleteNoteTablePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
 };
 
 export type MetadataFieldInput = {
@@ -66,7 +93,10 @@ export type Mutation = {
   __typename?: 'Mutation';
   addNoteMetadataField: AddNoteMetadataFieldPayload;
   createNote: CreateNotePayload;
+  createNoteTable: CreateNoteTablePayload;
   deleteNote: DeleteNotePayload;
+  deleteNoteMetadataField: DeleteNoteMetadataFieldPayload;
+  deleteNoteTable: DeleteNoteTablePayload;
   updateNote: UpdateNotePayload;
   updateNoteMetadataField: UpdateNoteMetadataFieldPayload;
 };
@@ -79,6 +109,16 @@ export type MutationAddNoteMetadataFieldArgs = {
 
 export type MutationDeleteNoteArgs = {
   input: DeleteNoteInput;
+};
+
+
+export type MutationDeleteNoteMetadataFieldArgs = {
+  input: DeleteNoteMetadataFieldInput;
+};
+
+
+export type MutationDeleteNoteTableArgs = {
+  input: DeleteNoteTableInput;
 };
 
 
@@ -121,10 +161,36 @@ export type NoteMetadataGroupObject = {
   fields: Array<MetadataGroupField>;
 };
 
+export type NoteSearchInput = {
+  title: Scalars['String'];
+};
+
+export type NoteTable = Node & {
+  __typename?: 'NoteTable';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  schema: NoteTableSchema;
+  title?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type NoteTableSchema = {
+  __typename?: 'NoteTableSchema';
+  fields: Array<NoteTableSchemaField>;
+};
+
+export type NoteTableSchemaField = {
+  __typename?: 'NoteTableSchemaField';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  type: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
   node?: Maybe<Node>;
   nodes: Array<Node>;
+  noteTables: Array<NoteTable>;
   notes: Array<Note>;
 };
 
@@ -136,6 +202,11 @@ export type QueryNodeArgs = {
 
 export type QueryNodesArgs = {
   ids: Array<Scalars['ID']>;
+};
+
+
+export type QueryNotesArgs = {
+  input?: InputMaybe<NoteSearchInput>;
 };
 
 export type UpdateNoteInput = {
@@ -164,21 +235,28 @@ export type WithTypename<T extends { __typename?: any }> = Partial<T> & { __type
 export type GraphCacheKeysConfig = {
   AddNoteMetadataFieldPayload?: (data: WithTypename<AddNoteMetadataFieldPayload>) => null | string,
   CreateNotePayload?: (data: WithTypename<CreateNotePayload>) => null | string,
+  CreateNoteTablePayload?: (data: WithTypename<CreateNoteTablePayload>) => null | string,
+  DeleteNoteMetadataFieldPayload?: (data: WithTypename<DeleteNoteMetadataFieldPayload>) => null | string,
   DeleteNotePayload?: (data: WithTypename<DeleteNotePayload>) => null | string,
+  DeleteNoteTablePayload?: (data: WithTypename<DeleteNoteTablePayload>) => null | string,
   MetadataGroupField?: (data: WithTypename<MetadataGroupField>) => null | string,
   MetadataGroupFieldSchema?: (data: WithTypename<MetadataGroupFieldSchema>) => null | string,
   Note?: (data: WithTypename<Note>) => null | string,
   NoteMetadata?: (data: WithTypename<NoteMetadata>) => null | string,
   NoteMetadataGroupObject?: (data: WithTypename<NoteMetadataGroupObject>) => null | string,
+  NoteTable?: (data: WithTypename<NoteTable>) => null | string,
+  NoteTableSchema?: (data: WithTypename<NoteTableSchema>) => null | string,
+  NoteTableSchemaField?: (data: WithTypename<NoteTableSchemaField>) => null | string,
   UpdateNoteMetadataFieldPayload?: (data: WithTypename<UpdateNoteMetadataFieldPayload>) => null | string,
   UpdateNotePayload?: (data: WithTypename<UpdateNotePayload>) => null | string
 }
 
 export type GraphCacheResolvers = {
   Query?: {
-    node?: GraphCacheResolver<WithTypename<Query>, QueryNodeArgs, WithTypename<Note> | string>,
-    nodes?: GraphCacheResolver<WithTypename<Query>, QueryNodesArgs, Array<WithTypename<Note> | string>>,
-    notes?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Note> | string>>
+    node?: GraphCacheResolver<WithTypename<Query>, QueryNodeArgs, WithTypename<Note> | WithTypename<NoteTable> | string>,
+    nodes?: GraphCacheResolver<WithTypename<Query>, QueryNodesArgs, Array<WithTypename<Note> | WithTypename<NoteTable> | string>>,
+    noteTables?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<NoteTable> | string>>,
+    notes?: GraphCacheResolver<WithTypename<Query>, QueryNotesArgs, Array<WithTypename<Note> | string>>
   },
   AddNoteMetadataFieldPayload?: {
     field?: GraphCacheResolver<WithTypename<AddNoteMetadataFieldPayload>, Record<string, never>, WithTypename<MetadataGroupField> | string>
@@ -186,8 +264,17 @@ export type GraphCacheResolvers = {
   CreateNotePayload?: {
     note?: GraphCacheResolver<WithTypename<CreateNotePayload>, Record<string, never>, WithTypename<Note> | string>
   },
+  CreateNoteTablePayload?: {
+    noteTable?: GraphCacheResolver<WithTypename<CreateNoteTablePayload>, Record<string, never>, WithTypename<NoteTable> | string>
+  },
+  DeleteNoteMetadataFieldPayload?: {
+    clientMutationId?: GraphCacheResolver<WithTypename<DeleteNoteMetadataFieldPayload>, Record<string, never>, Scalars['String'] | string>
+  },
   DeleteNotePayload?: {
-    success?: GraphCacheResolver<WithTypename<DeleteNotePayload>, Record<string, never>, Scalars['Boolean'] | string>
+    clientMutationId?: GraphCacheResolver<WithTypename<DeleteNotePayload>, Record<string, never>, Scalars['String'] | string>
+  },
+  DeleteNoteTablePayload?: {
+    clientMutationId?: GraphCacheResolver<WithTypename<DeleteNoteTablePayload>, Record<string, never>, Scalars['String'] | string>
   },
   MetadataGroupField?: {
     id?: GraphCacheResolver<WithTypename<MetadataGroupField>, Record<string, never>, Scalars['ID'] | string>,
@@ -213,6 +300,21 @@ export type GraphCacheResolvers = {
     context?: GraphCacheResolver<WithTypename<NoteMetadataGroupObject>, Record<string, never>, Scalars['String'] | string>,
     fields?: GraphCacheResolver<WithTypename<NoteMetadataGroupObject>, Record<string, never>, Array<WithTypename<MetadataGroupField> | string>>
   },
+  NoteTable?: {
+    createdAt?: GraphCacheResolver<WithTypename<NoteTable>, Record<string, never>, Scalars['DateTime'] | string>,
+    id?: GraphCacheResolver<WithTypename<NoteTable>, Record<string, never>, Scalars['ID'] | string>,
+    schema?: GraphCacheResolver<WithTypename<NoteTable>, Record<string, never>, WithTypename<NoteTableSchema> | string>,
+    title?: GraphCacheResolver<WithTypename<NoteTable>, Record<string, never>, Scalars['String'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<NoteTable>, Record<string, never>, Scalars['DateTime'] | string>
+  },
+  NoteTableSchema?: {
+    fields?: GraphCacheResolver<WithTypename<NoteTableSchema>, Record<string, never>, Array<WithTypename<NoteTableSchemaField> | string>>
+  },
+  NoteTableSchemaField?: {
+    id?: GraphCacheResolver<WithTypename<NoteTableSchemaField>, Record<string, never>, Scalars['ID'] | string>,
+    name?: GraphCacheResolver<WithTypename<NoteTableSchemaField>, Record<string, never>, Scalars['String'] | string>,
+    type?: GraphCacheResolver<WithTypename<NoteTableSchemaField>, Record<string, never>, Scalars['String'] | string>
+  },
   UpdateNoteMetadataFieldPayload?: {
     field?: GraphCacheResolver<WithTypename<UpdateNoteMetadataFieldPayload>, Record<string, never>, WithTypename<MetadataGroupField> | string>
   },
@@ -224,7 +326,10 @@ export type GraphCacheResolvers = {
 export type GraphCacheOptimisticUpdaters = {
   addNoteMetadataField?: GraphCacheOptimisticMutationResolver<MutationAddNoteMetadataFieldArgs, WithTypename<AddNoteMetadataFieldPayload>>,
   createNote?: GraphCacheOptimisticMutationResolver<Record<string, never>, WithTypename<CreateNotePayload>>,
+  createNoteTable?: GraphCacheOptimisticMutationResolver<Record<string, never>, WithTypename<CreateNoteTablePayload>>,
   deleteNote?: GraphCacheOptimisticMutationResolver<MutationDeleteNoteArgs, WithTypename<DeleteNotePayload>>,
+  deleteNoteMetadataField?: GraphCacheOptimisticMutationResolver<MutationDeleteNoteMetadataFieldArgs, WithTypename<DeleteNoteMetadataFieldPayload>>,
+  deleteNoteTable?: GraphCacheOptimisticMutationResolver<MutationDeleteNoteTableArgs, WithTypename<DeleteNoteTablePayload>>,
   updateNote?: GraphCacheOptimisticMutationResolver<MutationUpdateNoteArgs, WithTypename<UpdateNotePayload>>,
   updateNoteMetadataField?: GraphCacheOptimisticMutationResolver<MutationUpdateNoteMetadataFieldArgs, WithTypename<UpdateNoteMetadataFieldPayload>>
 };
@@ -233,7 +338,10 @@ export type GraphCacheUpdaters = {
   Mutation?: {
     addNoteMetadataField?: GraphCacheUpdateResolver<{ addNoteMetadataField: WithTypename<AddNoteMetadataFieldPayload> }, MutationAddNoteMetadataFieldArgs>,
     createNote?: GraphCacheUpdateResolver<{ createNote: WithTypename<CreateNotePayload> }, Record<string, never>>,
+    createNoteTable?: GraphCacheUpdateResolver<{ createNoteTable: WithTypename<CreateNoteTablePayload> }, Record<string, never>>,
     deleteNote?: GraphCacheUpdateResolver<{ deleteNote: WithTypename<DeleteNotePayload> }, MutationDeleteNoteArgs>,
+    deleteNoteMetadataField?: GraphCacheUpdateResolver<{ deleteNoteMetadataField: WithTypename<DeleteNoteMetadataFieldPayload> }, MutationDeleteNoteMetadataFieldArgs>,
+    deleteNoteTable?: GraphCacheUpdateResolver<{ deleteNoteTable: WithTypename<DeleteNoteTablePayload> }, MutationDeleteNoteTableArgs>,
     updateNote?: GraphCacheUpdateResolver<{ updateNote: WithTypename<UpdateNotePayload> }, MutationUpdateNoteArgs>,
     updateNoteMetadataField?: GraphCacheUpdateResolver<{ updateNoteMetadataField: WithTypename<UpdateNoteMetadataFieldPayload> }, MutationUpdateNoteMetadataFieldArgs>
   },

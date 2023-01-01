@@ -1,17 +1,18 @@
 import React, { useMemo, useEffect, useState } from 'react'
 
-import { Th, Thead, Tr, Td, Tbody, Table, TableContainer, Input, Text, Box, Button } from '@chakra-ui/react'
+import { Th, Thead, Tr, Td, Tbody, Table, TableContainer, Input, Text, Box, Flex, Button, IconButton } from '@chakra-ui/react'
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
   ColumnDef,
-  CellContext
+  CellContext,
+  Row,
 } from '@tanstack/react-table'
-import { AddIcon } from '@chakra-ui/icons'
+import { AddIcon, DeleteIcon } from '@chakra-ui/icons'
 
-import { AppNoteFragment, useUpdateNoteMetadataFieldMutation, useAddNoteMetadataFieldMutation, AppNoteMetdataFieldFragment } from '@gql/operations'
+import { AppNoteFragment, useDeleteNoteMetadataFieldMutation, useUpdateNoteMetadataFieldMutation, useAddNoteMetadataFieldMutation, AppNoteMetdataFieldFragment } from '@gql/operations'
 
 interface UpdateMetadataFieldCellProps extends CellContext<AppNoteMetdataFieldFragment, unknown> {
   onUpdate: (fieldId: string, name: string, type: string) => void;
@@ -104,6 +105,47 @@ const UpdateMetadataValueCell = ({
           />
 }
 
+interface DataRowProps {
+  row: Row<AppNoteMetdataFieldFragment>
+  onDeleteField: (fieldId: string) => void;
+}
+
+const DataRow = React.memo(({ row, onDeleteField }: DataRowProps) => {
+  return (
+    <Tr key={row.id} role="group" _hover={{
+      bg: 'gray.50'
+    }}>
+      {row.getVisibleCells().map(cell => {
+        return (
+          <Td key={cell.id} sx={{
+              pb: 'xxsm',
+              pt: 'xxsm',
+              paddingInlineStart: 'sm',
+              borderRight: '1px solid',
+              borderColor: 'gray.200',
+              borderRightColor: 'gray.200'
+            }}
+          >
+            {flexRender(
+              cell.column.columnDef.cell,
+              cell.getContext()
+            )}
+          </Td>
+        )
+      })}
+      <Flex width={"80px"}>
+        <IconButton onClick={() => onDeleteField(row.original.id)} 
+          ml="xsm" size="xs" mt="xxsm" display="none" _groupHover={{
+            display: 'initial',
+          }} aria-label='delete' icon={<DeleteIcon />} 
+        />
+      </Flex>
+    </Tr>
+  )
+}, (prevProps, nextProps) => {
+  return prevProps.row.original.id === nextProps.row.original.id
+})
+
 interface MetadataEditorProps {
   note: AppNoteFragment;
 }
@@ -112,6 +154,7 @@ export const MetadataEditor = ({ note }: MetadataEditorProps) => {
 
   const [, addMetadataFieldMutation] = useAddNoteMetadataFieldMutation()
   const [, updateMetadataFieldMutation] = useUpdateNoteMetadataFieldMutation()
+  const [, deleteMetadataFieldMutation] = useDeleteNoteMetadataFieldMutation()
 
   const data = useMemo(() => {
     const groups = note.metadata?.groups
@@ -150,6 +193,16 @@ export const MetadataEditor = ({ note }: MetadataEditorProps) => {
             type,
           }
         }
+      }
+    })
+  }
+
+  const onDeleteField = (fieldId: string) => {
+    deleteMetadataFieldMutation({
+      input: {
+        clientMutationId: '123',
+        fieldId,
+        noteId: note.id,
       }
     })
   }
@@ -194,29 +247,13 @@ export const MetadataEditor = ({ note }: MetadataEditorProps) => {
         <Tbody>
           {table.getRowModel().rows.map((row, i) => {
             return (
-              <Tr key={row.id}>
-                {row.getVisibleCells().map(cell => {
-                  return (
-                    <Td key={cell.id} sx={{
-                        pb: 'xxsm',
-                        pt: 'xxsm',
-                        paddingInlineStart: 'sm',
-                        borderRight: '1px solid',
-                        borderColor: 'gray.200',
-                        borderRightColor: 'gray.200'
-                      }}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </Td>
-                  )
-                })}
-              </Tr>
+              <DataRow row={row} onDeleteField={onDeleteField} />
             )
           })}
-          <Tr>
+          <Tr onClick={onAddRow} _hover={{
+              cursor: 'pointer',
+              bg: 'gray.50'
+          }}>
             <Td pb="xxsm" pt="xxsm" colSpan={2} sx={{
                 pb: 'xxsm',
                 pt: 'xxsm',
@@ -226,11 +263,7 @@ export const MetadataEditor = ({ note }: MetadataEditorProps) => {
                 borderRightColor: 'gray.200'
               }}
             >
-              <Button
-                onClick={onAddRow}
-                color="blue.500"
-                leftIcon={<AddIcon />} 
-                variant="ghost" size="xs" p="0px" m="0px">Add Row</Button>
+              <Text fontSize="xs" fontWeight="bold" color="blue.500">Add Row</Text>
             </Td>
           </Tr>
         </Tbody>

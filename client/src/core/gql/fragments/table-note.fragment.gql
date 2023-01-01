@@ -1,0 +1,11 @@
+fragment AppNoteTable on NoteTable {
+  id
+  title
+  schema {
+    fields {
+      id
+      name
+      type
+    }
+  }
+}

@@ -2,14 +2,16 @@
       export type PossibleTypesResultData = {
   "possibleTypes": {
     "Node": [
-      "Note"
+      "Note",
+      "NoteTable"
     ]
   }
 };
       const result: PossibleTypesResultData = {
   "possibleTypes": {
     "Node": [
-      "Note"
+      "Note",
+      "NoteTable"
     ]
   }
 };

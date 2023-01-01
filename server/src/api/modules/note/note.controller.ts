@@ -67,17 +67,17 @@ export class NoteController {
     };
   }
 
-  @ApiOkResponse({
-    type: DTO.GetNotesResponse,
-  })
-  @Get('/')
-  async getNotes(): Promise<DTO.GetNotesResponse> {
-    const notes = await this.noteService.getNotes();
+  // @ApiOkResponse({
+  //   type: DTO.GetNotesResponse,
+  // })
+  // @Get('/')
+  // async getNotes(): Promise<DTO.GetNotesResponse> {
+  //   const notes = await this.noteService.getNotes();
 
-    return {
-      notes: notes.map(this._mapNoteDto),
-    };
-  }
+  //   return {
+  //     notes: notes.map(this._mapNoteDto),
+  //   };
+  // }
 
   @ApiOkResponse({
     type: DTO.GetNoteResponse,

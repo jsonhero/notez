@@ -9,6 +9,9 @@ import _ from 'lodash'
 import { AppNoteFragment, useUpdateNoteMutation } from '@gql/operations'
 import './document-style.css'
 
+import { Reference } from './extensions'
+import { referenceSuggestion } from './reference'
+
 const CustomDocument = Document.extend({
   content: 'block*',
 })
@@ -44,6 +47,12 @@ export const DocumentEditor = ({ note }: DocumentEditorProps) => {
           return 'Add Content'
         },
       }),
+      Reference.configure({
+        HTMLAttributes: {
+          class: 'reference',
+        },
+        suggestion: referenceSuggestion,
+      })
     ],
     onUpdate({ editor }) {
       updateNoteDocumentThrottled(editor.getJSON())

@@ -6,12 +6,16 @@ import { Node } from '@api/graph';
 import { NoteDocument } from '@database/schemas';
 import { NoteService } from '../note';
 import { NoteResolver } from '../note/note.resolver';
+import { NoteTableService } from '../note-table';
+import { NoteTableResolver } from '../note-table/note-table.resolver';
 
 @Resolver('Node')
 export class NodeResolver {
   constructor(
     @Inject(forwardRef(() => NoteService))
     private noteService: NoteService,
+    @Inject(forwardRef(() => NoteTableService))
+    private noteTableService: NoteTableService,
   ) {}
 
   private static wrapNodeWithType(node: Node, type: string): Node {
@@ -27,6 +31,11 @@ export class NodeResolver {
       case 'Note':
         const note = await this.noteService.getNoteById(resolvedGlobalId.id);
         return NoteResolver._mapNoteDto(note);
+      case 'NoteTable':
+        const noteTable = await this.noteTableService.getNoteTableById(
+          resolvedGlobalId.id,
+        );
+        return NoteTableResolver._mapNoteTableDto(noteTable);
       default:
         return null;
     }

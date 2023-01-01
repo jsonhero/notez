@@ -1,10 +1,10 @@
 import React, { useContext } from 'react'
-import { Box, VStack, HStack, Button, IconButton } from '@chakra-ui/react'
+import { Box, VStack, HStack, Button, IconButton, Text } from '@chakra-ui/react'
 import { DeleteIcon } from '@chakra-ui/icons'
 import { useSearchParams } from 'react-router-dom'
 
 import { GlobalStoreContext  } from '@stores/global'
-import { useGetNotesQuery, useCreateNoteMutation, useDeleteNoteMutation } from '@gql/operations'
+import { useGetNotesQuery, useCreateNoteMutation, useDeleteNoteMutation, useCreateNoteTableMutation, useGetNoteTablesQuery, useDeleteNoteTableMutation } from '@gql/operations'
 
 export const Sidebar = () => {
   const [searchParams] = useSearchParams()
@@ -32,33 +32,41 @@ const NoteView = () => {
     globalStore.setSelectedNoteId(noteId)
   }
 
-  const onClickDelete = (noteId: string) => {
-    deleteNoteMutation({
+  const onClickDelete = async (noteId: string) => {
+    await deleteNoteMutation({
       input: {
         noteId,
       }
     })
+
+    if (globalStore.selectedNoteId === noteId) {
+      const newSelectedNote = response.data?.notes.find((note) => note.id !== noteId)
+      if (newSelectedNote) {
+        globalStore.setSelectedNoteId(newSelectedNote.id)
+      } else {
+        globalStore.setSelectedNoteId(null)
+      }
+    }
   }
 
   return (
     <Box p="medium">
       <Box mb="lg">
-        <Button onClick={() => refetchNotes()}>
-          Refresh
-        </Button>
         <Button onClick={onClickCreateNote}>
           Create Note
         </Button>
       </Box>
-      <VStack spacing="medium" align="flex-start">
+      <VStack spacing="xsm" align="flex-start">
         {response.data?.notes.map((note) => (
-          <HStack key={note.id}>
-            <Button onClick={() => onClickNote(note.id)} variant="ghost" p="0px" m="0px">
-              <Box>
-                {note.title || `Untitled :  ${note.id}`}
-              </Box>
+          <HStack key={note.id} justify="space-between" w="100%" role="group" 
+            bg={note.id === globalStore.selectedNoteId ? "gray.200" : 'initial'}
+          >
+            <Button justifyContent="flex-start" w="100%" onClick={() => onClickNote(note.id)} variant="ghost" p="0px" m="0px">
+              <Text pl="sm">
+                {note.title || `Untitled`}
+              </Text>
             </Button>
-            <IconButton onClick={() => onClickDelete(note.id)}  variant="ghost" aria-label='Delete' icon={<DeleteIcon />} />
+            <IconButton display="none" _groupHover={{ display: 'initial' }} onClick={() => onClickDelete(note.id)}  variant="ghost" aria-label='Delete' icon={<DeleteIcon />} />
           </HStack>
         ))}
       </VStack>
@@ -68,14 +76,57 @@ const NoteView = () => {
 
 
 const TableView = () => {
+  const globalStore = useContext(GlobalStoreContext)
+  const [, createNoteTableMutation] = useCreateNoteTableMutation()
+  const [, deleteNoteTableMutation] = useDeleteNoteTableMutation()
+  const [response] = useGetNoteTablesQuery()
+
+  const onClickCreateNoteTable = () => {
+    createNoteTableMutation({})
+  }
+
+
+  const onClickNoteTable = (noteTableId: string) => {
+    globalStore.setSelectedNoteTableId(noteTableId)
+  }
+
+  const onClickDelete = async (noteTableId: string) => {
+    await deleteNoteTableMutation({
+      input: {
+        noteTableId,
+      }
+    })
+
+    if (globalStore.selectedNoteTableId === noteTableId) {
+      const newSelectedNoteTable = response.data?.noteTables.find((noteTable) => noteTable.id !== noteTableId)
+      if (newSelectedNoteTable) {
+        globalStore.setSelectedNoteTableId(newSelectedNoteTable.id)
+      } else {
+        globalStore.setSelectedNoteTableId(null)
+      }
+    }
+  }
+
   return (
     <Box p="medium">
       <Box mb="lg">
-        <Button >
+        <Button onClick={onClickCreateNoteTable}>
           Create Table
         </Button>
       </Box>
-      <VStack spacing="medium" align="flex-start">
+      <VStack spacing="xsm" align="flex-start">
+        {response.data?.noteTables.map((noteTable) => (
+          <HStack key={noteTable.id} justify="space-between" w="100%" role="group" 
+            bg={noteTable.id === globalStore.selectedNoteTableId ? "gray.200" : 'initial'}
+          >
+            <Button justifyContent="flex-start" w="100%" onClick={() => onClickNoteTable(noteTable.id)} variant="ghost" p="0px" m="0px">
+              <Text pl="sm">
+                {noteTable.title || `Untitled`}
+              </Text>
+            </Button>
+            <IconButton display="none" _groupHover={{ display: 'initial' }} onClick={() => onClickDelete(noteTable.id)}  variant="ghost" aria-label='Delete' icon={<DeleteIcon />} />
+          </HStack>
+        ))}
       </VStack>
     </Box>
   )

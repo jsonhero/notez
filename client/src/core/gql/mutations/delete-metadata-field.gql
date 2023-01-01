@@ -1,0 +1,5 @@
+mutation deleteNoteMetadataField($input: DeleteNoteMetadataFieldInput!) {
+  deleteNoteMetadataField(input: $input) {
+    clientMutationId
+  }
+}

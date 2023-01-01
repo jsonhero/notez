@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as _ from 'lodash';
-import { Model } from 'mongoose';
+import { Model, FilterQuery } from 'mongoose';
 import { nanoid } from 'nanoid';
 
 import { Note, NoteDocument } from '@database/schemas';
@@ -29,6 +29,10 @@ interface IUpdateMetaDataField {
   value: string;
 }
 
+interface IGetNotes {
+  title?: string;
+}
+
 @Injectable()
 export class NoteService {
   constructor(
@@ -39,9 +43,17 @@ export class NoteService {
     return 'f_' + nanoid(10);
   }
 
-  async getNotes(): Promise<NoteDocument[]> {
+  async getNotes(args: IGetNotes): Promise<NoteDocument[]> {
+    const filter: FilterQuery<NoteDocument> = {};
+
+    if (args.title) {
+      filter.title = {
+        $regex: args.title,
+      };
+    }
+
     return this.noteModel.find(
-      {},
+      filter,
       {},
       {
         sort: {
@@ -187,6 +199,18 @@ export class NoteService {
       schema: _.get(note, schemaPropPath),
       value: _.get(note, valuePropPath),
     };
+  }
+
+  async deleteMetadataField(noteId: string, fieldId: string): Promise<void> {
+    const schemaPropPath = `metadata.schema.fields.${fieldId}`;
+    const valuePropPath = `metadata.values.local.${fieldId}`;
+
+    await this.noteModel.findByIdAndUpdate(noteId, {
+      $unset: {
+        [schemaPropPath]: 1,
+        [valuePropPath]: 1,
+      },
+    });
   }
 
   async updateMetadataFieldValue(

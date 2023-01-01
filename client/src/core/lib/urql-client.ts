@@ -6,7 +6,7 @@ import { devtoolsExchange } from '@urql/devtools';
 import { nanoid } from 'nanoid';
 
 import { GraphCacheConfig } from '@gql/graphql'
-import { GetNoteByIdDocument, GetNoteByIdQuery, GetNotesQuery, GetNotesDocument, GetNoteByIdQueryVariables } from '@gql/operations'
+import { GetNoteByIdDocument, GetNoteByIdQuery, GetNotesQuery, GetNotesDocument, GetNoteByIdQueryVariables, GetNoteTablesQuery, GetNoteTablesDocument } from '@gql/operations'
 import introspectedSchema from '../../../graphql.schema.json'
 
 
@@ -21,7 +21,6 @@ const storage = makeDefaultStorage({
   maxAge: 7, // The maximum age of the persisted data in days
 });
 
-
 // https://github.com/urql-graphql/urql/issues/901
 const cache = offlineExchange<GraphCacheConfig>({
   schema: (introspectedSchema as unknown) as IntrospectionQuery,
@@ -35,7 +34,7 @@ const cache = offlineExchange<GraphCacheConfig>({
     deleteNote: (vars, cache, info) => {
       return {
         __typename: 'DeleteNotePayload',
-        success: true,
+        clientMutationId: '123',
       }
     },
     createNote: (vars, cache, info) => {
@@ -85,29 +84,60 @@ const cache = offlineExchange<GraphCacheConfig>({
         cache.updateQuery<GetNoteByIdQuery, GetNoteByIdQueryVariables>({ query: GetNoteByIdDocument, variables: {
           noteId: args.input.noteId,
         } }, (data) => {
-          const local = data?.node?.metadata.groups
+          if (data?.node?.__typename === 'Note') {
+            const local = data?.node?.metadata.groups
 
-          if (local && result.addNoteMetadataField.field) {
-            if (local.length) {
-              local[0].fields.push(result.addNoteMetadataField.field)
-            } else {
-              local.push({
-                context: 'local',
-                fields: [result.addNoteMetadataField.field]
-              })
+            if (local && result.addNoteMetadataField.field) {
+              if (local.length) {
+                local[0].fields.push(result.addNoteMetadataField.field)
+              } else {
+                local.push({
+                  context: 'local',
+                  fields: [result.addNoteMetadataField.field]
+                })
+              }
             }
           }
 
           return data;
         })
       },
+      deleteNoteMetadataField: (result, args, cache, info) => {
+        cache.invalidate({ __typename: 'MetadataGroupField', id: args.input.fieldId })
+
+        // cache.updateQuery<GetNoteByIdQuery, GetNoteByIdQueryVariables>({ query: GetNoteByIdDocument, variables: {
+        //   noteId: args.input.noteId,
+        // } }, (data) => {
+        //   const local = data?.node?.metadata.groups
+
+        //   if (local && result.deleteNoteMetadataField) {
+        //     if (local.length) {
+        //       local[0].fields = local[0].fields.filter((field) => field.id !== args.input.fieldId)
+        //     }
+        //   }
+
+        //   return data;
+        // })
+      },
       deleteNote: (result, args, cache, info) => {
-        cache.updateQuery<GetNotesQuery>({ query: GetNotesDocument }, (data) => {
-          if (data && result.deleteNote.success) {
-            data.notes = data?.notes.filter((note) => note.id !== args.input.noteId)
+        cache.invalidate({ __typename: 'Note', id: args.input.noteId })
+        // cache.updateQuery<GetNotesQuery>({ query: GetNotesDocument }, (data) => {
+        //   if (data && result) {
+        //     data.notes = data?.notes.filter((note) => note.id !== args.input.noteId)
+        //   }
+        //   return data
+        // })
+      },
+      createNoteTable: (result, args, cache, info) => {
+        cache.updateQuery<GetNoteTablesQuery>({ query: GetNoteTablesDocument }, (data) => {
+          if (result.createNoteTable.noteTable) {
+            data?.noteTables.unshift(result.createNoteTable.noteTable)
           }
           return data
         })
+      },
+      deleteNoteTable: (result, args, cache, info) => {
+        cache.invalidate({ __typename: 'NoteTable', id: args.input.noteTableId })
       },
     }
   }

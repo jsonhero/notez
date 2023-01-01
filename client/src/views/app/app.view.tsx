@@ -1,11 +1,15 @@
 import React from 'react'
 import { Box, Grid, GridItem } from '@chakra-ui/react'
+import { useSearchParams } from 'react-router-dom'
 
 import { Sidebar } from '@features/sidebar'
 import { AppBar } from '@features/app-bar'
 import { NoteEditor } from '@features/note-editor'
+import { NoteTableEditor } from '@features/note-table-editor'
 
 export const AppView = () => {
+  const [searchParams] = useSearchParams()
+
   return (
     <Grid 
       templateAreas={`
@@ -23,7 +27,7 @@ export const AppView = () => {
       </GridItem>
       <GridItem area="main">
         <Box p="xxl" bg="#FFFFFF" w='100%' h="100%">
-          <NoteEditor />
+          {searchParams.get('tab') === 'table' ? <NoteTableEditor /> : <NoteEditor />}          
         </Box>
       </GridItem>
     </Grid>

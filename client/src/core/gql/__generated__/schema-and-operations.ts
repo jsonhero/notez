@@ -31,13 +31,40 @@ export type CreateNotePayload = {
   note: Note;
 };
 
+export type CreateNoteTablePayload = {
+  __typename?: 'CreateNoteTablePayload';
+  noteTable: NoteTable;
+};
+
 export type DeleteNoteInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
   noteId: Scalars['ID'];
+};
+
+export type DeleteNoteMetadataFieldInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  fieldId: Scalars['ID'];
+  noteId: Scalars['ID'];
+};
+
+export type DeleteNoteMetadataFieldPayload = {
+  __typename?: 'DeleteNoteMetadataFieldPayload';
+  clientMutationId?: Maybe<Scalars['String']>;
 };
 
 export type DeleteNotePayload = {
   __typename?: 'DeleteNotePayload';
-  success: Scalars['Boolean'];
+  clientMutationId?: Maybe<Scalars['String']>;
+};
+
+export type DeleteNoteTableInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  noteTableId: Scalars['ID'];
+};
+
+export type DeleteNoteTablePayload = {
+  __typename?: 'DeleteNoteTablePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
 };
 
 export type MetadataFieldInput = {
@@ -67,7 +94,10 @@ export type Mutation = {
   __typename?: 'Mutation';
   addNoteMetadataField: AddNoteMetadataFieldPayload;
   createNote: CreateNotePayload;
+  createNoteTable: CreateNoteTablePayload;
   deleteNote: DeleteNotePayload;
+  deleteNoteMetadataField: DeleteNoteMetadataFieldPayload;
+  deleteNoteTable: DeleteNoteTablePayload;
   updateNote: UpdateNotePayload;
   updateNoteMetadataField: UpdateNoteMetadataFieldPayload;
 };
@@ -80,6 +110,16 @@ export type MutationAddNoteMetadataFieldArgs = {
 
 export type MutationDeleteNoteArgs = {
   input: DeleteNoteInput;
+};
+
+
+export type MutationDeleteNoteMetadataFieldArgs = {
+  input: DeleteNoteMetadataFieldInput;
+};
+
+
+export type MutationDeleteNoteTableArgs = {
+  input: DeleteNoteTableInput;
 };
 
 
@@ -122,10 +162,36 @@ export type NoteMetadataGroupObject = {
   fields: Array<MetadataGroupField>;
 };
 
+export type NoteSearchInput = {
+  title: Scalars['String'];
+};
+
+export type NoteTable = Node & {
+  __typename?: 'NoteTable';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  schema: NoteTableSchema;
+  title?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type NoteTableSchema = {
+  __typename?: 'NoteTableSchema';
+  fields: Array<NoteTableSchemaField>;
+};
+
+export type NoteTableSchemaField = {
+  __typename?: 'NoteTableSchemaField';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  type: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
   node?: Maybe<Node>;
   nodes: Array<Node>;
+  noteTables: Array<NoteTable>;
   notes: Array<Note>;
 };
 
@@ -137,6 +203,11 @@ export type QueryNodeArgs = {
 
 export type QueryNodesArgs = {
   ids: Array<Scalars['ID']>;
+};
+
+
+export type QueryNotesArgs = {
+  input?: InputMaybe<NoteSearchInput>;
 };
 
 export type UpdateNoteInput = {
@@ -164,6 +235,8 @@ export type AppNoteMetdataFieldFragment = { __typename?: 'MetadataGroupField', i
 
 export type AppNoteFragment = { __typename?: 'Note', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'NoteMetadata', groups: Array<{ __typename?: 'NoteMetadataGroupObject', context: string, fields: Array<{ __typename?: 'MetadataGroupField', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } }> }> } };
 
+export type AppNoteTableFragment = { __typename?: 'NoteTable', id: string, title?: string | null, schema: { __typename?: 'NoteTableSchema', fields: Array<{ __typename?: 'NoteTableSchemaField', id: string, name: string, type: string }> } };
+
 export type AddNoteMetadataFieldMutationVariables = Exact<{
   input: AddNoteMetadataFieldInput;
 }>;
@@ -176,12 +249,31 @@ export type CreateNoteMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type CreateNoteMutation = { __typename?: 'Mutation', createNote: { __typename?: 'CreateNotePayload', note: { __typename?: 'Note', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'NoteMetadata', groups: Array<{ __typename?: 'NoteMetadataGroupObject', context: string, fields: Array<{ __typename?: 'MetadataGroupField', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } }> }> } } } };
 
+export type CreateNoteTableMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CreateNoteTableMutation = { __typename?: 'Mutation', createNoteTable: { __typename?: 'CreateNoteTablePayload', noteTable: { __typename?: 'NoteTable', id: string, title?: string | null, schema: { __typename?: 'NoteTableSchema', fields: Array<{ __typename?: 'NoteTableSchemaField', id: string, name: string, type: string }> } } } };
+
+export type DeleteNoteMetadataFieldMutationVariables = Exact<{
+  input: DeleteNoteMetadataFieldInput;
+}>;
+
+
+export type DeleteNoteMetadataFieldMutation = { __typename?: 'Mutation', deleteNoteMetadataField: { __typename?: 'DeleteNoteMetadataFieldPayload', clientMutationId?: string | null } };
+
+export type DeleteNoteTableMutationVariables = Exact<{
+  input: DeleteNoteTableInput;
+}>;
+
+
+export type DeleteNoteTableMutation = { __typename?: 'Mutation', deleteNoteTable: { __typename?: 'DeleteNoteTablePayload', clientMutationId?: string | null } };
+
 export type DeleteNoteMutationVariables = Exact<{
   input: DeleteNoteInput;
 }>;
 
 
-export type DeleteNoteMutation = { __typename?: 'Mutation', deleteNote: { __typename?: 'DeleteNotePayload', success: boolean } };
+export type DeleteNoteMutation = { __typename?: 'Mutation', deleteNote: { __typename?: 'DeleteNotePayload', clientMutationId?: string | null } };
 
 export type UpdateNoteMetadataFieldMutationVariables = Exact<{
   input: UpdateNoteMetadataFieldInput;
@@ -202,9 +294,16 @@ export type GetNoteByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetNoteByIdQuery = { __typename?: 'Query', node?: { __typename?: 'Note', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'NoteMetadata', groups: Array<{ __typename?: 'NoteMetadataGroupObject', context: string, fields: Array<{ __typename?: 'MetadataGroupField', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } }> }> } } | null };
+export type GetNoteByIdQuery = { __typename?: 'Query', node?: { __typename?: 'Note', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'NoteMetadata', groups: Array<{ __typename?: 'NoteMetadataGroupObject', context: string, fields: Array<{ __typename?: 'MetadataGroupField', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } }> }> } } | { __typename?: 'NoteTable' } | null };
 
-export type GetNotesQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetNoteTablesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetNoteTablesQuery = { __typename?: 'Query', noteTables: Array<{ __typename?: 'NoteTable', id: string, title?: string | null, schema: { __typename?: 'NoteTableSchema', fields: Array<{ __typename?: 'NoteTableSchemaField', id: string, name: string, type: string }> } }> };
+
+export type GetNotesQueryVariables = Exact<{
+  input?: InputMaybe<NoteSearchInput>;
+}>;
 
 
 export type GetNotesQuery = { __typename?: 'Query', notes: Array<{ __typename?: 'Note', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'NoteMetadata', groups: Array<{ __typename?: 'NoteMetadataGroupObject', context: string, fields: Array<{ __typename?: 'MetadataGroupField', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } }> }> } }> };
@@ -239,6 +338,19 @@ export const AppNoteFragmentDoc = gql`
   }
 }
     `;
+export const AppNoteTableFragmentDoc = gql`
+    fragment AppNoteTable on NoteTable {
+  id
+  title
+  schema {
+    fields {
+      id
+      name
+      type
+    }
+  }
+}
+    `;
 export const AddNoteMetadataFieldDocument = gql`
     mutation addNoteMetadataField($input: AddNoteMetadataFieldInput!) {
   addNoteMetadataField(input: $input) {
@@ -265,10 +377,45 @@ export const CreateNoteDocument = gql`
 export function useCreateNoteMutation() {
   return Urql.useMutation<CreateNoteMutation, CreateNoteMutationVariables>(CreateNoteDocument);
 };
+export const CreateNoteTableDocument = gql`
+    mutation createNoteTable {
+  createNoteTable {
+    noteTable {
+      ...AppNoteTable
+    }
+  }
+}
+    ${AppNoteTableFragmentDoc}`;
+
+export function useCreateNoteTableMutation() {
+  return Urql.useMutation<CreateNoteTableMutation, CreateNoteTableMutationVariables>(CreateNoteTableDocument);
+};
+export const DeleteNoteMetadataFieldDocument = gql`
+    mutation deleteNoteMetadataField($input: DeleteNoteMetadataFieldInput!) {
+  deleteNoteMetadataField(input: $input) {
+    clientMutationId
+  }
+}
+    `;
+
+export function useDeleteNoteMetadataFieldMutation() {
+  return Urql.useMutation<DeleteNoteMetadataFieldMutation, DeleteNoteMetadataFieldMutationVariables>(DeleteNoteMetadataFieldDocument);
+};
+export const DeleteNoteTableDocument = gql`
+    mutation deleteNoteTable($input: DeleteNoteTableInput!) {
+  deleteNoteTable(input: $input) {
+    clientMutationId
+  }
+}
+    `;
+
+export function useDeleteNoteTableMutation() {
+  return Urql.useMutation<DeleteNoteTableMutation, DeleteNoteTableMutationVariables>(DeleteNoteTableDocument);
+};
 export const DeleteNoteDocument = gql`
     mutation deleteNote($input: DeleteNoteInput!) {
   deleteNote(input: $input) {
-    success
+    clientMutationId
   }
 }
     `;
@@ -315,9 +462,20 @@ export const GetNoteByIdDocument = gql`
 export function useGetNoteByIdQuery(options: Omit<Urql.UseQueryArgs<GetNoteByIdQueryVariables>, 'query'>) {
   return Urql.useQuery<GetNoteByIdQuery, GetNoteByIdQueryVariables>({ query: GetNoteByIdDocument, ...options });
 };
+export const GetNoteTablesDocument = gql`
+    query getNoteTables {
+  noteTables {
+    ...AppNoteTable
+  }
+}
+    ${AppNoteTableFragmentDoc}`;
+
+export function useGetNoteTablesQuery(options?: Omit<Urql.UseQueryArgs<GetNoteTablesQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetNoteTablesQuery, GetNoteTablesQueryVariables>({ query: GetNoteTablesDocument, ...options });
+};
 export const GetNotesDocument = gql`
-    query getNotes {
-  notes {
+    query getNotes($input: NoteSearchInput) {
+  notes(input: $input) {
     ...AppNote
   }
 }
