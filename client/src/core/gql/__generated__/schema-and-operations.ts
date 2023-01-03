@@ -17,68 +17,109 @@ export type Scalars = {
   JSONObject: any;
 };
 
-export type AddNoteMetadataFieldInput = {
-  noteId: Scalars['ID'];
+export type AddIdeaMetadataFieldInput = {
+  ideaId: Scalars['ID'];
 };
 
-export type AddNoteMetadataFieldPayload = {
-  __typename?: 'AddNoteMetadataFieldPayload';
-  field: MetadataGroupField;
+export type AddIdeaMetadataFieldPayload = {
+  __typename?: 'AddIdeaMetadataFieldPayload';
+  field: MetadataGroupFieldEntry;
 };
 
-export type CreateNotePayload = {
-  __typename?: 'CreateNotePayload';
-  note: Note;
+export type AddMetadataTemplateFieldInput = {
+  metadataTemplateId: Scalars['ID'];
 };
 
-export type CreateNoteTablePayload = {
-  __typename?: 'CreateNoteTablePayload';
-  noteTable: NoteTable;
+export type AddMetadataTemplateFieldPayload = {
+  __typename?: 'AddMetadataTemplateFieldPayload';
+  field: MetadataTemplateSchemaField;
 };
 
-export type DeleteNoteInput = {
+export type CreateIdeaInput = {
+  metadataTemplateIds?: InputMaybe<Array<Scalars['ID']>>;
+};
+
+export type CreateIdeaPayload = {
+  __typename?: 'CreateIdeaPayload';
+  idea: Idea;
+};
+
+export type CreateMetadataTemplatePayload = {
+  __typename?: 'CreateMetadataTemplatePayload';
+  template: MetadataTemplate;
+};
+
+export type DeleteIdeaInput = {
   clientMutationId?: InputMaybe<Scalars['String']>;
-  noteId: Scalars['ID'];
+  ideaId: Scalars['ID'];
 };
 
-export type DeleteNoteMetadataFieldInput = {
+export type DeleteIdeaMetadataFieldInput = {
   clientMutationId?: InputMaybe<Scalars['String']>;
   fieldId: Scalars['ID'];
-  noteId: Scalars['ID'];
+  ideaId: Scalars['ID'];
 };
 
-export type DeleteNoteMetadataFieldPayload = {
-  __typename?: 'DeleteNoteMetadataFieldPayload';
+export type DeleteIdeaMetadataFieldPayload = {
+  __typename?: 'DeleteIdeaMetadataFieldPayload';
   clientMutationId?: Maybe<Scalars['String']>;
 };
 
-export type DeleteNotePayload = {
-  __typename?: 'DeleteNotePayload';
+export type DeleteIdeaPayload = {
+  __typename?: 'DeleteIdeaPayload';
   clientMutationId?: Maybe<Scalars['String']>;
 };
 
-export type DeleteNoteTableInput = {
+export type DeleteMetadataTemplateInput = {
   clientMutationId?: InputMaybe<Scalars['String']>;
-  noteTableId: Scalars['ID'];
+  metadataTemplateId: Scalars['ID'];
 };
 
-export type DeleteNoteTablePayload = {
-  __typename?: 'DeleteNoteTablePayload';
+export type DeleteMetadataTemplatePayload = {
+  __typename?: 'DeleteMetadataTemplatePayload';
   clientMutationId?: Maybe<Scalars['String']>;
+};
+
+export type Idea = Node & {
+  __typename?: 'Idea';
+  createdAt: Scalars['DateTime'];
+  document?: Maybe<Scalars['JSONObject']>;
+  id: Scalars['ID'];
+  metadata: IdeaMetadata;
+  title?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type IdeaInput = {
+  document?: InputMaybe<Scalars['JSONObject']>;
+  title?: InputMaybe<Scalars['String']>;
+};
+
+export type IdeaMetadata = {
+  __typename?: 'IdeaMetadata';
+  groups: Array<MetadataGroup>;
+};
+
+export type IdeaSearchInput = {
+  metadataTemplateIds?: InputMaybe<Array<Scalars['ID']>>;
+  title?: InputMaybe<Scalars['String']>;
 };
 
 export type MetadataFieldInput = {
-  schema?: InputMaybe<MetadataFieldSchemaInput>;
+  name?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']>;
   value?: InputMaybe<Scalars['String']>;
 };
 
-export type MetadataFieldSchemaInput = {
-  name: Scalars['String'];
-  type: Scalars['String'];
+export type MetadataGroup = {
+  __typename?: 'MetadataGroup';
+  context: Scalars['String'];
+  fields: Array<MetadataGroupFieldEntry>;
+  template?: Maybe<MetadataTemplate>;
 };
 
-export type MetadataGroupField = {
-  __typename?: 'MetadataGroupField';
+export type MetadataGroupFieldEntry = {
+  __typename?: 'MetadataGroupFieldEntry';
   id: Scalars['ID'];
   schema: MetadataGroupFieldSchema;
   value?: Maybe<Scalars['String']>;
@@ -86,113 +127,121 @@ export type MetadataGroupField = {
 
 export type MetadataGroupFieldSchema = {
   __typename?: 'MetadataGroupFieldSchema';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  type: Scalars['String'];
+};
+
+export type MetadataTemplate = Node & {
+  __typename?: 'MetadataTemplate';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  schema: MetadataTemplateSchema;
+  title?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type MetadataTemplateFieldInput = {
+  name: Scalars['String'];
+  type: Scalars['String'];
+};
+
+export type MetadataTemplateInput = {
+  title: Scalars['String'];
+};
+
+export type MetadataTemplateSchema = {
+  __typename?: 'MetadataTemplateSchema';
+  fields: Array<MetadataTemplateSchemaField>;
+};
+
+export type MetadataTemplateSchemaField = {
+  __typename?: 'MetadataTemplateSchemaField';
+  id: Scalars['ID'];
   name: Scalars['String'];
   type: Scalars['String'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addNoteMetadataField: AddNoteMetadataFieldPayload;
-  createNote: CreateNotePayload;
-  createNoteTable: CreateNoteTablePayload;
-  deleteNote: DeleteNotePayload;
-  deleteNoteMetadataField: DeleteNoteMetadataFieldPayload;
-  deleteNoteTable: DeleteNoteTablePayload;
-  updateNote: UpdateNotePayload;
-  updateNoteMetadataField: UpdateNoteMetadataFieldPayload;
+  addIdeaMetadataField: AddIdeaMetadataFieldPayload;
+  addMetadataTemplateField: AddMetadataTemplateFieldPayload;
+  createIdea: CreateIdeaPayload;
+  createMetadataTemplate: CreateMetadataTemplatePayload;
+  deleteIdea: DeleteIdeaPayload;
+  deleteIdeaMetadataField: DeleteIdeaMetadataFieldPayload;
+  deleteMetadataTemplate: DeleteMetadataTemplatePayload;
+  updateIdea: UpdateIdeaPayload;
+  updateIdeaMetadataField: UpdateIdeaMetadataFieldPayload;
+  updateMetadataTemplate: UpdateMetadataTemplatePayload;
+  updateMetadataTemplateField: UpdateMetadataTemplateFieldPayload;
 };
 
 
-export type MutationAddNoteMetadataFieldArgs = {
-  input: AddNoteMetadataFieldInput;
+export type MutationAddIdeaMetadataFieldArgs = {
+  input: AddIdeaMetadataFieldInput;
 };
 
 
-export type MutationDeleteNoteArgs = {
-  input: DeleteNoteInput;
+export type MutationAddMetadataTemplateFieldArgs = {
+  input: AddMetadataTemplateFieldInput;
 };
 
 
-export type MutationDeleteNoteMetadataFieldArgs = {
-  input: DeleteNoteMetadataFieldInput;
+export type MutationCreateIdeaArgs = {
+  input?: InputMaybe<CreateIdeaInput>;
 };
 
 
-export type MutationDeleteNoteTableArgs = {
-  input: DeleteNoteTableInput;
+export type MutationDeleteIdeaArgs = {
+  input: DeleteIdeaInput;
 };
 
 
-export type MutationUpdateNoteArgs = {
-  input: UpdateNoteInput;
+export type MutationDeleteIdeaMetadataFieldArgs = {
+  input: DeleteIdeaMetadataFieldInput;
 };
 
 
-export type MutationUpdateNoteMetadataFieldArgs = {
-  input: UpdateNoteMetadataFieldInput;
+export type MutationDeleteMetadataTemplateArgs = {
+  input: DeleteMetadataTemplateInput;
+};
+
+
+export type MutationUpdateIdeaArgs = {
+  input: UpdateIdeaInput;
+};
+
+
+export type MutationUpdateIdeaMetadataFieldArgs = {
+  input: UpdateIdeaMetadataFieldInput;
+};
+
+
+export type MutationUpdateMetadataTemplateArgs = {
+  input: UpdateMetadataTemplateInput;
+};
+
+
+export type MutationUpdateMetadataTemplateFieldArgs = {
+  input: UpdateMetadataTemplateFieldInput;
 };
 
 export type Node = {
   id: Scalars['ID'];
 };
 
-export type Note = Node & {
-  __typename?: 'Note';
-  createdAt: Scalars['DateTime'];
-  document?: Maybe<Scalars['JSONObject']>;
-  id: Scalars['ID'];
-  metadata: NoteMetadata;
-  title?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['DateTime'];
-};
-
-export type NoteInput = {
-  document?: InputMaybe<Scalars['JSONObject']>;
-  title?: InputMaybe<Scalars['String']>;
-};
-
-export type NoteMetadata = {
-  __typename?: 'NoteMetadata';
-  groups: Array<NoteMetadataGroupObject>;
-};
-
-export type NoteMetadataGroupObject = {
-  __typename?: 'NoteMetadataGroupObject';
-  context: Scalars['String'];
-  fields: Array<MetadataGroupField>;
-};
-
-export type NoteSearchInput = {
-  title: Scalars['String'];
-};
-
-export type NoteTable = Node & {
-  __typename?: 'NoteTable';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['ID'];
-  schema: NoteTableSchema;
-  title?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['DateTime'];
-};
-
-export type NoteTableSchema = {
-  __typename?: 'NoteTableSchema';
-  fields: Array<NoteTableSchemaField>;
-};
-
-export type NoteTableSchemaField = {
-  __typename?: 'NoteTableSchemaField';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  type: Scalars['String'];
-};
-
 export type Query = {
   __typename?: 'Query';
+  ideas: Array<Idea>;
+  metadataTemplates: Array<MetadataTemplate>;
   node?: Maybe<Node>;
   nodes: Array<Node>;
-  noteTables: Array<NoteTable>;
-  notes: Array<Note>;
+};
+
+
+export type QueryIdeasArgs = {
+  input?: InputMaybe<IdeaSearchInput>;
 };
 
 
@@ -205,111 +254,154 @@ export type QueryNodesArgs = {
   ids: Array<Scalars['ID']>;
 };
 
-
-export type QueryNotesArgs = {
-  input?: InputMaybe<NoteSearchInput>;
+export type UpdateIdeaInput = {
+  idea: IdeaInput;
+  ideaId: Scalars['ID'];
 };
 
-export type UpdateNoteInput = {
-  note: NoteInput;
-  noteId: Scalars['ID'];
-};
-
-export type UpdateNoteMetadataFieldInput = {
+export type UpdateIdeaMetadataFieldInput = {
   field: MetadataFieldInput;
   fieldId: Scalars['ID'];
-  noteId: Scalars['ID'];
+  ideaId: Scalars['ID'];
 };
 
-export type UpdateNoteMetadataFieldPayload = {
-  __typename?: 'UpdateNoteMetadataFieldPayload';
-  field: MetadataGroupField;
+export type UpdateIdeaMetadataFieldPayload = {
+  __typename?: 'UpdateIdeaMetadataFieldPayload';
+  field: MetadataGroupFieldEntry;
 };
 
-export type UpdateNotePayload = {
-  __typename?: 'UpdateNotePayload';
-  note: Note;
+export type UpdateIdeaPayload = {
+  __typename?: 'UpdateIdeaPayload';
+  idea: Idea;
 };
 
-export type AppNoteMetdataFieldFragment = { __typename?: 'MetadataGroupField', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } };
+export type UpdateMetadataTemplateFieldInput = {
+  field: MetadataTemplateFieldInput;
+  fieldId: Scalars['ID'];
+  metadataTemplateId: Scalars['ID'];
+};
 
-export type AppNoteFragment = { __typename?: 'Note', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'NoteMetadata', groups: Array<{ __typename?: 'NoteMetadataGroupObject', context: string, fields: Array<{ __typename?: 'MetadataGroupField', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } }> }> } };
+export type UpdateMetadataTemplateFieldPayload = {
+  __typename?: 'UpdateMetadataTemplateFieldPayload';
+  field: MetadataTemplateSchemaField;
+};
 
-export type AppNoteTableFragment = { __typename?: 'NoteTable', id: string, title?: string | null, schema: { __typename?: 'NoteTableSchema', fields: Array<{ __typename?: 'NoteTableSchemaField', id: string, name: string, type: string }> } };
+export type UpdateMetadataTemplateInput = {
+  metadataTemplateId: Scalars['ID'];
+  template: MetadataTemplateInput;
+};
 
-export type AddNoteMetadataFieldMutationVariables = Exact<{
-  input: AddNoteMetadataFieldInput;
+export type UpdateMetadataTemplatePayload = {
+  __typename?: 'UpdateMetadataTemplatePayload';
+  template: MetadataTemplate;
+};
+
+export type AppIdeaMetadataFieldFragment = { __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } };
+
+export type AppIdeaFragment = { __typename: 'Idea', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } };
+
+export type AppIdeaMetadataGroupFragment = { __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> };
+
+export type AppMetadataTemplateSchemaFieldFragment = { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string };
+
+export type AppMetadataTemplateFragment = { __typename: 'MetadataTemplate', id: string, title?: string | null, schema: { __typename?: 'MetadataTemplateSchema', fields: Array<{ __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string }> } };
+
+export type AddIdeaMetadataFieldMutationVariables = Exact<{
+  input: AddIdeaMetadataFieldInput;
 }>;
 
 
-export type AddNoteMetadataFieldMutation = { __typename?: 'Mutation', addNoteMetadataField: { __typename?: 'AddNoteMetadataFieldPayload', field: { __typename?: 'MetadataGroupField', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } } } };
+export type AddIdeaMetadataFieldMutation = { __typename?: 'Mutation', addIdeaMetadataField: { __typename?: 'AddIdeaMetadataFieldPayload', field: { __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } } } };
 
-export type CreateNoteMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type CreateNoteMutation = { __typename?: 'Mutation', createNote: { __typename?: 'CreateNotePayload', note: { __typename?: 'Note', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'NoteMetadata', groups: Array<{ __typename?: 'NoteMetadataGroupObject', context: string, fields: Array<{ __typename?: 'MetadataGroupField', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } }> }> } } } };
-
-export type CreateNoteTableMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type CreateNoteTableMutation = { __typename?: 'Mutation', createNoteTable: { __typename?: 'CreateNoteTablePayload', noteTable: { __typename?: 'NoteTable', id: string, title?: string | null, schema: { __typename?: 'NoteTableSchema', fields: Array<{ __typename?: 'NoteTableSchemaField', id: string, name: string, type: string }> } } } };
-
-export type DeleteNoteMetadataFieldMutationVariables = Exact<{
-  input: DeleteNoteMetadataFieldInput;
+export type AddMetadataTemplateFieldMutationVariables = Exact<{
+  input: AddMetadataTemplateFieldInput;
 }>;
 
 
-export type DeleteNoteMetadataFieldMutation = { __typename?: 'Mutation', deleteNoteMetadataField: { __typename?: 'DeleteNoteMetadataFieldPayload', clientMutationId?: string | null } };
+export type AddMetadataTemplateFieldMutation = { __typename?: 'Mutation', addMetadataTemplateField: { __typename?: 'AddMetadataTemplateFieldPayload', field: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string } } };
 
-export type DeleteNoteTableMutationVariables = Exact<{
-  input: DeleteNoteTableInput;
+export type CreateIdeaMutationVariables = Exact<{
+  input?: InputMaybe<CreateIdeaInput>;
 }>;
 
 
-export type DeleteNoteTableMutation = { __typename?: 'Mutation', deleteNoteTable: { __typename?: 'DeleteNoteTablePayload', clientMutationId?: string | null } };
+export type CreateIdeaMutation = { __typename?: 'Mutation', createIdea: { __typename?: 'CreateIdeaPayload', idea: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } } } };
 
-export type DeleteNoteMutationVariables = Exact<{
-  input: DeleteNoteInput;
+export type CreateMetadataTemplateMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CreateMetadataTemplateMutation = { __typename?: 'Mutation', createMetadataTemplate: { __typename?: 'CreateMetadataTemplatePayload', template: { __typename: 'MetadataTemplate', id: string, title?: string | null, schema: { __typename?: 'MetadataTemplateSchema', fields: Array<{ __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string }> } } } };
+
+export type DeleteIdeaMutationVariables = Exact<{
+  input: DeleteIdeaInput;
 }>;
 
 
-export type DeleteNoteMutation = { __typename?: 'Mutation', deleteNote: { __typename?: 'DeleteNotePayload', clientMutationId?: string | null } };
+export type DeleteIdeaMutation = { __typename?: 'Mutation', deleteIdea: { __typename?: 'DeleteIdeaPayload', clientMutationId?: string | null } };
 
-export type UpdateNoteMetadataFieldMutationVariables = Exact<{
-  input: UpdateNoteMetadataFieldInput;
+export type DeleteIdeaMetadataFieldMutationVariables = Exact<{
+  input: DeleteIdeaMetadataFieldInput;
 }>;
 
 
-export type UpdateNoteMetadataFieldMutation = { __typename?: 'Mutation', updateNoteMetadataField: { __typename?: 'UpdateNoteMetadataFieldPayload', field: { __typename?: 'MetadataGroupField', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } } } };
+export type DeleteIdeaMetadataFieldMutation = { __typename?: 'Mutation', deleteIdeaMetadataField: { __typename?: 'DeleteIdeaMetadataFieldPayload', clientMutationId?: string | null } };
 
-export type UpdateNoteMutationVariables = Exact<{
-  input: UpdateNoteInput;
+export type DeleteMetadataTemplateMutationVariables = Exact<{
+  input: DeleteMetadataTemplateInput;
 }>;
 
 
-export type UpdateNoteMutation = { __typename?: 'Mutation', updateNote: { __typename?: 'UpdateNotePayload', note: { __typename?: 'Note', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'NoteMetadata', groups: Array<{ __typename?: 'NoteMetadataGroupObject', context: string, fields: Array<{ __typename?: 'MetadataGroupField', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } }> }> } } } };
+export type DeleteMetadataTemplateMutation = { __typename?: 'Mutation', deleteMetadataTemplate: { __typename?: 'DeleteMetadataTemplatePayload', clientMutationId?: string | null } };
 
-export type GetNoteByIdQueryVariables = Exact<{
-  noteId: Scalars['ID'];
+export type UpdateIdeaMutationVariables = Exact<{
+  input: UpdateIdeaInput;
 }>;
 
 
-export type GetNoteByIdQuery = { __typename?: 'Query', node?: { __typename?: 'Note', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'NoteMetadata', groups: Array<{ __typename?: 'NoteMetadataGroupObject', context: string, fields: Array<{ __typename?: 'MetadataGroupField', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } }> }> } } | { __typename?: 'NoteTable' } | null };
+export type UpdateIdeaMutation = { __typename?: 'Mutation', updateIdea: { __typename?: 'UpdateIdeaPayload', idea: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } } } };
 
-export type GetNoteTablesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetNoteTablesQuery = { __typename?: 'Query', noteTables: Array<{ __typename?: 'NoteTable', id: string, title?: string | null, schema: { __typename?: 'NoteTableSchema', fields: Array<{ __typename?: 'NoteTableSchemaField', id: string, name: string, type: string }> } }> };
-
-export type GetNotesQueryVariables = Exact<{
-  input?: InputMaybe<NoteSearchInput>;
+export type UpdateIdeaMetadataFieldMutationVariables = Exact<{
+  input: UpdateIdeaMetadataFieldInput;
 }>;
 
 
-export type GetNotesQuery = { __typename?: 'Query', notes: Array<{ __typename?: 'Note', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'NoteMetadata', groups: Array<{ __typename?: 'NoteMetadataGroupObject', context: string, fields: Array<{ __typename?: 'MetadataGroupField', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } }> }> } }> };
+export type UpdateIdeaMetadataFieldMutation = { __typename?: 'Mutation', updateIdeaMetadataField: { __typename?: 'UpdateIdeaMetadataFieldPayload', field: { __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', name: string, type: string } } } };
 
-export const AppNoteMetdataFieldFragmentDoc = gql`
-    fragment AppNoteMetdataField on MetadataGroupField {
+export type UpdateMetadataTemplateFieldMutationVariables = Exact<{
+  input: UpdateMetadataTemplateFieldInput;
+}>;
+
+
+export type UpdateMetadataTemplateFieldMutation = { __typename?: 'Mutation', updateMetadataTemplateField: { __typename?: 'UpdateMetadataTemplateFieldPayload', field: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string } } };
+
+export type UpdateMetadataTemplateMutationVariables = Exact<{
+  input: UpdateMetadataTemplateInput;
+}>;
+
+
+export type UpdateMetadataTemplateMutation = { __typename?: 'Mutation', updateMetadataTemplate: { __typename?: 'UpdateMetadataTemplatePayload', template: { __typename: 'MetadataTemplate', id: string, title?: string | null, schema: { __typename?: 'MetadataTemplateSchema', fields: Array<{ __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string }> } } } };
+
+export type GetIdeasQueryVariables = Exact<{
+  input?: InputMaybe<IdeaSearchInput>;
+}>;
+
+
+export type GetIdeasQuery = { __typename?: 'Query', ideas: Array<{ __typename: 'Idea', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } }> };
+
+export type GetMetadataTemplatesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMetadataTemplatesQuery = { __typename?: 'Query', metadataTemplates: Array<{ __typename: 'MetadataTemplate', id: string, title?: string | null, schema: { __typename?: 'MetadataTemplateSchema', fields: Array<{ __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string }> } }> };
+
+export type GetNodeQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetNodeQuery = { __typename?: 'Query', node?: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } } | { __typename: 'MetadataTemplate', id: string, title?: string | null, schema: { __typename?: 'MetadataTemplateSchema', fields: Array<{ __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string }> } } | null };
+
+export const AppIdeaMetadataFieldFragmentDoc = gql`
+    fragment AppIdeaMetadataField on MetadataGroupFieldEntry {
   id
   schema {
     name
@@ -318,28 +410,46 @@ export const AppNoteMetdataFieldFragmentDoc = gql`
   value
 }
     `;
-export const AppNoteFragmentDoc = gql`
-    fragment AppNote on Note {
+export const AppIdeaMetadataGroupFragmentDoc = gql`
+    fragment AppIdeaMetadataGroup on MetadataGroup {
+  context
+  template {
+    id
+    title
+  }
+  fields {
+    id
+    schema {
+      id
+      name
+      type
+    }
+    value
+  }
+}
+    `;
+export const AppIdeaFragmentDoc = gql`
+    fragment AppIdea on Idea {
   id
   title
   document
   metadata {
     groups {
-      context
-      fields {
-        id
-        schema {
-          name
-          type
-        }
-        value
-      }
+      ...AppIdeaMetadataGroup
     }
   }
+  __typename
+}
+    ${AppIdeaMetadataGroupFragmentDoc}`;
+export const AppMetadataTemplateSchemaFieldFragmentDoc = gql`
+    fragment AppMetadataTemplateSchemaField on MetadataTemplateSchemaField {
+  id
+  name
+  type
 }
     `;
-export const AppNoteTableFragmentDoc = gql`
-    fragment AppNoteTable on NoteTable {
+export const AppMetadataTemplateFragmentDoc = gql`
+    fragment AppMetadataTemplate on MetadataTemplate {
   id
   title
   schema {
@@ -349,138 +459,182 @@ export const AppNoteTableFragmentDoc = gql`
       type
     }
   }
+  __typename
 }
     `;
-export const AddNoteMetadataFieldDocument = gql`
-    mutation addNoteMetadataField($input: AddNoteMetadataFieldInput!) {
-  addNoteMetadataField(input: $input) {
+export const AddIdeaMetadataFieldDocument = gql`
+    mutation addIdeaMetadataField($input: AddIdeaMetadataFieldInput!) {
+  addIdeaMetadataField(input: $input) {
     field {
-      ...AppNoteMetdataField
+      ...AppIdeaMetadataField
     }
   }
 }
-    ${AppNoteMetdataFieldFragmentDoc}`;
+    ${AppIdeaMetadataFieldFragmentDoc}`;
 
-export function useAddNoteMetadataFieldMutation() {
-  return Urql.useMutation<AddNoteMetadataFieldMutation, AddNoteMetadataFieldMutationVariables>(AddNoteMetadataFieldDocument);
+export function useAddIdeaMetadataFieldMutation() {
+  return Urql.useMutation<AddIdeaMetadataFieldMutation, AddIdeaMetadataFieldMutationVariables>(AddIdeaMetadataFieldDocument);
 };
-export const CreateNoteDocument = gql`
-    mutation createNote {
-  createNote {
-    note {
-      ...AppNote
-    }
-  }
-}
-    ${AppNoteFragmentDoc}`;
-
-export function useCreateNoteMutation() {
-  return Urql.useMutation<CreateNoteMutation, CreateNoteMutationVariables>(CreateNoteDocument);
-};
-export const CreateNoteTableDocument = gql`
-    mutation createNoteTable {
-  createNoteTable {
-    noteTable {
-      ...AppNoteTable
-    }
-  }
-}
-    ${AppNoteTableFragmentDoc}`;
-
-export function useCreateNoteTableMutation() {
-  return Urql.useMutation<CreateNoteTableMutation, CreateNoteTableMutationVariables>(CreateNoteTableDocument);
-};
-export const DeleteNoteMetadataFieldDocument = gql`
-    mutation deleteNoteMetadataField($input: DeleteNoteMetadataFieldInput!) {
-  deleteNoteMetadataField(input: $input) {
-    clientMutationId
-  }
-}
-    `;
-
-export function useDeleteNoteMetadataFieldMutation() {
-  return Urql.useMutation<DeleteNoteMetadataFieldMutation, DeleteNoteMetadataFieldMutationVariables>(DeleteNoteMetadataFieldDocument);
-};
-export const DeleteNoteTableDocument = gql`
-    mutation deleteNoteTable($input: DeleteNoteTableInput!) {
-  deleteNoteTable(input: $input) {
-    clientMutationId
-  }
-}
-    `;
-
-export function useDeleteNoteTableMutation() {
-  return Urql.useMutation<DeleteNoteTableMutation, DeleteNoteTableMutationVariables>(DeleteNoteTableDocument);
-};
-export const DeleteNoteDocument = gql`
-    mutation deleteNote($input: DeleteNoteInput!) {
-  deleteNote(input: $input) {
-    clientMutationId
-  }
-}
-    `;
-
-export function useDeleteNoteMutation() {
-  return Urql.useMutation<DeleteNoteMutation, DeleteNoteMutationVariables>(DeleteNoteDocument);
-};
-export const UpdateNoteMetadataFieldDocument = gql`
-    mutation updateNoteMetadataField($input: UpdateNoteMetadataFieldInput!) {
-  updateNoteMetadataField(input: $input) {
+export const AddMetadataTemplateFieldDocument = gql`
+    mutation addMetadataTemplateField($input: AddMetadataTemplateFieldInput!) {
+  addMetadataTemplateField(input: $input) {
     field {
-      ...AppNoteMetdataField
+      ...AppMetadataTemplateSchemaField
     }
   }
 }
-    ${AppNoteMetdataFieldFragmentDoc}`;
+    ${AppMetadataTemplateSchemaFieldFragmentDoc}`;
 
-export function useUpdateNoteMetadataFieldMutation() {
-  return Urql.useMutation<UpdateNoteMetadataFieldMutation, UpdateNoteMetadataFieldMutationVariables>(UpdateNoteMetadataFieldDocument);
+export function useAddMetadataTemplateFieldMutation() {
+  return Urql.useMutation<AddMetadataTemplateFieldMutation, AddMetadataTemplateFieldMutationVariables>(AddMetadataTemplateFieldDocument);
 };
-export const UpdateNoteDocument = gql`
-    mutation updateNote($input: UpdateNoteInput!) {
-  updateNote(input: $input) {
-    note {
-      ...AppNote
+export const CreateIdeaDocument = gql`
+    mutation createIdea($input: CreateIdeaInput) {
+  createIdea(input: $input) {
+    idea {
+      ...AppIdea
     }
   }
 }
-    ${AppNoteFragmentDoc}`;
+    ${AppIdeaFragmentDoc}`;
 
-export function useUpdateNoteMutation() {
-  return Urql.useMutation<UpdateNoteMutation, UpdateNoteMutationVariables>(UpdateNoteDocument);
+export function useCreateIdeaMutation() {
+  return Urql.useMutation<CreateIdeaMutation, CreateIdeaMutationVariables>(CreateIdeaDocument);
 };
-export const GetNoteByIdDocument = gql`
-    query getNoteById($noteId: ID!) {
-  node(id: $noteId) {
-    ... on Note {
-      ...AppNote
+export const CreateMetadataTemplateDocument = gql`
+    mutation createMetadataTemplate {
+  createMetadataTemplate {
+    template {
+      ...AppMetadataTemplate
     }
   }
 }
-    ${AppNoteFragmentDoc}`;
+    ${AppMetadataTemplateFragmentDoc}`;
 
-export function useGetNoteByIdQuery(options: Omit<Urql.UseQueryArgs<GetNoteByIdQueryVariables>, 'query'>) {
-  return Urql.useQuery<GetNoteByIdQuery, GetNoteByIdQueryVariables>({ query: GetNoteByIdDocument, ...options });
+export function useCreateMetadataTemplateMutation() {
+  return Urql.useMutation<CreateMetadataTemplateMutation, CreateMetadataTemplateMutationVariables>(CreateMetadataTemplateDocument);
 };
-export const GetNoteTablesDocument = gql`
-    query getNoteTables {
-  noteTables {
-    ...AppNoteTable
+export const DeleteIdeaDocument = gql`
+    mutation deleteIdea($input: DeleteIdeaInput!) {
+  deleteIdea(input: $input) {
+    clientMutationId
   }
 }
-    ${AppNoteTableFragmentDoc}`;
+    `;
 
-export function useGetNoteTablesQuery(options?: Omit<Urql.UseQueryArgs<GetNoteTablesQueryVariables>, 'query'>) {
-  return Urql.useQuery<GetNoteTablesQuery, GetNoteTablesQueryVariables>({ query: GetNoteTablesDocument, ...options });
+export function useDeleteIdeaMutation() {
+  return Urql.useMutation<DeleteIdeaMutation, DeleteIdeaMutationVariables>(DeleteIdeaDocument);
 };
-export const GetNotesDocument = gql`
-    query getNotes($input: NoteSearchInput) {
-  notes(input: $input) {
-    ...AppNote
+export const DeleteIdeaMetadataFieldDocument = gql`
+    mutation deleteIdeaMetadataField($input: DeleteIdeaMetadataFieldInput!) {
+  deleteIdeaMetadataField(input: $input) {
+    clientMutationId
   }
 }
-    ${AppNoteFragmentDoc}`;
+    `;
 
-export function useGetNotesQuery(options?: Omit<Urql.UseQueryArgs<GetNotesQueryVariables>, 'query'>) {
-  return Urql.useQuery<GetNotesQuery, GetNotesQueryVariables>({ query: GetNotesDocument, ...options });
+export function useDeleteIdeaMetadataFieldMutation() {
+  return Urql.useMutation<DeleteIdeaMetadataFieldMutation, DeleteIdeaMetadataFieldMutationVariables>(DeleteIdeaMetadataFieldDocument);
+};
+export const DeleteMetadataTemplateDocument = gql`
+    mutation deleteMetadataTemplate($input: DeleteMetadataTemplateInput!) {
+  deleteMetadataTemplate(input: $input) {
+    clientMutationId
+  }
+}
+    `;
+
+export function useDeleteMetadataTemplateMutation() {
+  return Urql.useMutation<DeleteMetadataTemplateMutation, DeleteMetadataTemplateMutationVariables>(DeleteMetadataTemplateDocument);
+};
+export const UpdateIdeaDocument = gql`
+    mutation updateIdea($input: UpdateIdeaInput!) {
+  updateIdea(input: $input) {
+    idea {
+      ...AppIdea
+    }
+  }
+}
+    ${AppIdeaFragmentDoc}`;
+
+export function useUpdateIdeaMutation() {
+  return Urql.useMutation<UpdateIdeaMutation, UpdateIdeaMutationVariables>(UpdateIdeaDocument);
+};
+export const UpdateIdeaMetadataFieldDocument = gql`
+    mutation updateIdeaMetadataField($input: UpdateIdeaMetadataFieldInput!) {
+  updateIdeaMetadataField(input: $input) {
+    field {
+      ...AppIdeaMetadataField
+    }
+  }
+}
+    ${AppIdeaMetadataFieldFragmentDoc}`;
+
+export function useUpdateIdeaMetadataFieldMutation() {
+  return Urql.useMutation<UpdateIdeaMetadataFieldMutation, UpdateIdeaMetadataFieldMutationVariables>(UpdateIdeaMetadataFieldDocument);
+};
+export const UpdateMetadataTemplateFieldDocument = gql`
+    mutation updateMetadataTemplateField($input: UpdateMetadataTemplateFieldInput!) {
+  updateMetadataTemplateField(input: $input) {
+    field {
+      ...AppMetadataTemplateSchemaField
+    }
+  }
+}
+    ${AppMetadataTemplateSchemaFieldFragmentDoc}`;
+
+export function useUpdateMetadataTemplateFieldMutation() {
+  return Urql.useMutation<UpdateMetadataTemplateFieldMutation, UpdateMetadataTemplateFieldMutationVariables>(UpdateMetadataTemplateFieldDocument);
+};
+export const UpdateMetadataTemplateDocument = gql`
+    mutation updateMetadataTemplate($input: UpdateMetadataTemplateInput!) {
+  updateMetadataTemplate(input: $input) {
+    template {
+      ...AppMetadataTemplate
+    }
+  }
+}
+    ${AppMetadataTemplateFragmentDoc}`;
+
+export function useUpdateMetadataTemplateMutation() {
+  return Urql.useMutation<UpdateMetadataTemplateMutation, UpdateMetadataTemplateMutationVariables>(UpdateMetadataTemplateDocument);
+};
+export const GetIdeasDocument = gql`
+    query getIdeas($input: IdeaSearchInput) {
+  ideas(input: $input) {
+    ...AppIdea
+  }
+}
+    ${AppIdeaFragmentDoc}`;
+
+export function useGetIdeasQuery(options?: Omit<Urql.UseQueryArgs<GetIdeasQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetIdeasQuery, GetIdeasQueryVariables>({ query: GetIdeasDocument, ...options });
+};
+export const GetMetadataTemplatesDocument = gql`
+    query getMetadataTemplates {
+  metadataTemplates {
+    ...AppMetadataTemplate
+  }
+}
+    ${AppMetadataTemplateFragmentDoc}`;
+
+export function useGetMetadataTemplatesQuery(options?: Omit<Urql.UseQueryArgs<GetMetadataTemplatesQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetMetadataTemplatesQuery, GetMetadataTemplatesQueryVariables>({ query: GetMetadataTemplatesDocument, ...options });
+};
+export const GetNodeDocument = gql`
+    query getNode($id: ID!) {
+  node(id: $id) {
+    ... on Idea {
+      ...AppIdea
+    }
+    ... on MetadataTemplate {
+      ...AppMetadataTemplate
+    }
+  }
+}
+    ${AppIdeaFragmentDoc}
+${AppMetadataTemplateFragmentDoc}`;
+
+export function useGetNodeQuery(options: Omit<Urql.UseQueryArgs<GetNodeQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetNodeQuery, GetNodeQueryVariables>({ query: GetNodeDocument, ...options });
 };

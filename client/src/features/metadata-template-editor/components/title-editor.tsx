@@ -2,26 +2,26 @@ import React from 'react'
 import { Input, Box } from '@chakra-ui/react'
 import _ from 'lodash'
 
-import { AppIdeaFragment, useUpdateIdeaMutation } from '@gql/operations'
+import { AppMetadataTemplateFragment, useUpdateMetadataTemplateMutation } from '@gql/operations'
 
 interface TitleEditorProps {
-  idea: AppIdeaFragment;
+  metadataTemplate: AppMetadataTemplateFragment;
 }
 
-export const TitleEditor = ({ idea }: TitleEditorProps) => {
-  const [_result, updateIdeaMutation] = useUpdateIdeaMutation()
+export const TitleEditor = ({ metadataTemplate }: TitleEditorProps) => {
+  const [_result, updateMetadataTemplateMutation] = useUpdateMetadataTemplateMutation()
 
   const updateNoteDocument = (title: string) => {
-    updateIdeaMutation({
+    updateMetadataTemplateMutation({
       input: {
-        ideaId: idea.id,
-        idea: {
+        metadataTemplateId: metadataTemplate.id,
+        template: {
           title,
         }
       }
     })
   }
-  const updateIdeaTitleThrottled = _.throttle(updateNoteDocument, 2000)
+  const updateNoteTitleThrottled = _.throttle(updateNoteDocument, 2000)
 
   return (
     <Box mb="small">
@@ -38,10 +38,10 @@ export const TitleEditor = ({ idea }: TitleEditorProps) => {
           outline: 'none',
           border: 'none',
         }}
-        value={idea.title || ''}
+        value={metadataTemplate.title || ''}
         borderRadius="none"
         placeholder="Untitled" 
-        onChange={(e) => updateIdeaTitleThrottled(e.target.value)} 
+        onChange={(e) => updateNoteTitleThrottled(e.target.value)} 
       />
     </Box>
   )

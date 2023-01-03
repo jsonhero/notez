@@ -1,5 +1,0 @@
-mutation deleteNote($input: DeleteNoteInput!) {
-  deleteNote(input: $input) {
-    clientMutationId
-  }
-}

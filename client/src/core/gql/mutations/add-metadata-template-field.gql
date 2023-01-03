@@ -1,0 +1,7 @@
+mutation addMetadataTemplateField($input: AddMetadataTemplateFieldInput!) {
+  addMetadataTemplateField(input: $input) {
+    field {
+      ...AppMetadataTemplateSchemaField
+    }
+  }
+}

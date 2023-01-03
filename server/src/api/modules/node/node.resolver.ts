@@ -3,19 +3,18 @@ import { Inject, forwardRef } from '@nestjs/common';
 
 import { ResolvedGlobalId, fromGlobalId } from '@api/utils';
 import { Node } from '@api/graph';
-import { NoteDocument } from '@database/schemas';
-import { NoteService } from '../note';
-import { NoteResolver } from '../note/note.resolver';
-import { NoteTableService } from '../note-table';
-import { NoteTableResolver } from '../note-table/note-table.resolver';
+import { IdeaService } from '../idea';
+import { IdeaResolver } from '../idea/idea.resolver';
+import { MetadataTemplateService } from '../metadata-template';
+import { MetadataTemplateResolver } from '../metadata-template/metadata-template.resolver';
 
 @Resolver('Node')
 export class NodeResolver {
   constructor(
-    @Inject(forwardRef(() => NoteService))
-    private noteService: NoteService,
-    @Inject(forwardRef(() => NoteTableService))
-    private noteTableService: NoteTableService,
+    @Inject(forwardRef(() => IdeaService))
+    private ideaService: IdeaService,
+    @Inject(forwardRef(() => MetadataTemplateService))
+    private metadataTemplateService: MetadataTemplateService,
   ) {}
 
   private static wrapNodeWithType(node: Node, type: string): Node {
@@ -28,14 +27,17 @@ export class NodeResolver {
     resolvedGlobalId: ResolvedGlobalId,
   ): Promise<Node> {
     switch (resolvedGlobalId.type) {
-      case 'Note':
-        const note = await this.noteService.getNoteById(resolvedGlobalId.id);
-        return NoteResolver._mapNoteDto(note);
-      case 'NoteTable':
-        const noteTable = await this.noteTableService.getNoteTableById(
-          resolvedGlobalId.id,
+      case 'Idea':
+        const idea = await this.ideaService.getIdeaById(resolvedGlobalId.id);
+        return IdeaResolver._mapIdeaDto(idea);
+      case 'MetadataTemplate':
+        const metadataTemplate =
+          await this.metadataTemplateService.getMetadataTemplateById(
+            resolvedGlobalId.id,
+          );
+        return MetadataTemplateResolver._mapMetadataTemplateDto(
+          metadataTemplate,
         );
-        return NoteTableResolver._mapNoteTableDto(noteTable);
       default:
         return null;
     }

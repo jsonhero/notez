@@ -13,7 +13,7 @@ const Component = (props: any) => {
   const globalStore = useContext(GlobalStoreContext)
 
   const onClick = () => {
-    globalStore.setSelectedNoteId(props.node.attrs.id)
+    globalStore.setSelectedIdeaId(props.node.attrs.id)
   }
 
   return (

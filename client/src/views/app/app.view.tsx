@@ -5,7 +5,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Sidebar } from '@features/sidebar'
 import { AppBar } from '@features/app-bar'
 import { NoteEditor } from '@features/note-editor'
-import { NoteTableEditor } from '@features/note-table-editor'
+import { MetadataTemplateEditor } from '@features/metadata-template-editor'
 
 export const AppView = () => {
   const [searchParams] = useSearchParams()
@@ -27,7 +27,7 @@ export const AppView = () => {
       </GridItem>
       <GridItem area="main">
         <Box p="xxl" bg="#FFFFFF" w='100%' h="100%">
-          {searchParams.get('tab') === 'table' ? <NoteTableEditor /> : <NoteEditor />}          
+          {searchParams.get('tab') === 'table' ? <MetadataTemplateEditor /> : <NoteEditor />}          
         </Box>
       </GridItem>
     </Grid>

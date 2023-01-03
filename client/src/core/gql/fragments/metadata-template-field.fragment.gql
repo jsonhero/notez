@@ -1,0 +1,5 @@
+fragment AppMetadataTemplateSchemaField on MetadataTemplateSchemaField {
+  id
+  name
+  type
+}

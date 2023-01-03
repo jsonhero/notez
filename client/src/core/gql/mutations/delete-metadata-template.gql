@@ -1,0 +1,5 @@
+mutation deleteMetadataTemplate($input: DeleteMetadataTemplateInput!) {
+  deleteMetadataTemplate(input: $input) {
+    clientMutationId
+  }
+}

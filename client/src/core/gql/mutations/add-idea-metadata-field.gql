@@ -1,0 +1,7 @@
+mutation addIdeaMetadataField($input: AddIdeaMetadataFieldInput!) {
+  addIdeaMetadataField(input: $input) {
+    field {
+      ...AppIdeaMetadataField
+    }
+  } 
+}

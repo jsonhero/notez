@@ -1,0 +1,8 @@
+fragment AppIdeaMetadataField on MetadataGroupFieldEntry {
+  id
+  schema {
+    name
+    type
+  }
+  value
+}

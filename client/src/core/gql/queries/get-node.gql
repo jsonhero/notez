@@ -1,0 +1,11 @@
+query getNode($id: ID!) {
+  node(id: $id) {
+    ... on Idea {
+      ...AppIdea
+    }
+
+    ... on MetadataTemplate {
+      ...AppMetadataTemplate
+    }
+  }
+}

@@ -2,16 +2,16 @@
       export type PossibleTypesResultData = {
   "possibleTypes": {
     "Node": [
-      "Note",
-      "NoteTable"
+      "Idea",
+      "MetadataTemplate"
     ]
   }
 };
       const result: PossibleTypesResultData = {
   "possibleTypes": {
     "Node": [
-      "Note",
-      "NoteTable"
+      "Idea",
+      "MetadataTemplate"
     ]
   }
 };

@@ -1,0 +1,12 @@
+fragment AppMetadataTemplate on MetadataTemplate {
+  id
+  title
+  schema {
+    fields {
+      id
+      name
+      type
+    }
+  }
+  __typename
+}

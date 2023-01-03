@@ -1,5 +1,5 @@
-mutation deleteNoteMetadataField($input: DeleteNoteMetadataFieldInput!) {
-  deleteNoteMetadataField(input: $input) {
+mutation deleteIdeaMetadataField($input: DeleteIdeaMetadataFieldInput!) {
+  deleteIdeaMetadataField(input: $input) {
     clientMutationId
   }
 }

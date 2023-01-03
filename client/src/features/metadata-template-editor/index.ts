@@ -1,0 +1,1 @@
+export { MetadataTemplateEditor } from './metadata-template-editor'

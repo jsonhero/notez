@@ -3,7 +3,7 @@ import { Box, CircularProgress } from '@chakra-ui/react'
 import { observer } from 'mobx-react-lite'
 
 import { GlobalStoreContext } from '@stores/global'
-import { AppNoteFragment, useGetNoteByIdQuery } from '@gql/operations'
+import { useGetNodeQuery } from '@gql/operations'
 
 import { DocumentEditor, TitleEditor, MetadataEditor } from './components'
 
@@ -13,9 +13,9 @@ export const NoteEditor = observer(() => {
 
   return (
     <Box>
-      {globalStore.selectedNoteId ? <NoteEditorActive noteId={globalStore.selectedNoteId} /> : (
+      {globalStore.selectedIdeaId ? <NoteEditorActive ideaId={globalStore.selectedIdeaId} /> : (
         <Box bg="red.100" p="md" borderRadius="3xl">
-          No note selected.
+          No idea selected.
         </Box>
       ) } 
     </Box>
@@ -23,14 +23,14 @@ export const NoteEditor = observer(() => {
 })
 
 interface NoteEditorActiveProps {
-  noteId: string
+  ideaId: string
 }
 
-const NoteEditorActive = ({ noteId }: NoteEditorActiveProps) => {
+const NoteEditorActive = ({ ideaId }: NoteEditorActiveProps) => {
   
-  const [response] = useGetNoteByIdQuery({
+  const [response] = useGetNodeQuery({
     variables: {
-      noteId,
+      id: ideaId,
     },
     requestPolicy: 'cache-and-network',
   })
@@ -38,13 +38,13 @@ const NoteEditorActive = ({ noteId }: NoteEditorActiveProps) => {
   return (
     <Box>
       {
-        !response.data?.node ? (
+        !response.data?.node || response.data.node.__typename !== 'Idea' ? (
           <CircularProgress isIndeterminate color='blue.300' />
         ) : (
           <>
-            <TitleEditor note={response.data.node} />
-            <MetadataEditor note={response.data.node} />
-            <DocumentEditor note={response.data.node} />
+            <TitleEditor idea={response.data.node} />
+            <MetadataEditor idea={response.data.node} />
+            <DocumentEditor idea={response.data.node} />
           </>
         )
       }

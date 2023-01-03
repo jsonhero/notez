@@ -1,0 +1,7 @@
+mutation updateMetadataTemplate($input: UpdateMetadataTemplateInput!) {
+  updateMetadataTemplate(input: $input) {
+    template {
+      ...AppMetadataTemplate
+    }
+  }
+}

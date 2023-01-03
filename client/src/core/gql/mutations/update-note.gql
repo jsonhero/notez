@@ -1,7 +1,0 @@
-mutation updateNote($input: UpdateNoteInput!) {
-  updateNote(input:$input) {
-    note {
-      ...AppNote
-    }
-  }
-}

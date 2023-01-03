@@ -3,19 +3,19 @@ import { makeAutoObservable } from 'mobx'
 import { createProviderRequiredContext } from '@lib/context-util'
 
 export class GlobalStore {
-  selectedNoteId: string | null = null;
-  selectedNoteTableId: string | null = null;
+  selectedIdeaId: string | null = null;
+  selectedMetadataTemplateId: string | null = null;
 
   constructor() {
     makeAutoObservable(this)
   }
 
-  setSelectedNoteId(noteId: string | null) {
-    this.selectedNoteId = noteId;
+  setSelectedIdeaId(ideaId: string | null) {
+    this.selectedIdeaId = ideaId;
   }
 
-  setSelectedNoteTableId(noteTableId: string | null) {
-    this.selectedNoteTableId = noteTableId;
+  setSelectedMetadataTemplateId(metadataTemplateId: string | null) {
+    this.selectedMetadataTemplateId = metadataTemplateId;
   }
 }
 

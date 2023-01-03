@@ -1,6 +1,6 @@
-export { Note, NoteSchema, NoteDocument } from './note.schema';
+export { Idea, IdeaSchema, IdeaDocument } from './idea.schema';
 export {
-  NoteTable,
-  NoteTableSchema,
-  NoteTableDocument,
-} from './note-table.schema';
+  MetadataTemplate,
+  MetadataTemplateDocument,
+  MetadataTemplateSchema,
+} from './metadata-template';

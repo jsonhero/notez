@@ -6,7 +6,7 @@ import Text from '@tiptap/extension-text'
 import Paragraph from '@tiptap/extension-paragraph'
 import _ from 'lodash'
 
-import { AppNoteFragment, useUpdateNoteMutation } from '@gql/operations'
+import { AppIdeaFragment, useUpdateIdeaMutation } from '@gql/operations'
 import './document-style.css'
 
 import { Reference } from './extensions'
@@ -17,23 +17,23 @@ const CustomDocument = Document.extend({
 })
 
 interface DocumentEditorProps {
-  note: AppNoteFragment;
+  idea: AppIdeaFragment;
 }
 
-export const DocumentEditor = ({ note }: DocumentEditorProps) => {
-  const [_result, updateNoteMutation] = useUpdateNoteMutation()
+export const DocumentEditor = ({ idea }: DocumentEditorProps) => {
+  const [_result, updateIdeaMutation] = useUpdateIdeaMutation()
 
-  const updateNoteDocument = (docJson: any) => {
-    updateNoteMutation({
+  const updateIdeaDocument = (docJson: any) => {
+    updateIdeaMutation({
       input: {
-        noteId: note.id,
-        note: {
+        ideaId: idea.id,
+        idea: {
           document: docJson,
         }
       }
     })
   }
-  const updateNoteDocumentThrottled = _.throttle(updateNoteDocument, 2000)
+  const updateIdeaDocumentThrottled = _.throttle(updateIdeaDocument, 2000)
   
   const editor = useEditor({
     extensions: [
@@ -55,10 +55,10 @@ export const DocumentEditor = ({ note }: DocumentEditorProps) => {
       })
     ],
     onUpdate({ editor }) {
-      updateNoteDocumentThrottled(editor.getJSON())
+      updateIdeaDocumentThrottled(editor.getJSON())
     },
-    content: note.document || '<p></p>',
-  }, [note.id])
+    content: idea.document || '<p></p>',
+  }, [idea.id])
 
   return (
     <EditorContent editor={editor} />

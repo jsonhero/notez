@@ -1,0 +1,5 @@
+mutation deleteIdea($input: DeleteIdeaInput!) {
+  deleteIdea(input: $input) {
+    clientMutationId
+  }
+}

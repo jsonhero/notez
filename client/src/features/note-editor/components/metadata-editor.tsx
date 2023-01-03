@@ -1,20 +1,24 @@
-import React, { useMemo, useEffect, useState } from 'react'
+import React, { useMemo, useEffect, useState, useCallback } from 'react'
 
 import { Th, Thead, Tr, Td, Tbody, Table, TableContainer, Input, Text, Box, Flex, Button, IconButton } from '@chakra-ui/react'
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getGroupedRowModel,
   useReactTable,
   ColumnDef,
   CellContext,
   Row,
 } from '@tanstack/react-table'
+// import {} from '_'
+
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons'
 
-import { AppNoteFragment, useDeleteNoteMetadataFieldMutation, useUpdateNoteMetadataFieldMutation, useAddNoteMetadataFieldMutation, AppNoteMetdataFieldFragment } from '@gql/operations'
+import { AppIdeaFragment, AppIdeaMetadataGroupFragment, useDeleteIdeaMetadataFieldMutation, useUpdateIdeaMetadataFieldMutation, useAddIdeaMetadataFieldMutation, AppIdeaMetadataFieldFragment } from '@gql/operations'
 
-interface UpdateMetadataFieldCellProps extends CellContext<AppNoteMetdataFieldFragment, unknown> {
+
+interface UpdateMetadataFieldCellProps extends CellContext<AppIdeaMetadataFieldFragment, unknown> {
   onUpdate: (fieldId: string, name: string, type: string) => void;
 }
 
@@ -61,7 +65,7 @@ const UpdateMetadataFieldCell = ({
 }
 
 
-interface UpdateMetadataValueCellProps extends CellContext<AppNoteMetdataFieldFragment, unknown> {
+interface UpdateMetadataValueCellProps extends CellContext<AppIdeaMetadataFieldFragment, unknown> {
   onUpdate: (fieldId: string, value: any) => void;
 }
 
@@ -70,6 +74,7 @@ const UpdateMetadataValueCell = ({
   getValue,
   onUpdate,
 }: UpdateMetadataValueCellProps) => {
+  
   const initialValue = getValue()
   // We need to keep and update the state of the cell normally
   const [value, setValue] = useState(initialValue)
@@ -106,11 +111,12 @@ const UpdateMetadataValueCell = ({
 }
 
 interface DataRowProps {
-  row: Row<AppNoteMetdataFieldFragment>
+  row: Row<AppIdeaMetadataFieldFragment>
   onDeleteField: (fieldId: string) => void;
+  isLocal: boolean;
 }
 
-const DataRow = React.memo(({ row, onDeleteField }: DataRowProps) => {
+const DataRow = React.memo(({ row, onDeleteField, isLocal }: DataRowProps) => {
   return (
     <Tr key={row.id} role="group" _hover={{
       bg: 'gray.50'
@@ -128,17 +134,21 @@ const DataRow = React.memo(({ row, onDeleteField }: DataRowProps) => {
           >
             {flexRender(
               cell.column.columnDef.cell,
-              cell.getContext()
+              { ...cell.getContext(), isLocal }
             )}
           </Td>
         )
       })}
       <Flex width={"80px"}>
-        <IconButton onClick={() => onDeleteField(row.original.id)} 
-          ml="xsm" size="xs" mt="xxsm" display="none" _groupHover={{
-            display: 'initial',
-          }} aria-label='delete' icon={<DeleteIcon />} 
-        />
+        {
+          isLocal && (
+            <IconButton onClick={() => onDeleteField(row.original.id)} 
+              ml="xsm" size="xs" mt="xxsm" display="none" _groupHover={{
+                display: 'initial',
+              }} aria-label='delete' icon={<DeleteIcon />} 
+            />
+          )
+        }
       </Flex>
     </Tr>
   )
@@ -147,25 +157,20 @@ const DataRow = React.memo(({ row, onDeleteField }: DataRowProps) => {
 })
 
 interface MetadataEditorProps {
-  note: AppNoteFragment;
+  idea: AppIdeaFragment;
 }
 
-export const MetadataEditor = ({ note }: MetadataEditorProps) => {
 
-  const [, addMetadataFieldMutation] = useAddNoteMetadataFieldMutation()
-  const [, updateMetadataFieldMutation] = useUpdateNoteMetadataFieldMutation()
-  const [, deleteMetadataFieldMutation] = useDeleteNoteMetadataFieldMutation()
+export const MetadataEditor = ({ idea }: MetadataEditorProps) => {
 
-  const data = useMemo(() => {
-    const groups = note.metadata?.groups
-    const localGroup = groups?.find((group) => group.context === 'local')
-    return localGroup?.fields || []
-  }, [note])
+  const [, addMetadataFieldMutation] = useAddIdeaMetadataFieldMutation()
+  const [, updateMetadataFieldMutation] = useUpdateIdeaMetadataFieldMutation()
+  const [, deleteMetadataFieldMutation] = useDeleteIdeaMetadataFieldMutation()
 
   const onAddRow = () => {
     addMetadataFieldMutation({
       input: {
-        noteId: note.id,
+        ideaId: idea.id,
       }
     })
   }
@@ -173,7 +178,7 @@ export const MetadataEditor = ({ note }: MetadataEditorProps) => {
   const onUpdateValue = (fieldId: string, value: any) => {
     updateMetadataFieldMutation({
       input: {
-        noteId: note.id,
+        ideaId: idea.id,
         fieldId: fieldId,
         field: {
           value,
@@ -185,13 +190,11 @@ export const MetadataEditor = ({ note }: MetadataEditorProps) => {
   const onUpdateField = (fieldId: string, name: string, type: string) => {
     updateMetadataFieldMutation({
       input: {
-        noteId: note.id,
+        ideaId: idea.id,
         fieldId: fieldId,
         field: {
-          schema: {
-            name,
-            type,
-          }
+          name,
+          type,
         }
       }
     })
@@ -202,16 +205,22 @@ export const MetadataEditor = ({ note }: MetadataEditorProps) => {
       input: {
         clientMutationId: '123',
         fieldId,
-        noteId: note.id,
+        ideaId: idea.id,
       }
     })
   }
 
-  const columnHelper = createColumnHelper<AppNoteMetdataFieldFragment>()
+  const columnHelper = createColumnHelper<AppIdeaMetadataFieldFragment>()
 
   const columns = [
     columnHelper.accessor('schema.name', {
       cell: (props) => {
+        console.log(props, 'props')
+        // @ts-ignore
+        if (!props.isLocal) {
+          return <Text fontWeight={"bold"} fontSize="xs">{props.getValue()}</Text>
+        }
+
         return <UpdateMetadataFieldCell {...props} onUpdate={onUpdateField} />
       },
     }),
@@ -222,11 +231,22 @@ export const MetadataEditor = ({ note }: MetadataEditorProps) => {
     }),
   ]
 
-  const table = useReactTable({
+  const groupingState = useMemo(() => ['groupId'], [])
+  const getSubRows = useCallback((row: AppIdeaMetadataGroupFragment, index: number) => {
+    return row.fields
+  }, [])
+
+  const table = useReactTable<any>({
+    // @ts-ignore
     columns,
     // @ts-ignore
-    data,
+    data: (idea.metadata?.groups || []),
+    // @ts-ignore
+    getSubRows,
+    manualGrouping: true,
+    enableGrouping: true,
     getCoreRowModel: getCoreRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
     meta: {
       updateValue: () => {
 
@@ -234,27 +254,43 @@ export const MetadataEditor = ({ note }: MetadataEditorProps) => {
       updateText: () => {
 
       }
-    }
+    },
+    debugAll: true,
   })
 
   return (
-    <TableContainer mb="medium" w="400px" sx={{
+    <TableContainer mb="medium" w="600px" sx={{
       borderTop: '1px solid',
       borderLeft: '1px solid',
       borderColor: 'gray.200',
     }}>
       <Table>
         <Tbody>
-          {table.getRowModel().rows.map((row, i) => {
+          {table.getGroupedRowModel().rows.map((row: Row<AppIdeaMetadataGroupFragment>, i) => {
             return (
-              <DataRow row={row} onDeleteField={onDeleteField} />
+              <>
+                <Tr key={row.id}>
+                  <Td colSpan={2} sx={{
+                      bg: 'gray.100',
+                      pb: 'xxsm',
+                      pt: 'xxsm',
+                      paddingInlineStart: 'sm',
+                      borderRight: '1px solid',
+                      borderColor: 'gray.200',
+                      borderRightColor: 'gray.200'
+                  }}>
+                    {row.original.template?.title || 'Local'}
+                  </Td>
+                </Tr>
+                {row.subRows.map((subRow: any) => <DataRow key={row.id} row={subRow} onDeleteField={onDeleteField} isLocal={row.original.context === 'local'} />)}
+              </>
             )
           })}
           <Tr onClick={onAddRow} _hover={{
               cursor: 'pointer',
               bg: 'gray.50'
           }}>
-            <Td pb="xxsm" pt="xxsm" colSpan={2} sx={{
+            <Td colSpan={2} sx={{
                 pb: 'xxsm',
                 pt: 'xxsm',
                 paddingInlineStart: 'sm',

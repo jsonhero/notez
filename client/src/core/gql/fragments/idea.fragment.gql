@@ -1,0 +1,28 @@
+fragment AppIdea on Idea {
+  id
+  title
+  document
+  metadata {
+    groups {
+      ...AppIdeaMetadataGroup
+    }
+  }
+  __typename
+}
+
+fragment AppIdeaMetadataGroup on MetadataGroup {
+  context
+  template {
+    id
+    title
+  }
+  fields {
+    id
+    schema {
+      id
+      name
+      type
+    }
+    value
+  }
+}

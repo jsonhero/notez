@@ -1,11 +1,11 @@
 type Base64String = string;
 
 function base64(i: string): Base64String {
-  return Buffer.from(i, 'ascii').toString('base64');
+  return btoa(i)
 }
 
 function unbase64(i: Base64String): string {
-  return Buffer.from(i, 'base64').toString('ascii');
+  return atob(i)
 }
 
 export type ResolvedGlobalId = {
@@ -14,9 +14,9 @@ export type ResolvedGlobalId = {
 };
 
 export function toGlobalId(type: string, id: string): string {
-  if (process.env.READABLE_GRAPH_IDS) {
-    return `${type}:${id}`;
-  }
+  // if (process.env.READABLE_GRAPH_IDS) {
+  //   return `${type}:${id}`;
+  // }
   return base64([type, id].join(':'));
 }
 

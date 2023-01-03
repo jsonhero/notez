@@ -1,0 +1,7 @@
+mutation createMetadataTemplate {
+  createMetadataTemplate {
+    template {
+      ...AppMetadataTemplate
+    }
+  }
+}

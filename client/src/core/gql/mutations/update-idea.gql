@@ -1,0 +1,7 @@
+mutation updateIdea($input: UpdateIdeaInput!) {
+  updateIdea(input: $input) {
+    idea {
+      ...AppIdea
+    }
+  }
+}

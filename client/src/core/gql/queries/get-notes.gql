@@ -1,5 +1,0 @@
-query getNotes($input: NoteSearchInput) {
-  notes(input: $input) {
-    ...AppNote
-  }
-}

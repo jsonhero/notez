@@ -10,7 +10,7 @@
     "types": [
       {
         "kind": "OBJECT",
-        "name": "AddNoteMetadataFieldPayload",
+        "name": "AddIdeaMetadataFieldPayload",
         "fields": [
           {
             "name": "field",
@@ -18,7 +18,7 @@
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "MetadataGroupField",
+                "name": "MetadataGroupFieldEntry",
                 "ofType": null
               }
             },
@@ -29,15 +29,15 @@
       },
       {
         "kind": "OBJECT",
-        "name": "CreateNotePayload",
+        "name": "AddMetadataTemplateFieldPayload",
         "fields": [
           {
-            "name": "note",
+            "name": "field",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "Note",
+                "name": "MetadataTemplateSchemaField",
                 "ofType": null
               }
             },
@@ -48,15 +48,15 @@
       },
       {
         "kind": "OBJECT",
-        "name": "CreateNoteTablePayload",
+        "name": "CreateIdeaPayload",
         "fields": [
           {
-            "name": "noteTable",
+            "name": "idea",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "NoteTable",
+                "name": "Idea",
                 "ofType": null
               }
             },
@@ -67,7 +67,26 @@
       },
       {
         "kind": "OBJECT",
-        "name": "DeleteNoteMetadataFieldPayload",
+        "name": "CreateMetadataTemplatePayload",
+        "fields": [
+          {
+            "name": "template",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "MetadataTemplate",
+                "ofType": null
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "DeleteIdeaMetadataFieldPayload",
         "fields": [
           {
             "name": "clientMutationId",
@@ -82,7 +101,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "DeleteNotePayload",
+        "name": "DeleteIdeaPayload",
         "fields": [
           {
             "name": "clientMutationId",
@@ -97,7 +116,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "DeleteNoteTablePayload",
+        "name": "DeleteMetadataTemplatePayload",
         "fields": [
           {
             "name": "clientMutationId",
@@ -112,7 +131,150 @@
       },
       {
         "kind": "OBJECT",
-        "name": "MetadataGroupField",
+        "name": "Idea",
+        "fields": [
+          {
+            "name": "createdAt",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "document",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          },
+          {
+            "name": "id",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "metadata",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "IdeaMetadata",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "title",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          },
+          {
+            "name": "updatedAt",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "Node"
+          }
+        ]
+      },
+      {
+        "kind": "OBJECT",
+        "name": "IdeaMetadata",
+        "fields": [
+          {
+            "name": "groups",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "MetadataGroup",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "MetadataGroup",
+        "fields": [
+          {
+            "name": "context",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "fields",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "MetadataGroupFieldEntry",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "template",
+            "type": {
+              "kind": "OBJECT",
+              "name": "MetadataTemplate",
+              "ofType": null
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "MetadataGroupFieldEntry",
         "fields": [
           {
             "name": "id",
@@ -153,6 +315,147 @@
         "name": "MetadataGroupFieldSchema",
         "fields": [
           {
+            "name": "id",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "name",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "type",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "MetadataTemplate",
+        "fields": [
+          {
+            "name": "createdAt",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "id",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "schema",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "MetadataTemplateSchema",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "title",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          },
+          {
+            "name": "updatedAt",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "Node"
+          }
+        ]
+      },
+      {
+        "kind": "OBJECT",
+        "name": "MetadataTemplateSchema",
+        "fields": [
+          {
+            "name": "fields",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "MetadataTemplateSchemaField",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "MetadataTemplateSchemaField",
+        "fields": [
+          {
+            "name": "id",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
             "name": "name",
             "type": {
               "kind": "NON_NULL",
@@ -182,12 +485,12 @@
         "name": "Mutation",
         "fields": [
           {
-            "name": "addNoteMetadataField",
+            "name": "addIdeaMetadataField",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "AddNoteMetadataFieldPayload",
+                "name": "AddIdeaMetadataFieldPayload",
                 "ofType": null
               }
             },
@@ -205,36 +508,67 @@
             ]
           },
           {
-            "name": "createNote",
+            "name": "addMetadataTemplateField",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "CreateNotePayload",
+                "name": "AddMetadataTemplateFieldPayload",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "input",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "createIdea",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "CreateIdeaPayload",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "input",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
+          },
+          {
+            "name": "createMetadataTemplate",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "CreateMetadataTemplatePayload",
                 "ofType": null
               }
             },
             "args": []
           },
           {
-            "name": "createNoteTable",
+            "name": "deleteIdea",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "CreateNoteTablePayload",
-                "ofType": null
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "deleteNote",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "DeleteNotePayload",
+                "name": "DeleteIdeaPayload",
                 "ofType": null
               }
             },
@@ -252,12 +586,12 @@
             ]
           },
           {
-            "name": "deleteNoteMetadataField",
+            "name": "deleteIdeaMetadataField",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "DeleteNoteMetadataFieldPayload",
+                "name": "DeleteIdeaMetadataFieldPayload",
                 "ofType": null
               }
             },
@@ -275,12 +609,12 @@
             ]
           },
           {
-            "name": "deleteNoteTable",
+            "name": "deleteMetadataTemplate",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "DeleteNoteTablePayload",
+                "name": "DeleteMetadataTemplatePayload",
                 "ofType": null
               }
             },
@@ -298,12 +632,12 @@
             ]
           },
           {
-            "name": "updateNote",
+            "name": "updateIdea",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "UpdateNotePayload",
+                "name": "UpdateIdeaPayload",
                 "ofType": null
               }
             },
@@ -321,12 +655,58 @@
             ]
           },
           {
-            "name": "updateNoteMetadataField",
+            "name": "updateIdeaMetadataField",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "UpdateNoteMetadataFieldPayload",
+                "name": "UpdateIdeaMetadataFieldPayload",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "input",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "updateMetadataTemplate",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "UpdateMetadataTemplatePayload",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "input",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "updateMetadataTemplateField",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "UpdateMetadataTemplateFieldPayload",
                 "ofType": null
               }
             },
@@ -366,282 +746,62 @@
         "possibleTypes": [
           {
             "kind": "OBJECT",
-            "name": "Note"
+            "name": "Idea"
           },
           {
             "kind": "OBJECT",
-            "name": "NoteTable"
+            "name": "MetadataTemplate"
           }
         ]
-      },
-      {
-        "kind": "OBJECT",
-        "name": "Note",
-        "fields": [
-          {
-            "name": "createdAt",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "document",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "id",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "metadata",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "NoteMetadata",
-                "ofType": null
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "title",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "updatedAt",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "Node"
-          }
-        ]
-      },
-      {
-        "kind": "OBJECT",
-        "name": "NoteMetadata",
-        "fields": [
-          {
-            "name": "groups",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "NoteMetadataGroupObject",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
-        "name": "NoteMetadataGroupObject",
-        "fields": [
-          {
-            "name": "context",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "fields",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "MetadataGroupField",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
-        "name": "NoteTable",
-        "fields": [
-          {
-            "name": "createdAt",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "id",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "schema",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "NoteTableSchema",
-                "ofType": null
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "title",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "updatedAt",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "Node"
-          }
-        ]
-      },
-      {
-        "kind": "OBJECT",
-        "name": "NoteTableSchema",
-        "fields": [
-          {
-            "name": "fields",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "NoteTableSchemaField",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
-        "name": "NoteTableSchemaField",
-        "fields": [
-          {
-            "name": "id",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "name",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "type",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
       },
       {
         "kind": "OBJECT",
         "name": "Query",
         "fields": [
+          {
+            "name": "ideas",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "Idea",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": [
+              {
+                "name": "input",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
+          },
+          {
+            "name": "metadataTemplates",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "MetadataTemplate",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": []
+          },
           {
             "name": "node",
             "type": {
@@ -696,57 +856,13 @@
                 }
               }
             ]
-          },
-          {
-            "name": "noteTables",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "NoteTable",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "notes",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Note",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "args": [
-              {
-                "name": "input",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              }
-            ]
           }
         ],
         "interfaces": []
       },
       {
         "kind": "OBJECT",
-        "name": "UpdateNoteMetadataFieldPayload",
+        "name": "UpdateIdeaMetadataFieldPayload",
         "fields": [
           {
             "name": "field",
@@ -754,7 +870,7 @@
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "MetadataGroupField",
+                "name": "MetadataGroupFieldEntry",
                 "ofType": null
               }
             },
@@ -765,15 +881,53 @@
       },
       {
         "kind": "OBJECT",
-        "name": "UpdateNotePayload",
+        "name": "UpdateIdeaPayload",
         "fields": [
           {
-            "name": "note",
+            "name": "idea",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "Note",
+                "name": "Idea",
+                "ofType": null
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UpdateMetadataTemplateFieldPayload",
+        "fields": [
+          {
+            "name": "field",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "MetadataTemplateSchemaField",
+                "ofType": null
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UpdateMetadataTemplatePayload",
+        "fields": [
+          {
+            "name": "template",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "MetadataTemplate",
                 "ofType": null
               }
             },

@@ -1,7 +1,0 @@
-mutation createNote {
-  createNote {
-    note {
-      ...AppNote
-    }
-  }
-}

@@ -1,0 +1,7 @@
+mutation createIdea($input: CreateIdeaInput) {
+  createIdea(input: $input) {
+    idea {
+      ...AppIdea
+    }
+  }
+}

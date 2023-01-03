@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { NoteModule } from './modules/note';
+import { IdeaModule } from './modules/idea';
 import { NodeModule } from './modules/node';
-import { NoteTableModule } from './modules/note-table';
+import { MetadataTemplateModule } from './modules/metadata-template';
 
 @Module({
-  imports: [NodeModule, NoteModule, NoteTableModule],
+  imports: [NodeModule, IdeaModule, MetadataTemplateModule],
   providers: [],
   exports: [],
 })
