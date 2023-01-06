@@ -41,6 +41,36 @@ const customTheme = {
     app: {
       gray: '#F9F9F9'
     }
+  },
+  components: {
+    Table: {
+      sizes: {
+        sm: {
+          td: {
+            py: 'xxsm',
+            px: 'xsm',
+          },
+          th: {
+            px: 'xsm'
+          }
+        }
+      },
+      baseStyle: {
+        th: {
+          borderTop: '1px solid',
+          borderRight: '1px solid',
+          _last: {
+            borderRight: 'none',
+          }
+        },
+        td: {
+          borderRight: '1px solid',
+          _last: {
+            borderRight: 'none',
+          }
+        },
+      }
+    }
   }
 }
 

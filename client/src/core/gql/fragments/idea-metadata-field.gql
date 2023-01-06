@@ -1,6 +1,7 @@
 fragment AppIdeaMetadataField on MetadataGroupFieldEntry {
   id
   schema {
+    id
     name
     type
   }

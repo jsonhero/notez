@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Box, CircularProgress } from '@chakra-ui/react'
 import { observer } from 'mobx-react-lite'
 
@@ -26,13 +26,12 @@ interface NoteEditorActiveProps {
   ideaId: string
 }
 
-const NoteEditorActive = ({ ideaId }: NoteEditorActiveProps) => {
+const NoteEditorActive = React.memo(({ ideaId }: NoteEditorActiveProps) => {
   
   const [response] = useGetNodeQuery({
     variables: {
       id: ideaId,
     },
-    requestPolicy: 'cache-and-network',
   })
 
   return (
@@ -50,4 +49,4 @@ const NoteEditorActive = ({ ideaId }: NoteEditorActiveProps) => {
       }
     </Box>
   )
-}
+}, (prevProps, nextProps) => prevProps.ideaId === nextProps.ideaId)

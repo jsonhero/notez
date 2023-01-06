@@ -16,7 +16,7 @@ export const AppView = () => {
         "header header"
         "sidebar main"`
       }
-      gridTemplateColumns="400px auto"
+      gridTemplateColumns="300px auto"
       gridTemplateRows="80px auto"
     >
       <GridItem area="header">

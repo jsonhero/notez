@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Input, Box } from '@chakra-ui/react'
 import _ from 'lodash'
 
@@ -9,14 +9,22 @@ interface TitleEditorProps {
 }
 
 export const TitleEditor = ({ idea }: TitleEditorProps) => {
+  const [title, setTitle] = useState<string>(idea.title || '')
   const [_result, updateIdeaMutation] = useUpdateIdeaMutation()
 
-  const updateNoteDocument = (title: string) => {
+
+  useEffect(() => {
+    setTitle(idea.title || '')
+  }, [idea.id])
+
+  const updateNoteDocument = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setTitle(value)
     updateIdeaMutation({
       input: {
         ideaId: idea.id,
         idea: {
-          title,
+          title: value,
         }
       }
     })
@@ -38,10 +46,10 @@ export const TitleEditor = ({ idea }: TitleEditorProps) => {
           outline: 'none',
           border: 'none',
         }}
-        value={idea.title || ''}
+        value={title}
         borderRadius="none"
         placeholder="Untitled" 
-        onChange={(e) => updateIdeaTitleThrottled(e.target.value)} 
+        onChange={updateIdeaTitleThrottled} 
       />
     </Box>
   )

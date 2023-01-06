@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useState, useCallback } from 'react'
 
-import { Th, Thead, Tr, Td, Tbody, Table, TableContainer, Input, Text, Box, Flex, Button, IconButton } from '@chakra-ui/react'
+import { Th, Thead, Tr, Td, Tbody, Table, TableContainer, Input, Text, Box, Flex, Button, IconButton, Icon } from '@chakra-ui/react'
 import {
   createColumnHelper,
   flexRender,
@@ -10,15 +10,22 @@ import {
   ColumnDef,
   CellContext,
   Row,
+  ColumnSizingState,
+  ColumnResizeMode,
 } from '@tanstack/react-table'
-// import {} from '_'
-
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons'
+import _ from 'lodash'
 
-import { AppIdeaFragment, AppIdeaMetadataGroupFragment, useDeleteIdeaMetadataFieldMutation, useUpdateIdeaMetadataFieldMutation, useAddIdeaMetadataFieldMutation, AppIdeaMetadataFieldFragment } from '@gql/operations'
+import { 
+  AppIdeaFragment, 
+  AppIdeaMetadataGroupFragment, 
+  useDeleteIdeaMetadataFieldMutation, 
+  useUpdateIdeaMetadataFieldMutation, 
+  useAddIdeaMetadataFieldMutation, 
+  AppIdeaMetadataFieldFragment 
+} from '@gql/operations'
 
-
-interface UpdateMetadataFieldCellProps extends CellContext<AppIdeaMetadataFieldFragment, unknown> {
+interface UpdateMetadataFieldCellProps extends CellContext<AppIdeaMetadataFieldFragment, any> {
   onUpdate: (fieldId: string, name: string, type: string) => void;
 }
 
@@ -30,7 +37,7 @@ const UpdateMetadataFieldCell = ({
   const initialValue = getValue() as string
 
   // We need to keep and update the state of the cell normally
-  const [value, setValue] = useState<string>(initialValue)
+  const [value, setValue] = useState<string>(initialValue || '')
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value)
@@ -40,12 +47,8 @@ const UpdateMetadataFieldCell = ({
     onUpdate(cell.row.original.id, value, cell.row.original.schema.type)
   }
 
-  useEffect(() => {
-    setValue(initialValue)
-  }, [initialValue])
-
   return <Input
-            w="initial"
+            w="100%"
             size="xs"
             sx={{
               fontWeight: 'bold',
@@ -58,14 +61,14 @@ const UpdateMetadataFieldCell = ({
             //   outline: 'none',
             //   border: 'none',
             // }}
-            value={value as string} 
+            value={value} 
             onChange={onChange} 
             onBlur={onBlur} 
           />
 }
 
 
-interface UpdateMetadataValueCellProps extends CellContext<AppIdeaMetadataFieldFragment, unknown> {
+interface UpdateMetadataValueCellProps extends CellContext<AppIdeaMetadataFieldFragment, any> {
   onUpdate: (fieldId: string, value: any) => void;
 }
 
@@ -74,10 +77,9 @@ const UpdateMetadataValueCell = ({
   getValue,
   onUpdate,
 }: UpdateMetadataValueCellProps) => {
-  
   const initialValue = getValue()
   // We need to keep and update the state of the cell normally
-  const [value, setValue] = useState(initialValue)
+  const [value, setValue] = useState<string>(initialValue || '')
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value)
@@ -87,12 +89,9 @@ const UpdateMetadataValueCell = ({
     onUpdate(cell.row.original.id, value)
   }
 
-  useEffect(() => {
-    setValue(initialValue)
-  }, [initialValue])
 
   return <Input
-            w="initial"
+            w="100%"
             size="xs"
             sx={{
               m: '0px',
@@ -104,7 +103,7 @@ const UpdateMetadataValueCell = ({
             //   outline: 'none',
             //   border: 'none',
             // }}
-            value={value as string} 
+            value={value} 
             onChange={onChange} 
             onBlur={onBlur} 
           />
@@ -118,20 +117,12 @@ interface DataRowProps {
 
 const DataRow = React.memo(({ row, onDeleteField, isLocal }: DataRowProps) => {
   return (
-    <Tr key={row.id} role="group" _hover={{
+    <Tr role="group" _hover={{
       bg: 'gray.50'
     }}>
       {row.getVisibleCells().map(cell => {
         return (
-          <Td key={cell.id} sx={{
-              pb: 'xxsm',
-              pt: 'xxsm',
-              paddingInlineStart: 'sm',
-              borderRight: '1px solid',
-              borderColor: 'gray.200',
-              borderRightColor: 'gray.200'
-            }}
-          >
+          <Td key={cell.id}>
             {flexRender(
               cell.column.columnDef.cell,
               { ...cell.getContext(), isLocal }
@@ -139,21 +130,29 @@ const DataRow = React.memo(({ row, onDeleteField, isLocal }: DataRowProps) => {
           </Td>
         )
       })}
-      <Flex width={"80px"}>
-        {
-          isLocal && (
-            <IconButton onClick={() => onDeleteField(row.original.id)} 
-              ml="xsm" size="xs" mt="xxsm" display="none" _groupHover={{
-                display: 'initial',
-              }} aria-label='delete' icon={<DeleteIcon />} 
-            />
-          )
-        }
-      </Flex>
+      <Td sx={{ border: 'none' }}>
+        <Box minWidth="80px" width="80px">
+          {
+              isLocal && (
+                <IconButton onClick={() => onDeleteField(row.original.id)}
+                  size="xs"
+                  sx={{
+                    m: '0px',
+                    display: 'none',
+                    p: '0px'
+                  }}
+                  _groupHover={{
+                    display: 'initial',
+                  }} aria-label='delete' icon={<DeleteIcon />} 
+                />
+              )
+            }
+        </Box>
+      </Td>
     </Tr>
   )
 }, (prevProps, nextProps) => {
-  return prevProps.row.original.id === nextProps.row.original.id
+  return _.isEqual(prevProps.row.original, nextProps.row.original)
 })
 
 interface MetadataEditorProps {
@@ -215,7 +214,6 @@ export const MetadataEditor = ({ idea }: MetadataEditorProps) => {
   const columns = [
     columnHelper.accessor('schema.name', {
       cell: (props) => {
-        console.log(props, 'props')
         // @ts-ignore
         if (!props.isLocal) {
           return <Text fontWeight={"bold"} fontSize="xs">{props.getValue()}</Text>
@@ -259,46 +257,28 @@ export const MetadataEditor = ({ idea }: MetadataEditorProps) => {
   })
 
   return (
-    <TableContainer mb="medium" w="600px" sx={{
-      borderTop: '1px solid',
-      borderLeft: '1px solid',
-      borderColor: 'gray.200',
-    }}>
-      <Table>
+    <TableContainer mb="medium">
+      <Table size="sm">
         <Tbody>
           {table.getGroupedRowModel().rows.map((row: Row<AppIdeaMetadataGroupFragment>, i) => {
             return (
-              <>
-                <Tr key={row.id}>
+              <React.Fragment key={row.id}>
+                <Tr>
                   <Td colSpan={2} sx={{
                       bg: 'gray.100',
-                      pb: 'xxsm',
-                      pt: 'xxsm',
-                      paddingInlineStart: 'sm',
-                      borderRight: '1px solid',
-                      borderColor: 'gray.200',
-                      borderRightColor: 'gray.200'
                   }}>
-                    {row.original.template?.title || 'Local'}
+                    {row.original.template?.id ?  row.original.template.title : 'Local'}
                   </Td>
                 </Tr>
-                {row.subRows.map((subRow: any) => <DataRow key={row.id} row={subRow} onDeleteField={onDeleteField} isLocal={row.original.context === 'local'} />)}
-              </>
+                {row.subRows.map((subRow: any, i) => <DataRow key={subRow.id} row={subRow} onDeleteField={onDeleteField} isLocal={row.original.context === 'local'} />)}
+              </React.Fragment>
             )
           })}
           <Tr onClick={onAddRow} _hover={{
               cursor: 'pointer',
               bg: 'gray.50'
           }}>
-            <Td colSpan={2} sx={{
-                pb: 'xxsm',
-                pt: 'xxsm',
-                paddingInlineStart: 'sm',
-                borderRight: '1px solid',
-                borderColor: 'gray.200',
-                borderRightColor: 'gray.200'
-              }}
-            >
+            <Td colSpan={2}>
               <Text fontSize="xs" fontWeight="bold" color="blue.500">Add Row</Text>
             </Td>
           </Tr>

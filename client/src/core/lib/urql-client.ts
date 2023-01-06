@@ -7,13 +7,23 @@ import { nanoid } from 'nanoid';
 
 import { GraphCacheConfig } from '@gql/graphql'
 import { fromGlobalId, toGlobalId } from '@lib/graph-utils'
-import { GetNodeDocument, GetNodeQuery, GetNodeQueryVariables, GetIdeasQuery, GetIdeasDocument, GetMetadataTemplatesQuery, GetMetadataTemplatesDocument, GetIdeasQueryVariables } from '@gql/operations'
+import { 
+  GetNodeDocument, 
+  GetNodeQuery, 
+  GetNodeQueryVariables, 
+  GetIdeasQuery, 
+  GetIdeasDocument, 
+  GetMetadataTemplatesQuery, 
+  GetMetadataTemplatesDocument, 
+  GetIdeasQueryVariables 
+} from '@gql/operations'
 import introspectedSchema from '../../../graphql.schema.json'
 
 function _generateFieldId(): string {
   return 'client_f_' + nanoid(10);
 }
 
+// ??: Why the fuck does it read from the storage first, and then the local cache when using this... causes needless renders
 // TODO: Broadcast/sync between tabs
 // Need to wait for INDEXDB to fully load.
 const storage = makeDefaultStorage({
@@ -121,7 +131,6 @@ const cache = offlineExchange<GraphCacheConfig>({
                 })
               }
             }
-          
           }
 
           return data;
@@ -163,6 +172,17 @@ const cache = offlineExchange<GraphCacheConfig>({
       deleteMetadataTemplate: (result, args, cache, info) => {
         cache.invalidate({ __typename: 'MetadataTemplate', id: args.input.metadataTemplateId })
       },
+      addMetadataTemplateField: (result, args, cache, info) => {
+        cache.updateQuery<GetNodeQuery, GetNodeQueryVariables>({ query: GetNodeDocument, variables: {
+          id: args.input.metadataTemplateId,
+        } }, (data) => {
+          if (data?.node?.__typename === 'MetadataTemplate') {
+            data.node.schema.fields.push(result.addMetadataTemplateField.field)
+          }
+
+          return data;
+        })
+      }
     },
   },
 });
@@ -181,25 +201,3 @@ const { unsubscribe } = urqlClient.subscribeToDebugTarget(event => {
   // console.log(event, 'event')
   // console.log(`${event.type} ${event.operation.kind}:${event.operation.key} `); // { type, message, operation, data, source, timestamp }
 });
-
-
-
-const schema = {
-  values: {
-    _1_parentFieldId: {
-      field1: {
-        id: 1,
-        value: 123,
-      },
-    },
-    _2_parnetFieldId: {
-      field2: {
-        id: 2,
-        value: 2,
-      },
-    }
-  },
-}
-
-
-// UpdateFieldId = impId + fieldId
