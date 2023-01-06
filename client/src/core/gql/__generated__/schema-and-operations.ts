@@ -70,6 +70,17 @@ export type DeleteIdeaPayload = {
   clientMutationId?: Maybe<Scalars['String']>;
 };
 
+export type DeleteMetadataTemplateFieldInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  fieldId: Scalars['ID'];
+  metadataTemplateId: Scalars['ID'];
+};
+
+export type DeleteMetadataTemplateFieldPayload = {
+  __typename?: 'DeleteMetadataTemplateFieldPayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+};
+
 export type DeleteMetadataTemplateInput = {
   clientMutationId?: InputMaybe<Scalars['String']>;
   metadataTemplateId: Scalars['ID'];
@@ -171,6 +182,7 @@ export type Mutation = {
   deleteIdea: DeleteIdeaPayload;
   deleteIdeaMetadataField: DeleteIdeaMetadataFieldPayload;
   deleteMetadataTemplate: DeleteMetadataTemplatePayload;
+  deleteMetadataTemplateField: DeleteMetadataTemplateFieldPayload;
   updateIdea: UpdateIdeaPayload;
   updateIdeaMetadataField: UpdateIdeaMetadataFieldPayload;
   updateMetadataTemplate: UpdateMetadataTemplatePayload;
@@ -205,6 +217,11 @@ export type MutationDeleteIdeaMetadataFieldArgs = {
 
 export type MutationDeleteMetadataTemplateArgs = {
   input: DeleteMetadataTemplateInput;
+};
+
+
+export type MutationDeleteMetadataTemplateFieldArgs = {
+  input: DeleteMetadataTemplateFieldInput;
 };
 
 
@@ -298,7 +315,7 @@ export type UpdateMetadataTemplatePayload = {
 
 export type AppIdeaMetadataFieldFragment = { __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } };
 
-export type AppIdeaFragment = { __typename: 'Idea', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } };
+export type AppIdeaFragment = { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } };
 
 export type AppIdeaMetadataGroupFragment = { __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> };
 
@@ -325,7 +342,7 @@ export type CreateIdeaMutationVariables = Exact<{
 }>;
 
 
-export type CreateIdeaMutation = { __typename?: 'Mutation', createIdea: { __typename?: 'CreateIdeaPayload', idea: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } } } };
+export type CreateIdeaMutation = { __typename?: 'Mutation', createIdea: { __typename?: 'CreateIdeaPayload', idea: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } } } };
 
 export type CreateMetadataTemplateMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -346,6 +363,13 @@ export type DeleteIdeaMetadataFieldMutationVariables = Exact<{
 
 export type DeleteIdeaMetadataFieldMutation = { __typename?: 'Mutation', deleteIdeaMetadataField: { __typename?: 'DeleteIdeaMetadataFieldPayload', clientMutationId?: string | null } };
 
+export type DeleteMetadataTemplateFieldMutationVariables = Exact<{
+  input: DeleteMetadataTemplateFieldInput;
+}>;
+
+
+export type DeleteMetadataTemplateFieldMutation = { __typename?: 'Mutation', deleteMetadataTemplateField: { __typename?: 'DeleteMetadataTemplateFieldPayload', clientMutationId?: string | null } };
+
 export type DeleteMetadataTemplateMutationVariables = Exact<{
   input: DeleteMetadataTemplateInput;
 }>;
@@ -358,7 +382,7 @@ export type UpdateIdeaMutationVariables = Exact<{
 }>;
 
 
-export type UpdateIdeaMutation = { __typename?: 'Mutation', updateIdea: { __typename?: 'UpdateIdeaPayload', idea: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } } } };
+export type UpdateIdeaMutation = { __typename?: 'Mutation', updateIdea: { __typename?: 'UpdateIdeaPayload', idea: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } } } };
 
 export type UpdateIdeaMetadataFieldMutationVariables = Exact<{
   input: UpdateIdeaMetadataFieldInput;
@@ -386,7 +410,7 @@ export type GetIdeasQueryVariables = Exact<{
 }>;
 
 
-export type GetIdeasQuery = { __typename?: 'Query', ideas: Array<{ __typename: 'Idea', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } }> };
+export type GetIdeasQuery = { __typename?: 'Query', ideas: Array<{ __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } }> };
 
 export type GetMetadataTemplatesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -398,7 +422,7 @@ export type GetNodeQueryVariables = Exact<{
 }>;
 
 
-export type GetNodeQuery = { __typename?: 'Query', node?: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } } | { __typename: 'MetadataTemplate', id: string, title?: string | null, schema: { __typename?: 'MetadataTemplateSchema', fields: Array<{ __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string }> } } | null };
+export type GetNodeQuery = { __typename?: 'Query', node?: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, value?: string | null, schema: { __typename?: 'MetadataGroupFieldSchema', id: string, name: string, type: string } }> }> } } | { __typename: 'MetadataTemplate', id: string, title?: string | null, schema: { __typename?: 'MetadataTemplateSchema', fields: Array<{ __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string }> } } | null };
 
 export const AppIdeaMetadataFieldFragmentDoc = gql`
     fragment AppIdeaMetadataField on MetadataGroupFieldEntry {
@@ -439,6 +463,7 @@ export const AppIdeaFragmentDoc = gql`
       ...AppIdeaMetadataGroup
     }
   }
+  createdAt
   __typename
 }
     ${AppIdeaMetadataGroupFragmentDoc}`;
@@ -536,6 +561,17 @@ export const DeleteIdeaMetadataFieldDocument = gql`
 
 export function useDeleteIdeaMetadataFieldMutation() {
   return Urql.useMutation<DeleteIdeaMetadataFieldMutation, DeleteIdeaMetadataFieldMutationVariables>(DeleteIdeaMetadataFieldDocument);
+};
+export const DeleteMetadataTemplateFieldDocument = gql`
+    mutation deleteMetadataTemplateField($input: DeleteMetadataTemplateFieldInput!) {
+  deleteMetadataTemplateField(input: $input) {
+    clientMutationId
+  }
+}
+    `;
+
+export function useDeleteMetadataTemplateFieldMutation() {
+  return Urql.useMutation<DeleteMetadataTemplateFieldMutation, DeleteMetadataTemplateFieldMutationVariables>(DeleteMetadataTemplateFieldDocument);
 };
 export const DeleteMetadataTemplateDocument = gql`
     mutation deleteMetadataTemplate($input: DeleteMetadataTemplateInput!) {

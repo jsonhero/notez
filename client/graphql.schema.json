@@ -116,6 +116,21 @@
       },
       {
         "kind": "OBJECT",
+        "name": "DeleteMetadataTemplateFieldPayload",
+        "fields": [
+          {
+            "name": "clientMutationId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
         "name": "DeleteMetadataTemplatePayload",
         "fields": [
           {
@@ -615,6 +630,29 @@
               "ofType": {
                 "kind": "OBJECT",
                 "name": "DeleteMetadataTemplatePayload",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "input",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "deleteMetadataTemplateField",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "DeleteMetadataTemplateFieldPayload",
                 "ofType": null
               }
             },

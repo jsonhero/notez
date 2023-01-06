@@ -44,7 +44,21 @@ const customTheme = {
   },
   components: {
     Table: {
+      variants: {
+        metadatatemplate: {
+        },
+      },
       sizes: {
+        zero: {
+          td: {
+            py: '0px',
+            px: '0px',
+          },
+          th: {
+            py: '0px',
+            px: '0px',
+          }
+        },
         sm: {
           td: {
             py: 'xxsm',

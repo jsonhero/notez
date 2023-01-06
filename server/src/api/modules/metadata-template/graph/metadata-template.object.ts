@@ -128,3 +128,21 @@ export class AddMetadataTemplateFieldPayload {
   @Field(() => MetadataTemplateSchemaField)
   field: MetadataTemplateSchemaField;
 }
+
+@InputType()
+export class DeleteMetadataTemplateFieldInput {
+  @Field({ nullable: true })
+  clientMutationId: string;
+
+  @Field(() => ID)
+  metadataTemplateId: string;
+
+  @Field(() => ID)
+  fieldId: string;
+}
+
+@ObjectType()
+export class DeleteMetadataTemplateFieldPayload {
+  @Field({ nullable: true })
+  clientMutationId: string;
+}

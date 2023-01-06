@@ -12,6 +12,7 @@ import { MetadataTemplateService } from './metadata-template.service';
 
 import { MetadataTemplateDocument } from '@database/schemas';
 import { fromGlobalId, toGlobalId } from '@api/utils';
+import { DeleteMetadataTemplateFieldInput } from './graph';
 
 @Resolver(() => Graph.MetadataTemplate)
 export class MetadataTemplateResolver {
@@ -119,6 +120,20 @@ export class MetadataTemplateResolver {
 
     return {
       field,
+    };
+  }
+
+  @Mutation(() => Graph.DeleteMetadataTemplateFieldPayload)
+  async deleteMetadataTemplateField(
+    @Args('input') input: Graph.DeleteMetadataTemplateFieldInput,
+  ): Promise<Graph.DeleteMetadataTemplateFieldPayload> {
+    await this.metadataTemplateService.deleteMetadataTemplateField(
+      fromGlobalId(input.metadataTemplateId).id,
+      input.fieldId,
+    );
+
+    return {
+      clientMutationId: input.clientMutationId,
     };
   }
 }

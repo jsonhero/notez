@@ -8,7 +8,7 @@ import { AppIdeaFragment, AppIdeaMetadataFieldFragment, useDeleteIdeaMutation } 
 export interface IdeaDataRowFields {
   idea: AppIdeaFragment;
   fields: {
-    [key: string]: AppIdeaMetadataFieldFragment;
+    [key: string]: AppIdeaMetadataFieldFragment | null;
   }
 }
 

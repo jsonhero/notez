@@ -37,8 +37,10 @@ export const TableEditor = ({
       },
     },
 
+    // Maybe I need to update the fragments vs query hmm...
+
     // Need to figure out cache for adding field/templates to idea
-    requestPolicy: 'network-only'
+    requestPolicy: 'cache-and-network'
   })
 
 
@@ -49,13 +51,18 @@ export const TableEditor = ({
         fields: {} 
       }
 
+
+
       const group = idea.metadata.groups.find((group) => group.context === 'external' && group.template?.id === metadataTemplate.id)
-      group?.fields.forEach((field) => {
-        row.fields[field.schema.id] = field
+
+      metadataTemplate.schema.fields.forEach((templateField) => {
+        const ideaField = group?.fields.find((field) => field.schema.id === templateField.id) 
+        row.fields[templateField.id] = ideaField || null
       })
+
       return row;
     }) || []
-  }, [response.data?.ideas, metadataTemplate.id])
+  }, [response.data?.ideas, metadataTemplate.id, metadataTemplate.schema.fields])
 
   const onAddRow = () => {
     createIdeaMutation({
@@ -111,14 +118,14 @@ export const TableEditor = ({
   })
 
   return (
-    <TableContainer ml="-46px">
-      <Table size="sm" variant="simple" width={table.getCenterTotalSize()}>
+    <TableContainer ml="-30px" pb="200px">
+      <Table size="zero" variant="simple" width={table.getCenterTotalSize()}>
         <Thead>
           {table.getHeaderGroups().map(headerGroup => (
               <Tr key={headerGroup.id} display="flex">
-                <Th border="none" width="46px"></Th>
+                <Th border="none" width="30px"></Th>
                 {headerGroup.headers.map(header => (
-                  <Th overflowX={"hidden"} position="relative" key={header.id} width={`${header.getSize()}px`}>
+                  <Th position="relative" key={header.id} width={`${header.getSize()}px`}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(

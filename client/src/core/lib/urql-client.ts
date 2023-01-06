@@ -182,6 +182,9 @@ const cache = offlineExchange<GraphCacheConfig>({
 
           return data;
         })
+      },
+      deleteMetadataTemplateField: (result, args, cache, info) => {
+        cache.invalidate({ __typename: 'MetadataTemplateSchemaField', id: args.input.fieldId })
       }
     },
   },

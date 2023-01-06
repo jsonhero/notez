@@ -147,4 +147,17 @@ export class MetadataTemplateService {
       name: fieldDefault.name,
     };
   }
+
+  async deleteMetadataTemplateField(
+    metadataTemplateId: string,
+    fieldId: string,
+  ): Promise<void> {
+    const fieldPath = `schema.fields.${fieldId}`;
+
+    await this.metadataTemplateModel.findByIdAndUpdate(metadataTemplateId, {
+      $unset: {
+        [fieldPath]: 1,
+      },
+    });
+  }
 }

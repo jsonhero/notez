@@ -1,7 +1,8 @@
 import React, { useContext } from 'react'
-import { Box, VStack, HStack, Button, IconButton, Text } from '@chakra-ui/react'
+import { Box, VStack, HStack, Button, IconButton, Text, Icon } from '@chakra-ui/react'
 import { DeleteIcon } from '@chakra-ui/icons'
 import { useSearchParams } from 'react-router-dom'
+import { BsThreeDots } from 'react-icons/bs'
 
 import { GlobalStoreContext  } from '@stores/global'
 import { useGetIdeasQuery, useCreateIdeaMutation, useDeleteIdeaMutation, useCreateMetadataTemplateMutation, useGetMetadataTemplatesQuery, useDeleteMetadataTemplateMutation } from '@gql/operations'
@@ -50,7 +51,7 @@ const IdeaView = () => {
   }
 
   return (
-    <Box p="medium">
+    <Box p="small">
       <Box mb="lg">
         <Button onClick={onClickCreateIdea}>
           Create Idea
@@ -58,15 +59,27 @@ const IdeaView = () => {
       </Box>
       <VStack spacing="xsm" align="flex-start">
         {response.data?.ideas.map((idea) => (
-          <HStack key={idea.id} justify="space-between" w="100%" role="group" 
-            bg={idea.id === globalStore.selectedIdeaId ? "gray.200" : 'initial'}
+          <HStack 
+            key={idea.id} 
+            sx={{
+              w: '100%',
+              justifyContent: 'space-between',
+              bg: idea.id === globalStore.selectedIdeaId ? "gray.200" : 'initial',
+              borderRadius: '4px'
+            }}
+            role="group"
           >
-            <Button justifyContent="flex-start" w="100%" onClick={() => onClickIdea(idea.id)} variant="ghost" p="0px" m="0px">
-              <Text pl="sm">
+            <Button size="xs" justifyContent="flex-start" w="100%" onClick={() => onClickIdea(idea.id)} variant="ghost" p="0px" m="0px">
+              <Text pl="xsm">
                 {idea.title || `Untitled`}
               </Text>
             </Button>
-            <IconButton display="none" _groupHover={{ display: 'initial' }} onClick={() => onClickDelete(idea.id)}  variant="ghost" aria-label='Delete' icon={<DeleteIcon />} />
+            <IconButton sx={{
+              height: 'initial',
+              display: 'none',
+            }}  _groupHover={{ display: 'initial' }} onClick={() => onClickDelete(idea.id)}  variant="unstyled" aria-label='Delete' 
+              icon={<Icon as={BsThreeDots} />} 
+            />
           </HStack>
         ))}
       </VStack>

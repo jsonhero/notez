@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { CellContext } from '@tanstack/react-table'
-import { HStack, Input } from '@chakra-ui/react'
+import { HStack, Input, Textarea } from '@chakra-ui/react'
 
 import { AppIdeaMetadataFieldFragment, useUpdateIdeaMetadataFieldMutation } from '@gql/operations'
 
 
 import { IdeaDataRowFields} from './idea-data-row'
 
-interface IdeaFieldCellProps extends CellContext<IdeaDataRowFields, AppIdeaMetadataFieldFragment> {
+interface IdeaFieldCellProps extends CellContext<IdeaDataRowFields, AppIdeaMetadataFieldFragment | null> {
 
 }
 
@@ -20,22 +20,24 @@ export const IdeaFieldCell = ({
   
   const [, updateIdeaMetadataFieldMutation] = useUpdateIdeaMetadataFieldMutation()
 
-  const [value, setValue] = useState<string>(initialValue.value || '')
+  const [value, setValue] = useState<string>(initialValue?.value || '')
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value)
   }
   
   const onBlur = () => {
-    updateIdeaMetadataFieldMutation({
-      input: {
-        fieldId: initialValue.id,
-        ideaId: row.original.idea.id,
-        field: {
-          value,
+    if (initialValue?.id) {
+      updateIdeaMetadataFieldMutation({
+        input: {
+          fieldId: initialValue?.id,
+          ideaId: row.original.idea.id,
+          field: {
+            value,
+          }
         }
-      }
-    })
+      })
+    }
   }
 
   return (
@@ -46,11 +48,10 @@ export const IdeaFieldCell = ({
         sx={{
           fontWeight: 'bold',
           m: '0px',
-          p: '0px',
+          p: 'xs',
           outline: 'none',
           border: 'none',
         }}
-        placeholder="null"
         value={value} 
         onChange={onChange} 
         onBlur={onBlur} 
