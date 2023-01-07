@@ -244,6 +244,78 @@
       },
       {
         "kind": "OBJECT",
+        "name": "MetadataFieldDateValue",
+        "fields": [
+          {
+            "name": "date",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "MetadataFieldNumberValue",
+        "fields": [
+          {
+            "name": "number",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "MetadataFieldTextValue",
+        "fields": [
+          {
+            "name": "text",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "UNION",
+        "name": "MetadataFieldValueUnion",
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "MetadataFieldDateValue"
+          },
+          {
+            "kind": "OBJECT",
+            "name": "MetadataFieldNumberValue"
+          },
+          {
+            "kind": "OBJECT",
+            "name": "MetadataFieldTextValue"
+          }
+        ]
+      },
+      {
+        "kind": "OBJECT",
         "name": "MetadataGroup",
         "fields": [
           {
@@ -317,8 +389,9 @@
           {
             "name": "value",
             "type": {
-              "kind": "SCALAR",
-              "name": "Any"
+              "kind": "UNION",
+              "name": "MetadataFieldValueUnion",
+              "ofType": null
             },
             "args": []
           }

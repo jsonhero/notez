@@ -1,33 +1,70 @@
-import { ObjectType, Field, ID, InputType } from '@nestjs/graphql';
+import {
+  ObjectType,
+  Field,
+  ID,
+  InputType,
+  createUnionType,
+} from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { AutoMap } from '@automapper/classes';
 
 import { Node } from '@api/graph';
 
-import { MetadataTemplate } from '../../metadata-template/graph';
+import {
+  MetadataTemplate,
+  MetadataTemplateSchemaField,
+} from '../../metadata-template/graph';
+
+// Union values below
+@ObjectType()
+class MetadataFieldTextValue {
+  @Field()
+  text: string;
+}
 
 @ObjectType()
-class MetadataGroupFieldSchema {
-  @Field(() => ID)
-  id: string;
-
+class MetadataFieldNumberValue {
   @Field()
-  name: string;
-
-  @Field()
-  type: string;
+  number: number;
 }
+
+@ObjectType()
+class MetadataFieldDateValue {
+  @Field()
+  date: Date;
+}
+
+export const MetadataFieldValueUnion = createUnionType({
+  name: 'MetadataFieldValueUnion',
+  resolveType: (input) => {
+    if (input.text) {
+      return MetadataFieldTextValue;
+    } else if (input.number) {
+      return MetadataFieldNumberValue;
+    } else if (input.date) {
+      return MetadataFieldDateValue;
+    }
+
+    return null;
+  },
+  types: () =>
+    [
+      MetadataFieldTextValue,
+      MetadataFieldNumberValue,
+      MetadataFieldDateValue,
+    ] as const,
+});
 
 @ObjectType()
 class MetadataGroupFieldEntry {
   @Field(() => ID)
   id: string;
 
-  @Field(() => MetadataGroupFieldSchema)
-  schema: MetadataGroupFieldSchema;
+  @Field(() => MetadataTemplateSchemaField)
+  schema: MetadataTemplateSchemaField;
 
-  @Field({ nullable: true })
-  value: string;
+  @Field(() => MetadataFieldValueUnion, { nullable: true })
+  value: typeof MetadataFieldValueUnion;
 }
 
 @ObjectType()

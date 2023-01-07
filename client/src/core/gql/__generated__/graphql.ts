@@ -115,11 +115,28 @@ export type IdeaSearchInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
+export type MetadataFieldDateValue = {
+  __typename?: 'MetadataFieldDateValue';
+  date: Scalars['DateTime'];
+};
+
 export type MetadataFieldInput = {
   name?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<Scalars['String']>;
   value?: InputMaybe<Scalars['String']>;
 };
+
+export type MetadataFieldNumberValue = {
+  __typename?: 'MetadataFieldNumberValue';
+  number: Scalars['Float'];
+};
+
+export type MetadataFieldTextValue = {
+  __typename?: 'MetadataFieldTextValue';
+  text: Scalars['String'];
+};
+
+export type MetadataFieldValueUnion = MetadataFieldDateValue | MetadataFieldNumberValue | MetadataFieldTextValue;
 
 export type MetadataGroup = {
   __typename?: 'MetadataGroup';
@@ -132,7 +149,7 @@ export type MetadataGroupFieldEntry = {
   __typename?: 'MetadataGroupFieldEntry';
   id: Scalars['ID'];
   schema: MetadataGroupFieldSchema;
-  value?: Maybe<Scalars['String']>;
+  value?: Maybe<MetadataFieldValueUnion>;
 };
 
 export type MetadataGroupFieldSchema = {
@@ -325,6 +342,9 @@ export type GraphCacheKeysConfig = {
   DeleteMetadataTemplatePayload?: (data: WithTypename<DeleteMetadataTemplatePayload>) => null | string,
   Idea?: (data: WithTypename<Idea>) => null | string,
   IdeaMetadata?: (data: WithTypename<IdeaMetadata>) => null | string,
+  MetadataFieldDateValue?: (data: WithTypename<MetadataFieldDateValue>) => null | string,
+  MetadataFieldNumberValue?: (data: WithTypename<MetadataFieldNumberValue>) => null | string,
+  MetadataFieldTextValue?: (data: WithTypename<MetadataFieldTextValue>) => null | string,
   MetadataGroup?: (data: WithTypename<MetadataGroup>) => null | string,
   MetadataGroupFieldEntry?: (data: WithTypename<MetadataGroupFieldEntry>) => null | string,
   MetadataGroupFieldSchema?: (data: WithTypename<MetadataGroupFieldSchema>) => null | string,
@@ -379,6 +399,15 @@ export type GraphCacheResolvers = {
   IdeaMetadata?: {
     groups?: GraphCacheResolver<WithTypename<IdeaMetadata>, Record<string, never>, Array<WithTypename<MetadataGroup> | string>>
   },
+  MetadataFieldDateValue?: {
+    date?: GraphCacheResolver<WithTypename<MetadataFieldDateValue>, Record<string, never>, Scalars['DateTime'] | string>
+  },
+  MetadataFieldNumberValue?: {
+    number?: GraphCacheResolver<WithTypename<MetadataFieldNumberValue>, Record<string, never>, Scalars['Float'] | string>
+  },
+  MetadataFieldTextValue?: {
+    text?: GraphCacheResolver<WithTypename<MetadataFieldTextValue>, Record<string, never>, Scalars['String'] | string>
+  },
   MetadataGroup?: {
     context?: GraphCacheResolver<WithTypename<MetadataGroup>, Record<string, never>, Scalars['String'] | string>,
     fields?: GraphCacheResolver<WithTypename<MetadataGroup>, Record<string, never>, Array<WithTypename<MetadataGroupFieldEntry> | string>>,
@@ -387,7 +416,7 @@ export type GraphCacheResolvers = {
   MetadataGroupFieldEntry?: {
     id?: GraphCacheResolver<WithTypename<MetadataGroupFieldEntry>, Record<string, never>, Scalars['ID'] | string>,
     schema?: GraphCacheResolver<WithTypename<MetadataGroupFieldEntry>, Record<string, never>, WithTypename<MetadataGroupFieldSchema> | string>,
-    value?: GraphCacheResolver<WithTypename<MetadataGroupFieldEntry>, Record<string, never>, Scalars['String'] | string>
+    value?: GraphCacheResolver<WithTypename<MetadataGroupFieldEntry>, Record<string, never>, WithTypename<MetadataFieldValueUnion> | string>
   },
   MetadataGroupFieldSchema?: {
     id?: GraphCacheResolver<WithTypename<MetadataGroupFieldSchema>, Record<string, never>, Scalars['ID'] | string>,

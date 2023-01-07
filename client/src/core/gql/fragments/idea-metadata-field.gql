@@ -5,5 +5,19 @@ fragment AppIdeaMetadataField on MetadataGroupFieldEntry {
     name
     type
   }
-  value
+  value {
+    __typename
+    
+    ... on MetadataFieldTextValue {
+      text
+    } 
+
+    ... on MetadataFieldNumberValue {
+      number
+    }
+
+    ... on MetadataFieldDateValue {
+      date
+    }
+  }
 }

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { CellContext } from '@tanstack/react-table'
-import { HStack, Button } from '@chakra-ui/react'
+import { HStack, Button, Text } from '@chakra-ui/react'
 import { useNavigate, createSearchParams } from 'react-router-dom'
 
 import { AppIdeaFragment } from '@gql/operations'
@@ -27,29 +27,14 @@ export const IdeaRefCell = ({
     })
   }
 
-
-  // console.log(initialValue)
-  // We need to keep and update the state of the cell normally
-  // const [value, setValue] = useState(initialValue)
-
-  // const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setValue(e.target.value)
-  // }
-
-  // const onBlur = () => {
-  //   onUpdate(cell.row.original.id, value)
-  // }
-
-  // useEffect(() => {
-  //   setValue(initialValue)
-  // }, [initialValue])
-
   return (
     <HStack sx={{
       w: '100%',
       h: '100%',
     }}>
-      <Button onClick={() => onClickIdeaLink(initialValue.id)} variant="link">{initialValue.title || "Untitled"}</Button>
+      <Button onClick={() => onClickIdeaLink(initialValue.id)} variant="link">
+        <Text fontSize="xs" fontWeight="bold">{initialValue.title || "Untitled"}</Text>
+      </Button>
     </HStack>
   )
 }

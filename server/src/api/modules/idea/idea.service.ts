@@ -25,9 +25,14 @@ enum MetaDataFieldType {
 interface IdeaMetadataField {
   id: string;
   metadataTemplateId: string;
-  type: string;
-  name: string;
-  value: string;
+  schema: {
+    type: string;
+    name: string;
+  };
+  input: {
+    type: string;
+    value: any;
+  };
 }
 
 interface UpdateIdeaMetaDataField {
@@ -169,9 +174,11 @@ export class IdeaService {
     return {
       id: fieldId,
       metadataTemplateId: null,
-      type: schemaDefault.type,
-      name: schemaDefault.name,
-      value: valueDefault,
+      schema: schemaDefault,
+      input: {
+        type: schemaDefault.type,
+        value: valueDefault,
+      },
     };
   }
 
@@ -199,9 +206,21 @@ export class IdeaService {
 
     let schemaValue = null;
 
+    let currentSchema;
+
+    if (metadataTemplate) {
+      const mtSchemaField = _.get(metadataTemplate, `schema.fields.${fieldId}`);
+      currentSchema = {
+        type: mtSchemaField.type,
+        name: mtSchemaField.name,
+      };
+    } else {
+      currentSchema = _.get(idea, schemaPropPath);
+    }
+
     if (props.name) {
       schemaValue = {
-        type: 'text',
+        type: currentSchema.type,
         name: props.name,
       };
     }
@@ -213,7 +232,10 @@ export class IdeaService {
     }
 
     if (props.value) {
-      $updateSetProps[valuePropPath] = props.value;
+      $updateSetProps[valuePropPath] = {
+        type: currentSchema.type, // stamp schema at time of value being set
+        value: props.value,
+      };
     }
 
     const nextIdea = await this.ideaModel.findByIdAndUpdate(
@@ -226,24 +248,28 @@ export class IdeaService {
       },
     );
 
-    let schema;
+    let nextSchema;
 
     if (metadataTemplate) {
       const mtSchemaField = _.get(metadataTemplate, `schema.fields.${fieldId}`);
-      schema = {
+      nextSchema = {
         type: mtSchemaField.type,
         name: mtSchemaField.name,
       };
     } else {
-      schema = _.get(idea, schemaPropPath);
+      nextSchema = _.get(idea, schemaPropPath);
     }
+
+    const input = _.get(nextIdea, valuePropPath);
 
     return {
       id: fieldId,
       metadataTemplateId: metadataTemplateId,
-      type: schema.type,
-      name: schema.name,
-      value: _.get(nextIdea, valuePropPath),
+      schema: nextSchema,
+      input: {
+        type: input?.type || 'text',
+        value: input?.value,
+      },
     };
   }
 

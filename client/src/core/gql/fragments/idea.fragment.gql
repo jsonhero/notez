@@ -18,12 +18,6 @@ fragment AppIdeaMetadataGroup on MetadataGroup {
     title
   }
   fields {
-    id
-    schema {
-      id
-      name
-      type
-    }
-    value
+    ...AppIdeaMetadataField
   }
 }

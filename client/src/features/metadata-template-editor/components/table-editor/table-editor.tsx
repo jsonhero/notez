@@ -90,7 +90,7 @@ export const TableEditor = ({
         header: (props) => (
           <HStack height="100%">
             <Icon boxSize="14px" as={BsLightbulb} />
-            <Text textTransform={"capitalize"}>Idea</Text>
+            <Text fontSize="xs" textTransform={"capitalize"}>Idea</Text>
           </HStack>
         ),
         cell: (props) => <IdeaRefCell {...props} />,
@@ -119,7 +119,7 @@ export const TableEditor = ({
 
   return (
     <TableContainer ml="-30px" pb="200px">
-      <Table size="zero" variant="simple" width={table.getCenterTotalSize()}>
+      <Table size="zero" variant="simple" width="100%">
         <Thead>
           {table.getHeaderGroups().map(headerGroup => (
               <Tr key={headerGroup.id} display="flex">
@@ -149,8 +149,11 @@ export const TableEditor = ({
                         </Box>
                   </Th>
                 ))}
-                <Th>
-                  <IconButton onClick={onAddField} size="xs" aria-label='Add Field' icon={<AddIcon />}/>
+                <Th sx={{
+                  flex: 1,
+                  minWidth: 100,
+                }}>
+                  <IconButton variant="ghost" onClick={onAddField} size="xs" aria-label='Add Field' icon={<AddIcon />}/>
                 </Th>
               </Tr>
             ))}
@@ -163,9 +166,11 @@ export const TableEditor = ({
               cursor: 'pointer',
               bg: 'gray.50'
           }}>
-            <Td border="none" width="46px"></Td>
-            <Td colSpan={metadataTemplate.schema.fields.length + 2}>
-              <Text fontSize="xs" fontWeight="bold" color="blue.500">Add Row</Text>
+            <Td border="none" width="30px"></Td>
+            <Td width="100%" colSpan={metadataTemplate.schema.fields.length + 2}>
+              <Box py="xxsm">
+                <Text fontSize="xs" fontWeight="bold" color="blue.500">Add Row</Text>
+              </Box>
             </Td>
           </Tr>
         </Tbody>

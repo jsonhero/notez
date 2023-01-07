@@ -20,7 +20,7 @@ export const IdeaDataRow = ({ row }: IdeaDataRowProps) => {
   const [, deleteIdeaMutation] = useDeleteIdeaMutation()
 
   return (
-    <Tr role="group" width="fit-content" display="flex" _hover={{
+    <Tr role="group" width="100%" display="flex" _hover={{
       bg: 'gray.50'
     }}>
       <Td border="none">
@@ -49,7 +49,12 @@ export const IdeaDataRow = ({ row }: IdeaDataRowProps) => {
           </Td>
         )
       })}
-      <Td></Td>
+      <Td sx={{
+        width: '100%',
+        flex: 1
+      }}>
+        
+      </Td>
     </Tr>
   )
 }

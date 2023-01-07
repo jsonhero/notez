@@ -19,6 +19,26 @@ import {
   toIdeaFieldEntryId,
 } from '@api/utils';
 
+function resolveInputValueToDto(input: { type: string; value: any }): any {
+  if (!input) return null;
+
+  if (input.type === 'text') {
+    return {
+      text: input.value,
+    };
+  } else if (input.type === 'number') {
+    return {
+      number: input.value,
+    };
+  } else if (input.type === 'date') {
+    return {
+      date: input.value,
+    };
+  }
+
+  return null;
+}
+
 @Resolver(() => Graph.IdeaObject)
 export class IdeaResolver {
   constructor(private ideaService: IdeaService) {}
@@ -32,11 +52,12 @@ export class IdeaResolver {
         )
           // .filter((field) => field.type !== 'noteRef')
           .map(([fieldId, field]: any) => {
-            const value = _.get(
+            const input = _.get(
               ideaDoc.metadata.values,
               `${template.pathId}.${fieldId}`,
               null,
             );
+            console.log(input, ':: input', resolveInputValueToDto(input));
             return {
               id: toIdeaFieldEntryId(ideaDoc.id, template.id, fieldId),
               schema: {
@@ -44,7 +65,7 @@ export class IdeaResolver {
                 name: field.name,
                 type: field.type,
               },
-              value,
+              value: resolveInputValueToDto(input),
             };
           });
 
@@ -61,7 +82,7 @@ export class IdeaResolver {
       const localGroupFields = Object.entries(
         ideaDoc.metadata.schema.fields,
       ).map(([fieldId, schema]: any) => {
-        const value = _.get(
+        const input = _.get(
           ideaDoc.metadata.values,
           `${ideaDoc.metadata.pathId}.${fieldId}`,
           null,
@@ -73,7 +94,7 @@ export class IdeaResolver {
             id: fieldId,
             ...schema,
           },
-          value,
+          value: resolveInputValueToDto(input),
         };
       });
       groups.push({
@@ -163,10 +184,10 @@ export class IdeaResolver {
         id: toIdeaFieldEntryId(ideaId, field.metadataTemplateId, field.id),
         schema: {
           id: field.id,
-          name: field.name,
-          type: field.type,
+          name: field.schema.name,
+          type: field.schema.type,
         },
-        value: field.value,
+        value: resolveInputValueToDto(field.input),
       },
     };
   }
@@ -189,10 +210,10 @@ export class IdeaResolver {
         id: toIdeaFieldEntryId(ideaId, field.metadataTemplateId, field.id),
         schema: {
           id: field.id,
-          name: field.name,
-          type: field.type,
+          name: field.schema.name,
+          type: field.schema.type,
         },
-        value: field.value,
+        value: resolveInputValueToDto(field.input),
       },
     };
   }
