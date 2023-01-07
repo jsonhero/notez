@@ -6,7 +6,7 @@ import { devtoolsExchange } from '@urql/devtools';
 import { nanoid } from 'nanoid';
 
 import { GraphCacheConfig } from '@gql/graphql'
-import { fromGlobalId, toGlobalId } from '@lib/graph-utils'
+import { fromGlobalId, toGlobalId, toIdeaFieldEntryId, fromIdeaFieldEntryId } from '@lib/graph-utils'
 import { 
   GetNodeDocument, 
   GetNodeQuery, 
@@ -182,6 +182,28 @@ const cache = cacheExchange<GraphCacheConfig>({
 
           return data;
         })
+
+        // TODO: Rework this so it's more efficient
+        cache.updateQuery<GetIdeasQuery, GetIdeasQueryVariables>({ query: GetIdeasDocument, variables: { input: { metadataTemplateIds: [args.input.metadataTemplateId] }}}, (data) => {
+          if (result.addMetadataTemplateField.field?.id) {
+            const rawMetadataTemplateId = fromGlobalId(args.input.metadataTemplateId).id
+
+            data?.ideas.forEach((idea) => {
+              const rawIdeaId = fromGlobalId(idea.id).id
+              const group = idea.metadata.groups.find((group) => group.template?.id === args.input.metadataTemplateId)
+              if (group) {
+                group.fields.push({
+                  id: toIdeaFieldEntryId(rawIdeaId, rawMetadataTemplateId, result.addMetadataTemplateField.field.id),
+                  __typename: 'MetadataGroupFieldEntry',
+                  schema: result.addMetadataTemplateField.field,
+                  value: null,
+                })
+              }
+            })
+          }
+          return data
+        })
+
       },
       deleteMetadataTemplateField: (result, args, cache, info) => {
         cache.invalidate({ __typename: 'MetadataTemplateSchemaField', id: args.input.fieldId })

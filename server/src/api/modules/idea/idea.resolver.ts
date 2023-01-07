@@ -57,7 +57,6 @@ export class IdeaResolver {
               `${template.pathId}.${fieldId}`,
               null,
             );
-            console.log(input, ':: input', resolveInputValueToDto(input));
             return {
               id: toIdeaFieldEntryId(ideaDoc.id, template.id, fieldId),
               schema: {

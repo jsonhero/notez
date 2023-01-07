@@ -28,3 +28,30 @@ export function fromGlobalId(globalId: string): ResolvedGlobalId {
     id: unbasedGlobalId.substring(delimiterPos + 1),
   };
 }
+
+export type ResolvedIdeaFieldPathId = {
+  ideaId: string;
+  metadataTemplateId: string | null;
+  fieldId: string;
+};
+
+export function toIdeaFieldEntryId(
+  ideaId: string,
+  metadataTemplateId: string | null,
+  fieldId: string,
+): string {
+  return base64([ideaId, metadataTemplateId || 'null', fieldId].join(':'));
+}
+
+export function fromIdeaFieldEntryId(
+  ideaFieldPathId: string,
+): ResolvedIdeaFieldPathId {
+  const unbasedFieldId = unbase64(ideaFieldPathId);
+  const [ideaId, metadataTemplateId, fieldId] = unbasedFieldId.split(':');
+  return {
+    ideaId,
+    metadataTemplateId: metadataTemplateId === 'null' ? null : metadataTemplateId,
+    fieldId,
+  };
+}
+

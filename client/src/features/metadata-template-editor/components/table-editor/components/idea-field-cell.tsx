@@ -13,8 +13,8 @@ interface IdeaFieldCellProps extends CellContext<IdeaDataRowFields, AppIdeaMetad
 
 export const IdeaFieldCell = (props: IdeaFieldCellProps) => {
   const fieldEntry = props.getValue()
-  
-  if (fieldEntry?.value?.__typename === 'MetadataFieldTextValue' || (fieldEntry?.schema.type === 'text' && !fieldEntry.value)) {
+
+  if (fieldEntry?.value?.__typename === 'MetadataFieldTextValue' || fieldEntry?.schema.type === 'text') {
 
     if (fieldEntry?.value?.__typename === 'MetadataFieldTextValue') {
       return (
@@ -117,8 +117,6 @@ export const IdeaNumberFieldCell = ({
   const hasSchemaTypeConflict = useMemo(() => {
     return fieldEntry?.schema.type !== 'number'
   }, [fieldEntry?.schema.type])
-
-  console.log(hasSchemaTypeConflict, ':: conflict?')
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNumber(e.target.value)
