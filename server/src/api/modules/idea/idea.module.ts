@@ -6,9 +6,11 @@ import { IdeaSchema, Idea } from '@database/schemas';
 import { IdeaService } from './idea.service';
 // import { NoteMapperProfile } from './note.mapper';
 import { IdeaResolver } from './idea.resolver';
+import { MetadataTemplateModule } from '../metadata-template';
 
 @Module({
   imports: [
+    MetadataTemplateModule,
     MongooseModule.forFeature([
       {
         name: Idea.name,

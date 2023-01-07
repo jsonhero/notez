@@ -1,5 +1,5 @@
 import { createClient, dedupExchange, fetchExchange } from 'urql';
-import { offlineExchange } from '@urql/exchange-graphcache';
+import { offlineExchange, cacheExchange } from '@urql/exchange-graphcache';
 import { makeDefaultStorage } from '@urql/exchange-graphcache/default-storage';
 import { IntrospectionQuery } from 'graphql'
 import { devtoolsExchange } from '@urql/devtools';
@@ -26,15 +26,15 @@ function _generateFieldId(): string {
 // ??: Why the fuck does it read from the storage first, and then the local cache when using this... causes needless renders
 // TODO: Broadcast/sync between tabs
 // Need to wait for INDEXDB to fully load.
-const storage = makeDefaultStorage({
-  idbName: 'graphcache-v3', // The name of the IndexedDB database
-  maxAge: 7, // The maximum age of the persisted data in days
-});
+// const storage = makeDefaultStorage({
+//   idbName: 'graphcache-v3', // The name of the IndexedDB database
+//   maxAge: 7, // The maximum age of the persisted data in days
+// });
 
 // https://github.com/urql-graphql/urql/issues/901
-const cache = offlineExchange<GraphCacheConfig>({
+const cache = cacheExchange<GraphCacheConfig>({
   schema: (introspectedSchema as unknown) as IntrospectionQuery,
-  storage,
+  // storage,
   resolvers: {
     Query: {
       // @ts-ignore

@@ -15,8 +15,8 @@ import { IdeaDocument } from '@database/schemas';
 import {
   fromGlobalId,
   toGlobalId,
-  fromIdeaFieldPathId,
-  toIdeaFieldPathId,
+  fromIdeaFieldEntryId,
+  toIdeaFieldEntryId,
 } from '@api/utils';
 
 @Resolver(() => Graph.IdeaObject)
@@ -38,7 +38,7 @@ export class IdeaResolver {
               null,
             );
             return {
-              id: toIdeaFieldPathId(ideaDoc.id, template.pathId, fieldId),
+              id: toIdeaFieldEntryId(ideaDoc.id, template.id, fieldId),
               schema: {
                 id: fieldId,
                 name: field.name,
@@ -68,7 +68,7 @@ export class IdeaResolver {
         );
 
         return {
-          id: toIdeaFieldPathId(ideaDoc.id, ideaDoc.metadata.pathId, fieldId),
+          id: toIdeaFieldEntryId(ideaDoc.id, null, fieldId),
           schema: {
             id: fieldId,
             ...schema,
@@ -160,7 +160,7 @@ export class IdeaResolver {
     const field = await this.ideaService.addMetadataField(ideaId);
     return {
       field: {
-        id: toIdeaFieldPathId(ideaId, field.pathId, field.id),
+        id: toIdeaFieldEntryId(ideaId, field.metadataTemplateId, field.id),
         schema: {
           id: field.id,
           name: field.name,
@@ -176,17 +176,17 @@ export class IdeaResolver {
     @Args('input') input: Graph.UpdateIdeaMetadataFieldInput,
   ): Promise<Graph.UpdateIdeaMetadataFieldPayload> {
     const ideaId = fromGlobalId(input.ideaId).id;
-    const { fieldId, pathId } = fromIdeaFieldPathId(input.fieldId);
+    const { fieldId, metadataTemplateId } = fromIdeaFieldEntryId(input.fieldId);
 
     const field = await this.ideaService.updateMetadataField(
       ideaId,
-      pathId,
+      metadataTemplateId,
       fieldId,
       input.field,
     );
     return {
       field: {
-        id: toIdeaFieldPathId(ideaId, field.pathId, field.id),
+        id: toIdeaFieldEntryId(ideaId, field.metadataTemplateId, field.id),
         schema: {
           id: field.id,
           name: field.name,
@@ -202,9 +202,13 @@ export class IdeaResolver {
     @Args('input') input: Graph.DeleteIdeaMetadataFieldInput,
   ): Promise<Graph.DeleteIdeaMetadataFieldPayload> {
     const ideaId = fromGlobalId(input.ideaId).id;
-    const { fieldId, pathId } = fromIdeaFieldPathId(input.fieldId);
+    const { fieldId, metadataTemplateId } = fromIdeaFieldEntryId(input.fieldId);
 
-    await this.ideaService.deleteMetadataField(ideaId, pathId, fieldId);
+    await this.ideaService.deleteMetadataField(
+      ideaId,
+      metadataTemplateId,
+      fieldId,
+    );
 
     return {
       clientMutationId: input.clientMutationId,

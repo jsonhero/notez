@@ -10,26 +10,26 @@ function unbase64(i: Base64String): string {
 
 export type ResolvedIdeaFieldPathId = {
   ideaId: string;
-  pathId: string;
+  metadataTemplateId: string | null;
   fieldId: string;
 };
 
-export function toIdeaFieldPathId(
+export function toIdeaFieldEntryId(
   ideaId: string,
-  pathId: string,
+  metadataTemplateId: string | null,
   fieldId: string,
 ): string {
-  return base64([ideaId, pathId, fieldId].join(':'));
+  return base64([ideaId, metadataTemplateId || 'null', fieldId].join(':'));
 }
 
-export function fromIdeaFieldPathId(
+export function fromIdeaFieldEntryId(
   ideaFieldPathId: string,
 ): ResolvedIdeaFieldPathId {
   const unbasedFieldId = unbase64(ideaFieldPathId);
-  const [ideaId, pathId, fieldId] = unbasedFieldId.split(':');
+  const [ideaId, metadataTemplateId, fieldId] = unbasedFieldId.split(':');
   return {
     ideaId,
-    pathId,
+    metadataTemplateId: metadataTemplateId === 'null' ? null : metadataTemplateId,
     fieldId,
   };
 }

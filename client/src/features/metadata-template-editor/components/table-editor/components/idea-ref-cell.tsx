@@ -45,7 +45,10 @@ export const IdeaRefCell = ({
   // }, [initialValue])
 
   return (
-    <HStack>
+    <HStack sx={{
+      w: '100%',
+      h: '100%',
+    }}>
       <Button onClick={() => onClickIdeaLink(initialValue.id)} variant="link">{initialValue.title || "Untitled"}</Button>
     </HStack>
   )

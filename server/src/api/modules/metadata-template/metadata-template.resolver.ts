@@ -12,7 +12,6 @@ import { MetadataTemplateService } from './metadata-template.service';
 
 import { MetadataTemplateDocument } from '@database/schemas';
 import { fromGlobalId, toGlobalId } from '@api/utils';
-import { DeleteMetadataTemplateFieldInput } from './graph';
 
 @Resolver(() => Graph.MetadataTemplate)
 export class MetadataTemplateResolver {

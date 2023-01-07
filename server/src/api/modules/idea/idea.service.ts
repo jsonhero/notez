@@ -8,7 +8,13 @@ const mongoObjectId = Types.ObjectId;
 
 import { nanoid } from 'nanoid';
 
-import { Idea, IdeaDocument } from '@database/schemas';
+import {
+  Idea,
+  IdeaDocument,
+  MetadataTemplateDocument,
+} from '@database/schemas';
+
+import { MetadataTemplateService } from '../metadata-template';
 
 enum MetaDataFieldType {
   TEXT,
@@ -18,7 +24,7 @@ enum MetaDataFieldType {
 
 interface IdeaMetadataField {
   id: string;
-  pathId: string;
+  metadataTemplateId: string;
   type: string;
   name: string;
   value: string;
@@ -39,6 +45,7 @@ interface GetIdeas {
 export class IdeaService {
   constructor(
     @InjectModel(Idea.name) private readonly ideaModel: Model<IdeaDocument>,
+    private metadataTemplateService: MetadataTemplateService,
   ) {}
 
   _generateFieldId(): string {
@@ -153,7 +160,7 @@ export class IdeaService {
     };
     const valueDefault = null;
 
-    const idea = await this.ideaModel.findByIdAndUpdate(ideaId, {
+    await this.ideaModel.findByIdAndUpdate(ideaId, {
       $set: {
         [schemaPropPath]: schemaDefault,
       },
@@ -161,7 +168,7 @@ export class IdeaService {
 
     return {
       id: fieldId,
-      pathId: idea.metadata.pathId,
+      metadataTemplateId: null,
       type: schemaDefault.type,
       name: schemaDefault.name,
       value: valueDefault,
@@ -170,12 +177,25 @@ export class IdeaService {
 
   async updateMetadataField(
     ideaId: string,
-    pathId: string,
+    metadataTemplateId: string | null,
     fieldId: string,
     props: UpdateIdeaMetaDataField,
   ): Promise<IdeaMetadataField> {
+    const idea = await this.ideaModel.findById(ideaId);
+
+    let fieldPathId = idea.metadata.pathId;
+    let metadataTemplate: MetadataTemplateDocument | null = null;
+
+    if (metadataTemplateId) {
+      metadataTemplate =
+        await this.metadataTemplateService.getMetadataTemplateById(
+          metadataTemplateId,
+        );
+      fieldPathId = metadataTemplate.pathId;
+    }
+
     const schemaPropPath = `metadata.schema.fields.${fieldId}`;
-    const valuePropPath = `metadata.values.${pathId}.${fieldId}`;
+    const valuePropPath = `metadata.values.${fieldPathId}.${fieldId}`;
 
     let schemaValue = null;
 
@@ -196,34 +216,59 @@ export class IdeaService {
       $updateSetProps[valuePropPath] = props.value;
     }
 
-    const idea = await this.ideaModel.findByIdAndUpdate(
+    const nextIdea = await this.ideaModel.findByIdAndUpdate(
       ideaId,
       {
         $set: $updateSetProps,
       },
-      { new: true },
+      {
+        new: true,
+      },
     );
 
-    const schema = _.get(idea, schemaPropPath);
+    let schema;
+
+    if (metadataTemplate) {
+      const mtSchemaField = _.get(metadataTemplate, `schema.fields.${fieldId}`);
+      schema = {
+        type: mtSchemaField.type,
+        name: mtSchemaField.name,
+      };
+    } else {
+      schema = _.get(idea, schemaPropPath);
+    }
 
     return {
       id: fieldId,
-      pathId: pathId,
+      metadataTemplateId: metadataTemplateId,
       type: schema.type,
       name: schema.name,
-      value: _.get(idea, valuePropPath),
+      value: _.get(nextIdea, valuePropPath),
     };
   }
 
   async deleteMetadataField(
-    noteId: string,
-    pathId: string,
+    ideaId: string,
+    metadataTemplateId: string | null,
     fieldId: string,
   ): Promise<void> {
-    const schemaPropPath = `metadata.schema.fields.${fieldId}`;
-    const valuePropPath = `metadata.values.${pathId}.${fieldId}`;
+    const idea = await this.ideaModel.findById(ideaId);
 
-    await this.ideaModel.findByIdAndUpdate(noteId, {
+    let fieldPathId = idea.metadata.pathId;
+    let metadataTemplate: MetadataTemplateDocument | null = null;
+
+    if (metadataTemplateId) {
+      metadataTemplate =
+        await this.metadataTemplateService.getMetadataTemplateById(
+          metadataTemplateId,
+        );
+      fieldPathId = metadataTemplate.pathId;
+    }
+
+    const schemaPropPath = `metadata.schema.fields.${fieldId}`;
+    const valuePropPath = `metadata.values.${fieldPathId}.${fieldId}`;
+
+    await this.ideaModel.findByIdAndUpdate(ideaId, {
       $unset: {
         [schemaPropPath]: 1,
         [valuePropPath]: 1,

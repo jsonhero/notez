@@ -27,6 +27,7 @@ export const IdeaFieldCell = ({
   }
   
   const onBlur = () => {
+    // Make this better if value is null (field jsut added to schema)
     if (initialValue?.id) {
       updateIdeaMetadataFieldMutation({
         input: {
@@ -43,7 +44,7 @@ export const IdeaFieldCell = ({
   return (
     <HStack>
       <Input
-        w="initial"
+        w="100%"
         size="xs"
         sx={{
           fontWeight: 'bold',

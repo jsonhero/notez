@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { HStack, Icon, Input, Button, Popover, PopoverTrigger, PopoverContent, Text, VStack, Menu} from '@chakra-ui/react'
+import { HStack, Icon, Input, Button, Popover, PopoverTrigger, PopoverContent, Text, VStack } from '@chakra-ui/react'
 import { HeaderContext } from '@tanstack/react-table'
 import { BsTextLeft } from 'react-icons/bs'
 import { DeleteIcon } from '@chakra-ui/icons'
@@ -115,7 +115,7 @@ export const IdeaFieldHeader = React.memo(({
   const [, updateMetadataTemplateFieldMutation] = useUpdateMetadataTemplateFieldMutation()
   return (
     <IdeaFieldHeaderMenu field={field} metadataTemplateId={metadataTemplateId}>
-      <HStack h="100%">
+      <HStack h="100%" overflowX="hidden">
         <Icon boxSize="16px" as={BsTextLeft} />
         <Text fontSize="xs">{field.name}</Text>
       </HStack>
