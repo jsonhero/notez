@@ -28,10 +28,12 @@ interface IdeaMetadataField {
   schema: {
     type: string;
     name: string;
+    updatedAt: Date;
   };
   input: {
     type: string;
     value: any;
+    updatedAt: Date;
   };
 }
 
@@ -162,6 +164,8 @@ export class IdeaService {
     const schemaDefault = {
       type: 'text',
       name: '',
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
     const valueDefault = null;
 
@@ -178,6 +182,7 @@ export class IdeaService {
       input: {
         type: schemaDefault.type,
         value: valueDefault,
+        updatedAt: null,
       },
     };
   }
@@ -222,6 +227,7 @@ export class IdeaService {
       schemaValue = {
         type: currentSchema.type,
         name: props.name,
+        updatedAt: new Date(),
       };
     }
 
@@ -235,6 +241,7 @@ export class IdeaService {
       $updateSetProps[valuePropPath] = {
         type: currentSchema.type, // stamp schema at time of value being set
         value: props.value,
+        updatedAt: new Date(),
       };
     }
 
@@ -269,6 +276,7 @@ export class IdeaService {
       input: {
         type: input?.type || 'text',
         value: input?.value,
+        updatedAt: input?.updatedAt,
       },
     };
   }

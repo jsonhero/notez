@@ -3,9 +3,7 @@ fragment AppMetadataTemplate on MetadataTemplate {
   title
   schema {
     fields {
-      id
-      name
-      type
+      ...AppMetadataTemplateSchemaField
     }
   }
   __typename

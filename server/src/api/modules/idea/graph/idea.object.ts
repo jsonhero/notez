@@ -20,18 +20,27 @@ import {
 class MetadataFieldTextValue {
   @Field()
   text: string;
+
+  @Field()
+  updatedAt: Date;
 }
 
 @ObjectType()
 class MetadataFieldNumberValue {
   @Field()
   number: number;
+
+  @Field()
+  updatedAt: Date;
 }
 
 @ObjectType()
 class MetadataFieldDateValue {
   @Field()
   date: Date;
+
+  @Field()
+  updatedAt: Date;
 }
 
 export const MetadataFieldValueUnion = createUnionType({

@@ -256,6 +256,17 @@
               }
             },
             "args": []
+          },
+          {
+            "name": "updatedAt",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
           }
         ],
         "interfaces": []
@@ -274,6 +285,17 @@
               }
             },
             "args": []
+          },
+          {
+            "name": "updatedAt",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
           }
         ],
         "interfaces": []
@@ -284,6 +306,17 @@
         "fields": [
           {
             "name": "text",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "updatedAt",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
@@ -380,7 +413,7 @@
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "MetadataGroupFieldSchema",
+                "name": "MetadataTemplateSchemaField",
                 "ofType": null
               }
             },
@@ -392,46 +425,6 @@
               "kind": "UNION",
               "name": "MetadataFieldValueUnion",
               "ofType": null
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
-        "name": "MetadataGroupFieldSchema",
-        "fields": [
-          {
-            "name": "id",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "name",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "type",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
             },
             "args": []
           }
@@ -556,6 +549,17 @@
           },
           {
             "name": "type",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "updatedAt",
             "type": {
               "kind": "NON_NULL",
               "ofType": {

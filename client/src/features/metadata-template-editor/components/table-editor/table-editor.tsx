@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Table, TableContainer, Thead, Tbody, Tr, Td, Th, Box, HStack, Text, IconButton, Icon } from '@chakra-ui/react'
 import { AddIcon } from '@chakra-ui/icons'
 import { BsLightbulb } from 'react-icons/bs'
-import { createColumnHelper, useReactTable, getCoreRowModel, flexRender } from '@tanstack/react-table'
+import { createColumnHelper, useReactTable, getCoreRowModel, flexRender, ColumnSizingState } from '@tanstack/react-table'
 
 import { 
   AppMetadataTemplateFragment, 
@@ -87,13 +87,6 @@ export const TableEditor = ({
       columnHelper.accessor('idea', {
         minSize: 100,
         maxSize: 500,
-        header: (props) => (
-          <HStack height="100%">
-            <Icon boxSize="14px" as={BsLightbulb} />
-            <Text fontSize="xs" textTransform={"capitalize"}>Idea</Text>
-          </HStack>
-        ),
-        cell: (props) => <IdeaRefCell {...props} />,
       })
     ]
 
@@ -101,22 +94,29 @@ export const TableEditor = ({
       return columnHelper.accessor(`fields.${field.id}`, {
         minSize: 100,
         maxSize: 500,
-        header: (props) => <IdeaFieldHeader metadataTemplateId={metadataTemplate.id} field={field} {...props} />,
-        cell: (props) => <IdeaFieldCell {...props} />
+        meta: {
+          field,
+        },
       })
     })
 
     return [...defaultColumns, ...dynamicFieldsColumns]
   }, [metadataTemplate.schema.fields])
 
+
+  const [columnSizingState, setColumnSizingState] = useState<ColumnSizingState>({})
+
   const table = useReactTable({
     columnResizeMode: 'onChange',
+    state: {
+      columnSizing: columnSizingState,
+    },
+    onColumnSizingChange: setColumnSizingState,
     columns,
     enableColumnResizing: true,
     data: data || [],
     getCoreRowModel: getCoreRowModel(),
   })
-
   return (
     <TableContainer ml="-30px" pb="200px">
       <Table size="zero" variant="simple" width="100%">
@@ -126,12 +126,15 @@ export const TableEditor = ({
                 <Th border="none" width="30px"></Th>
                 {headerGroup.headers.map(header => (
                   <Th position="relative" key={header.id} width={`${header.getSize()}px`}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                    {header.column.id === 'idea'
+                      ? (
+                        <HStack height="100%">
+                          <Icon boxSize="14px" as={BsLightbulb} />
+                          <Text fontSize="xs" textTransform={"capitalize"}>Idea</Text>
+                        </HStack>
+                      )
+                      // @ts-ignore
+                      : <IdeaFieldHeader metadataTemplateId={metadataTemplate.id} field={header.column.columnDef.meta?.field} />}
                         <Box sx={{
                           position: 'absolute',
                           opacity: header.column.getIsResizing() ? 1 : 0,

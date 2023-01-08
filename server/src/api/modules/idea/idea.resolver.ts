@@ -19,20 +19,27 @@ import {
   toIdeaFieldEntryId,
 } from '@api/utils';
 
-function resolveInputValueToDto(input: { type: string; value: any }): any {
+function resolveInputValueToDto(input: {
+  type: string;
+  value: any;
+  updatedAt: Date;
+}): any {
   if (!input) return null;
 
   if (input.type === 'text') {
     return {
       text: input.value,
+      updatedAt: input.updatedAt,
     };
   } else if (input.type === 'number') {
     return {
       number: input.value,
+      updatedAt: input.updatedAt,
     };
   } else if (input.type === 'date') {
     return {
       date: input.value,
+      updatedAt: input.updatedAt,
     };
   }
 
@@ -63,6 +70,7 @@ export class IdeaResolver {
                 id: fieldId,
                 name: field.name,
                 type: field.type,
+                updatedAt: field.updatedAt,
               },
               value: resolveInputValueToDto(input),
             };
@@ -185,6 +193,7 @@ export class IdeaResolver {
           id: field.id,
           name: field.schema.name,
           type: field.schema.type,
+          updatedAt: field.schema.updatedAt,
         },
         value: resolveInputValueToDto(field.input),
       },
@@ -211,6 +220,7 @@ export class IdeaResolver {
           id: field.id,
           name: field.schema.name,
           type: field.schema.type,
+          updatedAt: field.schema.updatedAt,
         },
         value: resolveInputValueToDto(field.input),
       },

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useRef } from 'react'
 import { CellContext } from '@tanstack/react-table'
 import { HStack, Input } from '@chakra-ui/react'
 
@@ -6,15 +6,16 @@ import { AppIdeaMetadataFieldFragment, MetadataFieldTextValue, MetadataFieldNumb
 
 
 import { IdeaDataRowFields} from './idea-data-row'
+import { BaseEditableCell } from './base-editable-cell'
 
 interface IdeaFieldCellProps extends CellContext<IdeaDataRowFields, AppIdeaMetadataFieldFragment | null> {
 
 }
 
-export const IdeaFieldCell = (props: IdeaFieldCellProps) => {
+export const IdeaFieldCell = React.memo((props: IdeaFieldCellProps) => {
   const fieldEntry = props.getValue()
 
-  if (fieldEntry?.value?.__typename === 'MetadataFieldTextValue' || fieldEntry?.schema.type === 'text') {
+  if (fieldEntry?.value?.__typename === 'MetadataFieldTextValue' || (fieldEntry?.schema.type === 'text' && !fieldEntry.value)) {
 
     if (fieldEntry?.value?.__typename === 'MetadataFieldTextValue') {
       return (
@@ -26,14 +27,23 @@ export const IdeaFieldCell = (props: IdeaFieldCellProps) => {
     )
   }
 
-  if (fieldEntry?.value?.__typename === 'MetadataFieldNumberValue') {
+  if (fieldEntry?.value?.__typename === 'MetadataFieldNumberValue' || (fieldEntry?.schema.type === 'number' && !fieldEntry.value)) {
+
+    if (fieldEntry?.value?.__typename === 'MetadataFieldNumberValue') {
+      return (
+        <IdeaNumberFieldCell {...props} value={fieldEntry?.value}  />
+      )
+    }
+
     return (
-      <IdeaNumberFieldCell {...props} value={fieldEntry?.value} />
+      <IdeaNumberFieldCell {...props} value={null} />
     )
   }
 
   return null
-}
+}, (prevProps, nextProps) => {
+  return prevProps.cell.getValue()?.schema.updatedAt === nextProps.getValue()?.schema.updatedAt
+})
 
 interface IdeaTextFieldCellProps extends CellContext<IdeaDataRowFields, AppIdeaMetadataFieldFragment | null> {
   value: MetadataFieldTextValue | null;
@@ -47,6 +57,7 @@ export const IdeaTextFieldCell = ({
   value,
 }: IdeaTextFieldCellProps) => {
   const fieldEntry = getValue()
+  const inputRef = useRef<HTMLInputElement>(null)  
 
   const [, updateIdeaMetadataFieldMutation] = useUpdateIdeaMetadataFieldMutation()
 
@@ -77,7 +88,7 @@ export const IdeaTextFieldCell = ({
   }
 
   return (
-    <HStack>
+    <BaseEditableCell isInvalid={hasSchemaTypeConflict} editableRef={inputRef}>
       <Input
         w="100%"
         size="xs"
@@ -88,13 +99,16 @@ export const IdeaTextFieldCell = ({
           outline: 'none',
           border: 'none',
         }}
-        isInvalid={hasSchemaTypeConflict}
+        _focusVisible={{
+          outline: 'none',
+          border: 'none',
+        }}
         isDisabled={hasSchemaTypeConflict}
         value={text} 
         onChange={onChange} 
         onBlur={onBlur} 
       />
-    </HStack>
+    </BaseEditableCell>
   )
 }
 
@@ -109,6 +123,7 @@ export const IdeaNumberFieldCell = ({
   value,
 }: IdeaNumberFieldCellProps) => {
   const fieldEntry = getValue()
+  const inputRef = useRef<HTMLInputElement>(null)  
 
   const [, updateIdeaMetadataFieldMutation] = useUpdateIdeaMetadataFieldMutation()
 
@@ -138,7 +153,7 @@ export const IdeaNumberFieldCell = ({
   }
 
   return (
-    <HStack>
+    <BaseEditableCell isInvalid={hasSchemaTypeConflict} editableRef={inputRef}>
       <Input
         w="100%"
         size="xs"
@@ -149,13 +164,16 @@ export const IdeaNumberFieldCell = ({
           outline: 'none',
           border: 'none',
         }}
-        isInvalid={hasSchemaTypeConflict}
+        _focusVisible={{
+          outline: 'none',
+          border: 'none',
+        }}
         isDisabled={hasSchemaTypeConflict}
         type="number"
         value={number} 
         onChange={onChange} 
         onBlur={onBlur} 
       />
-    </HStack>
+    </BaseEditableCell>
   )
 }

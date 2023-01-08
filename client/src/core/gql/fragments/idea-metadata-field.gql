@@ -4,20 +4,24 @@ fragment AppIdeaMetadataField on MetadataGroupFieldEntry {
     id
     name
     type
+    updatedAt
   }
   value {
     __typename
-    
+
     ... on MetadataFieldTextValue {
       text
+      updatedAt
     } 
 
     ... on MetadataFieldNumberValue {
       number
+      updatedAt
     }
 
     ... on MetadataFieldDateValue {
       date
+      updatedAt
     }
   }
 }

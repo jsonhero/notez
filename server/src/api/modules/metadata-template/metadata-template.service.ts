@@ -10,6 +10,7 @@ interface IMetadataTemplateField {
   id: string;
   name: string;
   type: string;
+  updatedAt: Date;
 }
 
 interface IUpdateMetadataTemplateField {
@@ -107,6 +108,7 @@ export class MetadataTemplateService {
         $set: {
           [fieldPath]: {
             ...updateFields,
+            updatedAt: new Date(),
           },
         },
       },
@@ -133,6 +135,8 @@ export class MetadataTemplateService {
     const fieldDefault = {
       type: 'text',
       name: '',
+      updatedAt: new Date(),
+      createdAt: new Date(),
     };
 
     await this.metadataTemplateModel.findByIdAndUpdate(metadataTemplateId, {
@@ -145,6 +149,7 @@ export class MetadataTemplateService {
       id: fieldId,
       type: fieldDefault.type,
       name: fieldDefault.name,
+      updatedAt: fieldDefault.updatedAt,
     };
   }
 

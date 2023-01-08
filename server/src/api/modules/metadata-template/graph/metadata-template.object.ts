@@ -13,6 +13,9 @@ export class MetadataTemplateSchemaField {
 
   @Field()
   type: string;
+
+  @Field()
+  updatedAt: Date;
 }
 
 @ObjectType()

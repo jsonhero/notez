@@ -123,7 +123,7 @@ const IdeaFieldHeaderMenu = ({
           onBlur={onBlur} 
         />
         <VStack align="flex-start">
-          <Menu>
+          <Menu isLazy={true}>
             <MenuButton>
               Type
             </MenuButton>
@@ -157,18 +157,20 @@ interface IdeaFieldHeaderProps extends HeaderContext<any, any> {
 
 export const IdeaFieldHeader = React.memo(({
   field,
-  header,
   metadataTemplateId,
 }: IdeaFieldHeaderProps) => {
   const [, updateMetadataTemplateFieldMutation] = useUpdateMetadataTemplateFieldMutation()
+
   return (
     <IdeaFieldHeaderMenu field={field} metadataTemplateId={metadataTemplateId}>
       <HStack h="100%" overflowX="hidden">
         <Icon boxSize="16px" as={BsTextLeft} />
-        <Text fontSize="xs">{field.name}</Text>
+        <Text fontSize="xs">{field?.name}</Text>
       </HStack>
     </IdeaFieldHeaderMenu>
   )
 }, (prevProps, nextProps) => {
   return prevProps.field.id === nextProps.field.id
 })
+
+IdeaFieldHeader.whyDidYouRender = true
