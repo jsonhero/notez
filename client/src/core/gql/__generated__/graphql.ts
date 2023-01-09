@@ -25,6 +25,18 @@ export type AddIdeaMetadataFieldPayload = {
   field: MetadataGroupFieldEntry;
 };
 
+export type AddIdeaMetadataTemplateInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  ideaId: Scalars['ID'];
+  metadataTemplateId: Scalars['ID'];
+};
+
+export type AddIdeaMetadataTemplatePayload = {
+  __typename?: 'AddIdeaMetadataTemplatePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  idea: Idea;
+};
+
 export type AddMetadataTemplateFieldInput = {
   metadataTemplateId: Scalars['ID'];
 };
@@ -62,6 +74,18 @@ export type DeleteIdeaMetadataFieldInput = {
 export type DeleteIdeaMetadataFieldPayload = {
   __typename?: 'DeleteIdeaMetadataFieldPayload';
   clientMutationId?: Maybe<Scalars['String']>;
+};
+
+export type DeleteIdeaMetadataTemplateInput = {
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  ideaId: Scalars['ID'];
+  metadataTemplateId: Scalars['ID'];
+};
+
+export type DeleteIdeaMetadataTemplatePayload = {
+  __typename?: 'DeleteIdeaMetadataTemplatePayload';
+  clientMutationId?: Maybe<Scalars['String']>;
+  idea: Idea;
 };
 
 export type DeleteIdeaPayload = {
@@ -118,6 +142,7 @@ export type IdeaSearchInput = {
 export type MetadataFieldDateValue = {
   __typename?: 'MetadataFieldDateValue';
   date: Scalars['DateTime'];
+  type: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
 
@@ -130,12 +155,14 @@ export type MetadataFieldInput = {
 export type MetadataFieldNumberValue = {
   __typename?: 'MetadataFieldNumberValue';
   number: Scalars['Float'];
+  type: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
 
 export type MetadataFieldTextValue = {
   __typename?: 'MetadataFieldTextValue';
   text: Scalars['String'];
+  type: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
 
@@ -186,14 +213,20 @@ export type MetadataTemplateSchemaField = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type MetadataTemplateSearchInput = {
+  title?: InputMaybe<Scalars['String']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   addIdeaMetadataField: AddIdeaMetadataFieldPayload;
+  addIdeaMetadataTemplate: AddIdeaMetadataTemplatePayload;
   addMetadataTemplateField: AddMetadataTemplateFieldPayload;
   createIdea: CreateIdeaPayload;
   createMetadataTemplate: CreateMetadataTemplatePayload;
   deleteIdea: DeleteIdeaPayload;
   deleteIdeaMetadataField: DeleteIdeaMetadataFieldPayload;
+  deleteIdeaMetadataTemplate: DeleteIdeaMetadataTemplatePayload;
   deleteMetadataTemplate: DeleteMetadataTemplatePayload;
   deleteMetadataTemplateField: DeleteMetadataTemplateFieldPayload;
   updateIdea: UpdateIdeaPayload;
@@ -205,6 +238,11 @@ export type Mutation = {
 
 export type MutationAddIdeaMetadataFieldArgs = {
   input: AddIdeaMetadataFieldInput;
+};
+
+
+export type MutationAddIdeaMetadataTemplateArgs = {
+  input: AddIdeaMetadataTemplateInput;
 };
 
 
@@ -225,6 +263,11 @@ export type MutationDeleteIdeaArgs = {
 
 export type MutationDeleteIdeaMetadataFieldArgs = {
   input: DeleteIdeaMetadataFieldInput;
+};
+
+
+export type MutationDeleteIdeaMetadataTemplateArgs = {
+  input: DeleteIdeaMetadataTemplateInput;
 };
 
 
@@ -272,6 +315,11 @@ export type Query = {
 
 export type QueryIdeasArgs = {
   input?: InputMaybe<IdeaSearchInput>;
+};
+
+
+export type QueryMetadataTemplatesArgs = {
+  input?: InputMaybe<MetadataTemplateSearchInput>;
 };
 
 
@@ -330,10 +378,12 @@ export type WithTypename<T extends { __typename?: any }> = Partial<T> & { __type
 
 export type GraphCacheKeysConfig = {
   AddIdeaMetadataFieldPayload?: (data: WithTypename<AddIdeaMetadataFieldPayload>) => null | string,
+  AddIdeaMetadataTemplatePayload?: (data: WithTypename<AddIdeaMetadataTemplatePayload>) => null | string,
   AddMetadataTemplateFieldPayload?: (data: WithTypename<AddMetadataTemplateFieldPayload>) => null | string,
   CreateIdeaPayload?: (data: WithTypename<CreateIdeaPayload>) => null | string,
   CreateMetadataTemplatePayload?: (data: WithTypename<CreateMetadataTemplatePayload>) => null | string,
   DeleteIdeaMetadataFieldPayload?: (data: WithTypename<DeleteIdeaMetadataFieldPayload>) => null | string,
+  DeleteIdeaMetadataTemplatePayload?: (data: WithTypename<DeleteIdeaMetadataTemplatePayload>) => null | string,
   DeleteIdeaPayload?: (data: WithTypename<DeleteIdeaPayload>) => null | string,
   DeleteMetadataTemplateFieldPayload?: (data: WithTypename<DeleteMetadataTemplateFieldPayload>) => null | string,
   DeleteMetadataTemplatePayload?: (data: WithTypename<DeleteMetadataTemplatePayload>) => null | string,
@@ -356,12 +406,16 @@ export type GraphCacheKeysConfig = {
 export type GraphCacheResolvers = {
   Query?: {
     ideas?: GraphCacheResolver<WithTypename<Query>, QueryIdeasArgs, Array<WithTypename<Idea> | string>>,
-    metadataTemplates?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<MetadataTemplate> | string>>,
+    metadataTemplates?: GraphCacheResolver<WithTypename<Query>, QueryMetadataTemplatesArgs, Array<WithTypename<MetadataTemplate> | string>>,
     node?: GraphCacheResolver<WithTypename<Query>, QueryNodeArgs, WithTypename<Idea> | WithTypename<MetadataTemplate> | string>,
     nodes?: GraphCacheResolver<WithTypename<Query>, QueryNodesArgs, Array<WithTypename<Idea> | WithTypename<MetadataTemplate> | string>>
   },
   AddIdeaMetadataFieldPayload?: {
     field?: GraphCacheResolver<WithTypename<AddIdeaMetadataFieldPayload>, Record<string, never>, WithTypename<MetadataGroupFieldEntry> | string>
+  },
+  AddIdeaMetadataTemplatePayload?: {
+    clientMutationId?: GraphCacheResolver<WithTypename<AddIdeaMetadataTemplatePayload>, Record<string, never>, Scalars['String'] | string>,
+    idea?: GraphCacheResolver<WithTypename<AddIdeaMetadataTemplatePayload>, Record<string, never>, WithTypename<Idea> | string>
   },
   AddMetadataTemplateFieldPayload?: {
     field?: GraphCacheResolver<WithTypename<AddMetadataTemplateFieldPayload>, Record<string, never>, WithTypename<MetadataTemplateSchemaField> | string>
@@ -374,6 +428,10 @@ export type GraphCacheResolvers = {
   },
   DeleteIdeaMetadataFieldPayload?: {
     clientMutationId?: GraphCacheResolver<WithTypename<DeleteIdeaMetadataFieldPayload>, Record<string, never>, Scalars['String'] | string>
+  },
+  DeleteIdeaMetadataTemplatePayload?: {
+    clientMutationId?: GraphCacheResolver<WithTypename<DeleteIdeaMetadataTemplatePayload>, Record<string, never>, Scalars['String'] | string>,
+    idea?: GraphCacheResolver<WithTypename<DeleteIdeaMetadataTemplatePayload>, Record<string, never>, WithTypename<Idea> | string>
   },
   DeleteIdeaPayload?: {
     clientMutationId?: GraphCacheResolver<WithTypename<DeleteIdeaPayload>, Record<string, never>, Scalars['String'] | string>
@@ -397,14 +455,17 @@ export type GraphCacheResolvers = {
   },
   MetadataFieldDateValue?: {
     date?: GraphCacheResolver<WithTypename<MetadataFieldDateValue>, Record<string, never>, Scalars['DateTime'] | string>,
+    type?: GraphCacheResolver<WithTypename<MetadataFieldDateValue>, Record<string, never>, Scalars['String'] | string>,
     updatedAt?: GraphCacheResolver<WithTypename<MetadataFieldDateValue>, Record<string, never>, Scalars['DateTime'] | string>
   },
   MetadataFieldNumberValue?: {
     number?: GraphCacheResolver<WithTypename<MetadataFieldNumberValue>, Record<string, never>, Scalars['Float'] | string>,
+    type?: GraphCacheResolver<WithTypename<MetadataFieldNumberValue>, Record<string, never>, Scalars['String'] | string>,
     updatedAt?: GraphCacheResolver<WithTypename<MetadataFieldNumberValue>, Record<string, never>, Scalars['DateTime'] | string>
   },
   MetadataFieldTextValue?: {
     text?: GraphCacheResolver<WithTypename<MetadataFieldTextValue>, Record<string, never>, Scalars['String'] | string>,
+    type?: GraphCacheResolver<WithTypename<MetadataFieldTextValue>, Record<string, never>, Scalars['String'] | string>,
     updatedAt?: GraphCacheResolver<WithTypename<MetadataFieldTextValue>, Record<string, never>, Scalars['DateTime'] | string>
   },
   MetadataGroup?: {
@@ -449,11 +510,13 @@ export type GraphCacheResolvers = {
 
 export type GraphCacheOptimisticUpdaters = {
   addIdeaMetadataField?: GraphCacheOptimisticMutationResolver<MutationAddIdeaMetadataFieldArgs, WithTypename<AddIdeaMetadataFieldPayload>>,
+  addIdeaMetadataTemplate?: GraphCacheOptimisticMutationResolver<MutationAddIdeaMetadataTemplateArgs, WithTypename<AddIdeaMetadataTemplatePayload>>,
   addMetadataTemplateField?: GraphCacheOptimisticMutationResolver<MutationAddMetadataTemplateFieldArgs, WithTypename<AddMetadataTemplateFieldPayload>>,
   createIdea?: GraphCacheOptimisticMutationResolver<MutationCreateIdeaArgs, WithTypename<CreateIdeaPayload>>,
   createMetadataTemplate?: GraphCacheOptimisticMutationResolver<Record<string, never>, WithTypename<CreateMetadataTemplatePayload>>,
   deleteIdea?: GraphCacheOptimisticMutationResolver<MutationDeleteIdeaArgs, WithTypename<DeleteIdeaPayload>>,
   deleteIdeaMetadataField?: GraphCacheOptimisticMutationResolver<MutationDeleteIdeaMetadataFieldArgs, WithTypename<DeleteIdeaMetadataFieldPayload>>,
+  deleteIdeaMetadataTemplate?: GraphCacheOptimisticMutationResolver<MutationDeleteIdeaMetadataTemplateArgs, WithTypename<DeleteIdeaMetadataTemplatePayload>>,
   deleteMetadataTemplate?: GraphCacheOptimisticMutationResolver<MutationDeleteMetadataTemplateArgs, WithTypename<DeleteMetadataTemplatePayload>>,
   deleteMetadataTemplateField?: GraphCacheOptimisticMutationResolver<MutationDeleteMetadataTemplateFieldArgs, WithTypename<DeleteMetadataTemplateFieldPayload>>,
   updateIdea?: GraphCacheOptimisticMutationResolver<MutationUpdateIdeaArgs, WithTypename<UpdateIdeaPayload>>,
@@ -465,11 +528,13 @@ export type GraphCacheOptimisticUpdaters = {
 export type GraphCacheUpdaters = {
   Mutation?: {
     addIdeaMetadataField?: GraphCacheUpdateResolver<{ addIdeaMetadataField: WithTypename<AddIdeaMetadataFieldPayload> }, MutationAddIdeaMetadataFieldArgs>,
+    addIdeaMetadataTemplate?: GraphCacheUpdateResolver<{ addIdeaMetadataTemplate: WithTypename<AddIdeaMetadataTemplatePayload> }, MutationAddIdeaMetadataTemplateArgs>,
     addMetadataTemplateField?: GraphCacheUpdateResolver<{ addMetadataTemplateField: WithTypename<AddMetadataTemplateFieldPayload> }, MutationAddMetadataTemplateFieldArgs>,
     createIdea?: GraphCacheUpdateResolver<{ createIdea: WithTypename<CreateIdeaPayload> }, MutationCreateIdeaArgs>,
     createMetadataTemplate?: GraphCacheUpdateResolver<{ createMetadataTemplate: WithTypename<CreateMetadataTemplatePayload> }, Record<string, never>>,
     deleteIdea?: GraphCacheUpdateResolver<{ deleteIdea: WithTypename<DeleteIdeaPayload> }, MutationDeleteIdeaArgs>,
     deleteIdeaMetadataField?: GraphCacheUpdateResolver<{ deleteIdeaMetadataField: WithTypename<DeleteIdeaMetadataFieldPayload> }, MutationDeleteIdeaMetadataFieldArgs>,
+    deleteIdeaMetadataTemplate?: GraphCacheUpdateResolver<{ deleteIdeaMetadataTemplate: WithTypename<DeleteIdeaMetadataTemplatePayload> }, MutationDeleteIdeaMetadataTemplateArgs>,
     deleteMetadataTemplate?: GraphCacheUpdateResolver<{ deleteMetadataTemplate: WithTypename<DeleteMetadataTemplatePayload> }, MutationDeleteMetadataTemplateArgs>,
     deleteMetadataTemplateField?: GraphCacheUpdateResolver<{ deleteMetadataTemplateField: WithTypename<DeleteMetadataTemplateFieldPayload> }, MutationDeleteMetadataTemplateFieldArgs>,
     updateIdea?: GraphCacheUpdateResolver<{ updateIdea: WithTypename<UpdateIdeaPayload> }, MutationUpdateIdeaArgs>,

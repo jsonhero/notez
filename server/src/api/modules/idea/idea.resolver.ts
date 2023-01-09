@@ -28,18 +28,21 @@ function resolveInputValueToDto(input: {
 
   if (input.type === 'text') {
     return {
-      text: input.value,
+      text: input.value || '',
       updatedAt: input.updatedAt,
+      type: 'text',
     };
   } else if (input.type === 'number') {
     return {
-      number: input.value,
+      number: input.value || 0,
       updatedAt: input.updatedAt,
+      type: 'number',
     };
   } else if (input.type === 'date') {
     return {
       date: input.value,
       updatedAt: input.updatedAt,
+      type: 'date',
     };
   }
 
@@ -254,6 +257,42 @@ export class IdeaResolver {
 
     return {
       clientMutationId: input.clientMutationId,
+    };
+  }
+
+  @Mutation(() => Graph.DeleteIdeaMetadataTemplatePayload)
+  async deleteIdeaMetadataTemplate(
+    @Args('input') input: Graph.DeleteIdeaMetadataTemplateInput,
+  ): Promise<Graph.DeleteIdeaMetadataTemplatePayload> {
+    const ideaId = fromGlobalId(input.ideaId).id;
+    const metadataTemplateId = fromGlobalId(input.metadataTemplateId).id;
+
+    const idea = await this.ideaService.deleteIdeaMetadataTemplate(
+      ideaId,
+      metadataTemplateId,
+    );
+
+    return {
+      clientMutationId: input.clientMutationId,
+      idea: IdeaResolver._mapIdeaDto(idea),
+    };
+  }
+
+  @Mutation(() => Graph.AddIdeaMetadataTemplatePayload)
+  async addIdeaMetadataTemplate(
+    @Args('input') input: Graph.AddIdeaMetadataTemplateInput,
+  ): Promise<Graph.AddIdeaMetadataTemplatePayload> {
+    const ideaId = fromGlobalId(input.ideaId).id;
+    const metadataTemplateId = fromGlobalId(input.metadataTemplateId).id;
+
+    const idea = await this.ideaService.addIdeaMetadataTemplate(
+      ideaId,
+      metadataTemplateId,
+    );
+
+    return {
+      clientMutationId: input.clientMutationId,
+      idea: IdeaResolver._mapIdeaDto(idea),
     };
   }
 }

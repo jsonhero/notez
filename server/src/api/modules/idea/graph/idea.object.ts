@@ -22,6 +22,9 @@ class MetadataFieldTextValue {
   text: string;
 
   @Field()
+  type: string;
+
+  @Field()
   updatedAt: Date;
 }
 
@@ -29,6 +32,9 @@ class MetadataFieldTextValue {
 class MetadataFieldNumberValue {
   @Field()
   number: number;
+
+  @Field()
+  type: string;
 
   @Field()
   updatedAt: Date;
@@ -40,17 +46,20 @@ class MetadataFieldDateValue {
   date: Date;
 
   @Field()
+  type: string;
+
+  @Field()
   updatedAt: Date;
 }
 
 export const MetadataFieldValueUnion = createUnionType({
   name: 'MetadataFieldValueUnion',
   resolveType: (input) => {
-    if (input.text) {
+    if (input.type === 'text') {
       return MetadataFieldTextValue;
-    } else if (input.number) {
+    } else if (input.type === 'number') {
       return MetadataFieldNumberValue;
-    } else if (input.date) {
+    } else if (input.type === 'date') {
       return MetadataFieldDateValue;
     }
 
@@ -255,4 +264,46 @@ export class IdeaSearchInput {
     nullable: true,
   })
   metadataTemplateIds: string[];
+}
+
+@InputType()
+export class DeleteIdeaMetadataTemplateInput {
+  @Field({ nullable: true })
+  clientMutationId: string;
+
+  @Field(() => ID)
+  metadataTemplateId: string;
+
+  @Field(() => ID)
+  ideaId: string;
+}
+
+@ObjectType()
+export class DeleteIdeaMetadataTemplatePayload {
+  @Field({ nullable: true })
+  clientMutationId: string;
+
+  @Field(() => IdeaObject)
+  idea: IdeaObject;
+}
+
+@InputType()
+export class AddIdeaMetadataTemplateInput {
+  @Field({ nullable: true })
+  clientMutationId: string;
+
+  @Field(() => ID)
+  metadataTemplateId: string;
+
+  @Field(() => ID)
+  ideaId: string;
+}
+
+@ObjectType()
+export class AddIdeaMetadataTemplatePayload {
+  @Field({ nullable: true })
+  clientMutationId: string;
+
+  @Field(() => IdeaObject)
+  idea: IdeaObject;
 }

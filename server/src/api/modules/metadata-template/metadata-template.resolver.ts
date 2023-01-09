@@ -44,9 +44,16 @@ export class MetadataTemplateResolver {
   }
 
   @Query(() => [Graph.MetadataTemplate])
-  async metadataTemplates(): Promise<Graph.MetadataTemplate[]> {
+  async metadataTemplates(
+    @Args('input', {
+      nullable: true,
+    })
+    input: Graph.MetadataTemplateSearchInput,
+  ): Promise<Graph.MetadataTemplate[]> {
     const metadataTemplates =
-      await this.metadataTemplateService.getMetadataTemplates();
+      await this.metadataTemplateService.getMetadataTemplates({
+        title: input?.title,
+      });
 
     return metadataTemplates.map(
       MetadataTemplateResolver._mapMetadataTemplateDto,

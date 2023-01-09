@@ -1,0 +1,7 @@
+mutation deleteIdeaMetadataTemplate($input: DeleteIdeaMetadataTemplateInput!) {
+  deleteIdeaMetadataTemplate(input: $input) {
+    idea {
+      ...AppIdea
+    }
+  }
+}

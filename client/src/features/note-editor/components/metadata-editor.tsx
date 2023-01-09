@@ -25,6 +25,9 @@ import {
   AppIdeaMetadataFieldFragment 
 } from '@gql/operations'
 
+import { IdeaFieldCell } from '../../metadata-template-editor/components/table-editor/components'
+import { IdeaLocalFieldHeader, IdeaReadonlyFieldHeader } from '@components/table'
+
 interface UpdateMetadataFieldCellProps extends CellContext<AppIdeaMetadataFieldFragment, any> {
   onUpdate: (fieldId: string, name: string, type: string) => void;
 }
@@ -67,70 +70,25 @@ const UpdateMetadataFieldCell = ({
           />
 }
 
-
-interface UpdateMetadataValueCellProps extends CellContext<AppIdeaMetadataFieldFragment, any> {
-  onUpdate: (fieldId: string, value: any) => void;
-}
-
-const UpdateMetadataValueCell = ({
-  cell,
-  getValue,
-  onUpdate,
-}: UpdateMetadataValueCellProps) => {
-  const initialValue = getValue()
-  // We need to keep and update the state of the cell normally
-  const [value, setValue] = useState<string>(initialValue || '')
-
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value)
-  }
-
-  const onBlur = () => {
-    onUpdate(cell.row.original.id, value)
-  }
-
-
-  return <Input
-            w="100%"
-            size="xs"
-            sx={{
-              m: '0px',
-              p: '0px',
-              outline: 'none',
-              border: 'none',
-            }}
-            // _focusVisible={{
-            //   outline: 'none',
-            //   border: 'none',
-            // }}
-            value={value} 
-            onChange={onChange} 
-            onBlur={onBlur} 
-          />
-}
-
 interface DataRowProps {
   row: Row<AppIdeaMetadataFieldFragment>
   onDeleteField: (fieldId: string) => void;
   isLocal: boolean;
+  ideaId: string;
 }
 
-const DataRow = React.memo(({ row, onDeleteField, isLocal }: DataRowProps) => {
+const DataRow = React.memo(({ row, onDeleteField, isLocal, ideaId }: DataRowProps) => {
   return (
     <Tr role="group" _hover={{
       bg: 'gray.50'
     }}>
-      {row.getVisibleCells().map(cell => {
-        return (
-          <Td key={cell.id}>
-            {flexRender(
-              cell.column.columnDef.cell,
-              { ...cell.getContext(), isLocal }
-            )}
-          </Td>
-        )
-      })}
-      <Td sx={{ border: 'none' }}>
+      <Td>
+        {isLocal ? <IdeaLocalFieldHeader ideaId={ideaId} entry={row.original} /> : <IdeaReadonlyFieldHeader ideaId={ideaId} entry={row.original} />}
+      </Td>
+      <Td borderRight="none">
+        <IdeaFieldCell entry={row.original} ideaId={ideaId} />
+      </Td>
+      {/* <Td sx={{ border: 'none' }}>
         <Box minWidth="80px" width="80px">
           {
               isLocal && (
@@ -148,7 +106,7 @@ const DataRow = React.memo(({ row, onDeleteField, isLocal }: DataRowProps) => {
               )
             }
         </Box>
-      </Td>
+      </Td> */}
     </Tr>
   )
 }, (prevProps, nextProps) => {
@@ -211,34 +169,28 @@ export const MetadataEditor = ({ idea }: MetadataEditorProps) => {
 
   const columnHelper = createColumnHelper<AppIdeaMetadataFieldFragment>()
 
-  const columns = [
-    columnHelper.accessor('schema.name', {
-      cell: (props) => {
-        // @ts-ignore
-        if (!props.isLocal) {
-          return <Text fontWeight={"bold"} fontSize="xs">{props.getValue()}</Text>
-        }
-
-        return <UpdateMetadataFieldCell {...props} onUpdate={onUpdateField} />
-      },
+  const columns = useMemo(() => [
+    columnHelper.display({
+      id: 'schema',
     }),
-    columnHelper.accessor('value', {
-      cell: (props) => {
-        return <UpdateMetadataValueCell {...props} onUpdate={onUpdateValue} />
-      }
+    columnHelper.display({
+      id: 'value',
     }),
-  ]
+  ], [])
 
-  const groupingState = useMemo(() => ['groupId'], [])
   const getSubRows = useCallback((row: AppIdeaMetadataGroupFragment, index: number) => {
     return row.fields
   }, [])
+
+  const data = useMemo(() => {
+    return idea.metadata?.groups || []
+  }, [idea.metadata?.groups])
 
   const table = useReactTable<any>({
     // @ts-ignore
     columns,
     // @ts-ignore
-    data: (idea.metadata?.groups || []),
+    data,
     // @ts-ignore
     getSubRows,
     manualGrouping: true,
@@ -257,29 +209,31 @@ export const MetadataEditor = ({ idea }: MetadataEditorProps) => {
   })
 
   return (
-    <TableContainer mb="medium">
-      <Table size="sm">
+    <TableContainer mb="medium" border="1px solid" borderColor="gray.100" borderRadius="8px" p="sm">
+      <Table size="zero" variant="simple" width="100%">
         <Tbody>
           {table.getGroupedRowModel().rows.map((row: Row<AppIdeaMetadataGroupFragment>, i) => {
             return (
               <React.Fragment key={row.id}>
                 <Tr>
                   <Td colSpan={2} sx={{
+                      w: "100%",
+                      flex: 1,
                       bg: 'gray.100',
                   }}>
-                    {row.original.template?.id ?  row.original.template.title : 'Local'}
+                    <Text color="gray.500" ml="xsm" fontSize="sm" fontWeight="bold">{row.original.template?.id ?  row.original.template.title : 'Local'}</Text>
                   </Td>
                 </Tr>
-                {row.subRows.map((subRow: any, i) => <DataRow key={subRow.id} row={subRow} onDeleteField={onDeleteField} isLocal={row.original.context === 'local'} />)}
+                {row.subRows.map((subRow: any, i) => <DataRow key={subRow.id} ideaId={idea.id} row={subRow} onDeleteField={onDeleteField} isLocal={row.original.context === 'local'} />)}
               </React.Fragment>
             )
           })}
           <Tr onClick={onAddRow} _hover={{
               cursor: 'pointer',
-              bg: 'gray.50'
+              bg: 'gray.50',
           }}>
             <Td colSpan={2}>
-              <Text fontSize="xs" fontWeight="bold" color="blue.500">Add Row</Text>
+              <Text p="xxsm" fontSize="xs" fontWeight="bold" color="blue.400">Add Row</Text>
             </Td>
           </Tr>
         </Tbody>

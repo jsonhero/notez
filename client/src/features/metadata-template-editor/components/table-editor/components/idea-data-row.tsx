@@ -34,7 +34,7 @@ export const IdeaDataRow = ({ row }: IdeaDataRowProps) => {
               cell.column.id === 'idea' ? (
                 <IdeaRefCell {...cell.getContext()} />
               ) : 
-                <IdeaFieldCell {...cell.getContext()} />
+                <IdeaFieldCell entry={cell.getValue()} ideaId={row.original.idea.id} />
             }
           </Td>
         )

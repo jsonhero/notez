@@ -1,4 +1,4 @@
-import { createClient, dedupExchange, fetchExchange } from 'urql';
+import { createClient, dedupExchange, fetchExchange, errorExchange } from 'urql';
 import { offlineExchange, cacheExchange } from '@urql/exchange-graphcache';
 import { makeDefaultStorage } from '@urql/exchange-graphcache/default-storage';
 import { IntrospectionQuery } from 'graphql'
@@ -82,12 +82,13 @@ const cache = cacheExchange<GraphCacheConfig>({
           id: _generateFieldId(),
           __typename: 'MetadataGroupFieldEntry',
           schema: {
-            __typename: 'MetadataGroupFieldSchema',
+            __typename: 'MetadataTemplateSchemaField',
             id: _generateFieldId(),
             name: '',
             type: 'text',
+            updatedAt: new Date()
           },
-          value: '',
+          value: null,
         }
       }
     },
@@ -214,12 +215,17 @@ const cache = cacheExchange<GraphCacheConfig>({
 
 export const urqlClient = createClient({
   url: 'http://localhost:3000/graphql',
-  exchanges: [devtoolsExchange, cache, fetchExchange],
+  exchanges: [devtoolsExchange, errorExchange({
+    onError: ({ graphQLErrors, message }) => {
+      console.error(message, ...graphQLErrors)
+    }
+  }), cache, fetchExchange],
   requestPolicy: 'cache-and-network',
 });
 
 // @ts-ignore
 const { unsubscribe } = urqlClient.subscribeToDebugTarget(event => {
+  event
   if (event.source === 'dedupExchange')
     return;
 

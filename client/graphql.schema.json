@@ -29,6 +29,33 @@
       },
       {
         "kind": "OBJECT",
+        "name": "AddIdeaMetadataTemplatePayload",
+        "fields": [
+          {
+            "name": "clientMutationId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          },
+          {
+            "name": "idea",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Idea",
+                "ofType": null
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
         "name": "AddMetadataTemplateFieldPayload",
         "fields": [
           {
@@ -93,6 +120,33 @@
             "type": {
               "kind": "SCALAR",
               "name": "Any"
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "DeleteIdeaMetadataTemplatePayload",
+        "fields": [
+          {
+            "name": "clientMutationId",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          },
+          {
+            "name": "idea",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Idea",
+                "ofType": null
+              }
             },
             "args": []
           }
@@ -258,6 +312,17 @@
             "args": []
           },
           {
+            "name": "type",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
             "name": "updatedAt",
             "type": {
               "kind": "NON_NULL",
@@ -287,6 +352,17 @@
             "args": []
           },
           {
+            "name": "type",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
             "name": "updatedAt",
             "type": {
               "kind": "NON_NULL",
@@ -306,6 +382,17 @@
         "fields": [
           {
             "name": "text",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "type",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
@@ -600,6 +687,29 @@
             ]
           },
           {
+            "name": "addIdeaMetadataTemplate",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "AddIdeaMetadataTemplatePayload",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "input",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
             "name": "addMetadataTemplateField",
             "type": {
               "kind": "NON_NULL",
@@ -684,6 +794,29 @@
               "ofType": {
                 "kind": "OBJECT",
                 "name": "DeleteIdeaMetadataFieldPayload",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "input",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "deleteIdeaMetadataTemplate",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "DeleteIdeaMetadataTemplatePayload",
                 "ofType": null
               }
             },
@@ -915,7 +1048,15 @@
                 }
               }
             },
-            "args": []
+            "args": [
+              {
+                "name": "input",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
           },
           {
             "name": "node",

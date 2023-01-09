@@ -1,0 +1,7 @@
+mutation addIdeaMetadataTemplate($input: AddIdeaMetadataTemplateInput!) {
+  addIdeaMetadataTemplate(input: $input) {
+    idea {
+      ...AppIdea
+    }
+  }
+}

@@ -16,7 +16,7 @@ export const IdeaRefCell = React.memo(({
   cell,
   getValue,
 }: IdeaRefCellCellProps) => {
-  const [result, updateIdeaMutation] = useUpdateIdeaMutation()
+  const [, updateIdeaMutation] = useUpdateIdeaMutation()
 
   const inputRef = useRef<HTMLInputElement>(null)  
   const idea = getValue()
@@ -50,7 +50,7 @@ export const IdeaRefCell = React.memo(({
   }
 
   return (
-    <BaseEditableCell editableRef={inputRef}>
+    <BaseEditableCell ideaId={idea.id} editableRef={inputRef}>
       <Input
         ref={inputRef}
         w="100%"

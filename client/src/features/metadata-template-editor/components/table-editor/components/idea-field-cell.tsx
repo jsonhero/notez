@@ -8,18 +8,19 @@ import { AppIdeaMetadataFieldFragment, MetadataFieldTextValue, MetadataFieldNumb
 import { IdeaDataRowFields} from './idea-data-row'
 import { BaseEditableCell } from './base-editable-cell'
 
-interface IdeaFieldCellProps extends CellContext<IdeaDataRowFields, AppIdeaMetadataFieldFragment | null> {
-
+interface IdeaFieldCellProps {
+  entry: AppIdeaMetadataFieldFragment | null;
+  ideaId: string;
 }
 
 export const IdeaFieldCell = React.memo((props: IdeaFieldCellProps) => {
-  const fieldEntry = props.getValue()
+  const entry = props.entry
 
-  if (fieldEntry?.value?.__typename === 'MetadataFieldTextValue' || (fieldEntry?.schema.type === 'text' && !fieldEntry.value)) {
+  if (entry?.value?.__typename === 'MetadataFieldTextValue' || (entry?.schema.type === 'text' && !entry.value)) {
 
-    if (fieldEntry?.value?.__typename === 'MetadataFieldTextValue') {
+    if (entry?.value?.__typename === 'MetadataFieldTextValue') {
       return (
-        <IdeaTextFieldCell {...props} value={fieldEntry?.value}  />
+        <IdeaTextFieldCell {...props} value={entry?.value}  />
       )
     }
     return (
@@ -27,11 +28,11 @@ export const IdeaFieldCell = React.memo((props: IdeaFieldCellProps) => {
     )
   }
 
-  if (fieldEntry?.value?.__typename === 'MetadataFieldNumberValue' || (fieldEntry?.schema.type === 'number' && !fieldEntry.value)) {
+  if (entry?.value?.__typename === 'MetadataFieldNumberValue' || (entry?.schema.type === 'number' && !entry.value)) {
 
-    if (fieldEntry?.value?.__typename === 'MetadataFieldNumberValue') {
+    if (entry?.value?.__typename === 'MetadataFieldNumberValue') {
       return (
-        <IdeaNumberFieldCell {...props} value={fieldEntry?.value}  />
+        <IdeaNumberFieldCell {...props} value={entry?.value}  />
       )
     }
 
@@ -42,21 +43,22 @@ export const IdeaFieldCell = React.memo((props: IdeaFieldCellProps) => {
 
   return null
 }, (prevProps, nextProps) => {
-  return prevProps.cell.getValue()?.schema.updatedAt === nextProps.getValue()?.schema.updatedAt
+  return prevProps.entry?.schema.updatedAt === nextProps.entry?.schema.updatedAt &&
+    prevProps.entry?.value?.updatedAt === nextProps.entry?.value?.updatedAt
 })
 
-interface IdeaTextFieldCellProps extends CellContext<IdeaDataRowFields, AppIdeaMetadataFieldFragment | null> {
+interface IdeaTextFieldCellProps {
+  ideaId: string;
+  entry: AppIdeaMetadataFieldFragment | null;
   value: MetadataFieldTextValue | null;
 }
 
 
 export const IdeaTextFieldCell = ({
-  row,
-  cell,
-  getValue,
+  ideaId,
+  entry,
   value,
 }: IdeaTextFieldCellProps) => {
-  const fieldEntry = getValue()
   const inputRef = useRef<HTMLInputElement>(null)  
 
   const [, updateIdeaMetadataFieldMutation] = useUpdateIdeaMetadataFieldMutation()
@@ -64,8 +66,8 @@ export const IdeaTextFieldCell = ({
   const [text, setText] = useState<string>(value?.text || '')
 
   const hasSchemaTypeConflict = useMemo(() => {
-    return fieldEntry?.schema.type !== 'text'
-  }, [fieldEntry?.schema.type])
+    return entry?.schema.type !== 'text'
+  }, [entry?.schema.type])
 
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,11 +76,11 @@ export const IdeaTextFieldCell = ({
   
   const onBlur = () => {
     // Make this better if value is null (field jsut added to schema)
-    if (fieldEntry?.id) {
+    if (entry?.id) {
       updateIdeaMetadataFieldMutation({
         input: {
-          fieldId: fieldEntry?.id,
-          ideaId: row.original.idea.id,
+          fieldId: entry?.id,
+          ideaId,
           field: {
             value: text,
           }
@@ -88,7 +90,7 @@ export const IdeaTextFieldCell = ({
   }
 
   return (
-    <BaseEditableCell isInvalid={hasSchemaTypeConflict} editableRef={inputRef}>
+    <BaseEditableCell ideaId={ideaId} fieldEntry={entry} isInvalid={hasSchemaTypeConflict} editableRef={inputRef}>
       <Input
         w="100%"
         size="xs"
@@ -112,17 +114,17 @@ export const IdeaTextFieldCell = ({
   )
 }
 
-interface IdeaNumberFieldCellProps extends CellContext<IdeaDataRowFields, AppIdeaMetadataFieldFragment | null> {
+interface IdeaNumberFieldCellProps {
+  ideaId: string;
+  entry: AppIdeaMetadataFieldFragment | null;
   value: MetadataFieldNumberValue | null;
 }
 
 export const IdeaNumberFieldCell = ({
-  row,
-  cell,
-  getValue,
+  ideaId,
+  entry,
   value,
 }: IdeaNumberFieldCellProps) => {
-  const fieldEntry = getValue()
   const inputRef = useRef<HTMLInputElement>(null)  
 
   const [, updateIdeaMetadataFieldMutation] = useUpdateIdeaMetadataFieldMutation()
@@ -130,8 +132,8 @@ export const IdeaNumberFieldCell = ({
   const [number, setNumber] = useState<string>(value?.number.toString() || '')
 
   const hasSchemaTypeConflict = useMemo(() => {
-    return fieldEntry?.schema.type !== 'number'
-  }, [fieldEntry?.schema.type])
+    return entry?.schema.type !== 'number'
+  }, [entry?.schema.type])
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNumber(e.target.value)
@@ -139,11 +141,11 @@ export const IdeaNumberFieldCell = ({
   
   const onBlur = () => {
     // Make this better if value is null (field jsut added to schema)
-    if (fieldEntry?.id) {
+    if (entry?.id) {
       updateIdeaMetadataFieldMutation({
         input: {
-          fieldId: fieldEntry?.id,
-          ideaId: row.original.idea.id,
+          fieldId: entry?.id,
+          ideaId,
           field: {
             value: number,
           }
@@ -153,7 +155,7 @@ export const IdeaNumberFieldCell = ({
   }
 
   return (
-    <BaseEditableCell isInvalid={hasSchemaTypeConflict} editableRef={inputRef}>
+    <BaseEditableCell ideaId={ideaId} fieldEntry={entry} isInvalid={hasSchemaTypeConflict} editableRef={inputRef}>
       <Input
         w="100%"
         size="xs"

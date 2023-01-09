@@ -18,6 +18,10 @@ interface IUpdateMetadataTemplateField {
   type?: string;
 }
 
+interface IGetMetadataTemplates {
+  title?: string;
+}
+
 @Injectable()
 export class MetadataTemplateService {
   constructor(
@@ -33,9 +37,19 @@ export class MetadataTemplateService {
     return 'f_' + nanoid(10);
   }
 
-  async getMetadataTemplates(): Promise<MetadataTemplateDocument[]> {
+  async getMetadataTemplates(
+    args: IGetMetadataTemplates,
+  ): Promise<MetadataTemplateDocument[]> {
+    const filter: FilterQuery<MetadataTemplateDocument> = {};
+
+    if (args.title !== undefined) {
+      filter.title = {
+        $regex: args.title,
+      };
+    }
+
     return this.metadataTemplateModel.find(
-      {},
+      filter,
       {},
       {
         sort: {

@@ -1,5 +1,5 @@
-query getMetadataTemplates {
-  metadataTemplates {
+query getMetadataTemplates($input: MetadataTemplateSearchInput) {
+  metadataTemplates(input: $input) {
     ...AppMetadataTemplate
   }
 }

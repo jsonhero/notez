@@ -149,3 +149,11 @@ export class DeleteMetadataTemplateFieldPayload {
   @Field({ nullable: true })
   clientMutationId: string;
 }
+
+@InputType()
+export class MetadataTemplateSearchInput {
+  @Field({
+    nullable: true,
+  })
+  title: string;
+}

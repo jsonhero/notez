@@ -9,9 +9,10 @@ import { DeleteIcon } from '@chakra-ui/icons'
 import { HiOutlineCalendar } from 'react-icons/hi'
 
 import { 
-  AppMetadataTemplateSchemaFieldFragment, 
-  useUpdateMetadataTemplateFieldMutation,
-  useDeleteMetadataTemplateFieldMutation,
+  AppMetadataTemplateSchemaFieldFragment,
+  AppIdeaMetadataFieldFragment,
+  useDeleteIdeaMetadataFieldMutation,
+  useUpdateIdeaMetadataFieldMutation,
 } from '@gql/operations'
 
 interface SchemaTypeIconProps {
@@ -27,33 +28,33 @@ const SchemaTypeIcon = ({ type }: SchemaTypeIconProps) => {
 
   return <Icon boxSize="16px" as={getIcon()} />
 }
-interface IdeaFieldHeaderProps {
-  field: AppMetadataTemplateSchemaFieldFragment;
-  metadataTemplateId: string;
+interface IdeaLocalFieldHeaderProps {
+  entry: AppIdeaMetadataFieldFragment;
+  ideaId: string;
 }
 
-export const IdeaFieldHeader = React.memo(({
-  field,
-  metadataTemplateId,
-}: IdeaFieldHeaderProps) => {
+export const IdeaLocalFieldHeader = React.memo(({
+  entry,
+  ideaId,
+}: IdeaLocalFieldHeaderProps) => {
   const initialFocusRef = React.useRef<HTMLInputElement>(null)
 
-  const [name, setName] = useState<string>(field.name || '')
-  const [schemaType, setSchemaType] = useState<string>(field.type || 'text')
+  const [name, setName] = useState<string>(entry.schema.name || '')
+  const [schemaType, setSchemaType] = useState<string>(entry.schema.type || 'text')
 
 
-  const [, updateMetadataTemplateFieldMutation] = useUpdateMetadataTemplateFieldMutation()
-  const [,deleteMetadataTemplateFieldMutation] = useDeleteMetadataTemplateFieldMutation()
+  const [, updateIdeaMetadataFieldMutation] = useUpdateIdeaMetadataFieldMutation()
+  const [, deleteIdeaMetadataFieldMutation] = useDeleteIdeaMetadataFieldMutation()
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value)
   }
 
   const onBlur = () => {
-    updateMetadataTemplateFieldMutation({
+    updateIdeaMetadataFieldMutation({
       input: {
-        metadataTemplateId,
-        fieldId: field.id,
+        ideaId,
+        fieldId: entry.id,
         field: {
           name,
           type: schemaType,
@@ -64,10 +65,10 @@ export const IdeaFieldHeader = React.memo(({
 
   const onChangeSchemaType = (selected: string) => {
     setSchemaType(selected)    
-    updateMetadataTemplateFieldMutation({
+    updateIdeaMetadataFieldMutation({
       input: {
-        metadataTemplateId,
-        fieldId: field.id,
+        ideaId,
+        fieldId: entry.id,
         field: {
           name,
           type: selected,
@@ -77,13 +78,13 @@ export const IdeaFieldHeader = React.memo(({
   }
 
   const onDelete = useCallback(() => {
-    deleteMetadataTemplateFieldMutation({
+    deleteIdeaMetadataFieldMutation({
       input: {
-        fieldId: field.id,
-        metadataTemplateId,
+        fieldId: entry.id,
+        ideaId,
       }
     })
-  }, [field.id, metadataTemplateId])
+  }, [entry.id, ideaId])
 
   return (
     <Popover
@@ -147,5 +148,5 @@ export const IdeaFieldHeader = React.memo(({
     </Popover>
   )
 }, (prevProps, nextProps) => {
-  return prevProps.field.id === nextProps.field.id && prevProps.field.updatedAt === nextProps.field.updatedAt
+  return prevProps.entry.id === nextProps.entry.id && prevProps.entry.schema.updatedAt === nextProps.entry.schema.updatedAt
 })

@@ -22,6 +22,7 @@
       "@lib/*": ["src/core/lib/*"],
       "@layouts/*": ["src/layouts/*"],
       "@views/*": ["src/views/*"],
+      "@components/*": ["src/components/*"],
       "@features/*": ["src/features/*"],
       "@stores/*": ["src/core/stores/*"],
       "@gql/operations": ["./src/core/gql/__generated__/schema-and-operations"],

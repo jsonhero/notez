@@ -65,8 +65,13 @@ export class IdeaService {
 
   async getIdeas(args: GetIdeas): Promise<IdeaDocument[]> {
     const filter: FilterQuery<IdeaDocument> = {};
+    let aggregateProps = {
+      sort: {
+        createdAt: 'desc',
+      },
+    };
 
-    if (args.title) {
+    if (args.title !== undefined) {
       filter.title = {
         $regex: args.title,
       };
@@ -76,18 +81,15 @@ export class IdeaService {
       filter['metadata.templates'] = {
         $in: args.metadataTemplateIds.map((id) => new mongoObjectId(id)),
       };
+      aggregateProps = {
+        sort: {
+          createdAt: 'asc',
+        },
+      };
     }
 
     return this.ideaModel
-      .find(
-        filter,
-        {},
-        {
-          sort: {
-            createdAt: 'desc',
-          },
-        },
-      )
+      .find(filter, {}, aggregateProps)
       .populate('metadata.templates');
   }
 
@@ -182,7 +184,7 @@ export class IdeaService {
       input: {
         type: schemaDefault.type,
         value: valueDefault,
-        updatedAt: null,
+        updatedAt: new Date(),
       },
     };
   }
@@ -223,10 +225,10 @@ export class IdeaService {
       currentSchema = _.get(idea, schemaPropPath);
     }
 
-    if (props.name) {
+    if (props.name !== undefined || props.type !== undefined) {
       schemaValue = {
-        type: currentSchema.type,
-        name: props.name,
+        type: props.type || currentSchema.type,
+        name: props.name || currentSchema.name,
         updatedAt: new Date(),
       };
     }
@@ -237,7 +239,7 @@ export class IdeaService {
       $updateSetProps[schemaPropPath] = schemaValue;
     }
 
-    if (props.value) {
+    if (props.value !== undefined) {
       $updateSetProps[valuePropPath] = {
         type: currentSchema.type, // stamp schema at time of value being set
         value: props.value,
@@ -262,9 +264,10 @@ export class IdeaService {
       nextSchema = {
         type: mtSchemaField.type,
         name: mtSchemaField.name,
+        updatedAt: mtSchemaField.updatedAt,
       };
     } else {
-      nextSchema = _.get(idea, schemaPropPath);
+      nextSchema = _.get(nextIdea, schemaPropPath);
     }
 
     const input = _.get(nextIdea, valuePropPath);
@@ -308,5 +311,54 @@ export class IdeaService {
         [valuePropPath]: 1,
       },
     });
+  }
+
+  async addIdeaMetadataTemplate(
+    ideaId: string,
+    metadataTemplateId: string,
+  ): Promise<IdeaDocument> {
+    const idea = await this.ideaModel
+      .findByIdAndUpdate(
+        ideaId,
+        {
+          $set: {
+            'metadata.templates': {
+              $ifNull: [
+                {
+                  $concatArrays: ["$'metadata.templates", [metadataTemplateId]],
+                },
+                [metadataTemplateId],
+              ],
+            },
+          },
+        },
+        {
+          new: true,
+        },
+      )
+      .populate('metadata.templates');
+
+    return idea;
+  }
+
+  async deleteIdeaMetadataTemplate(
+    ideaId: string,
+    metadataTemplateId: string,
+  ): Promise<IdeaDocument> {
+    const idea = await this.ideaModel
+      .findByIdAndUpdate(
+        ideaId,
+        {
+          $pull: {
+            'metadata.templates': metadataTemplateId,
+          },
+        },
+        {
+          new: true,
+        },
+      )
+      .populate('metadata.templates');
+
+    return idea;
   }
 }
