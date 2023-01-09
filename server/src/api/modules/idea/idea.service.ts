@@ -116,7 +116,7 @@ export class IdeaService {
         schema: {
           fields: {},
         },
-        templates: null,
+        templates: [],
       },
       document: null,
       title: null,
@@ -317,25 +317,38 @@ export class IdeaService {
     ideaId: string,
     metadataTemplateId: string,
   ): Promise<IdeaDocument> {
+    const _idea = await this.ideaModel
+      .findById(ideaId)
+      .populate('metadata.templates');
+
+    const isMatch = !_idea.metadata.templates
+      ? false
+      : _idea.metadata.templates.some(
+          (template) => template.id === metadataTemplateId,
+        );
+
+    if (isMatch) {
+      return _idea;
+    }
+
+    let query: any = {
+      $push: {
+        'metadata.templates': metadataTemplateId,
+      },
+    };
+
+    if (_idea.metadata.templates === null) {
+      query = {
+        $set: {
+          'metadata.templates': [metadataTemplateId],
+        },
+      };
+    }
+
     const idea = await this.ideaModel
-      .findByIdAndUpdate(
-        ideaId,
-        {
-          $set: {
-            'metadata.templates': {
-              $ifNull: [
-                {
-                  $concatArrays: ["$'metadata.templates", [metadataTemplateId]],
-                },
-                [metadataTemplateId],
-              ],
-            },
-          },
-        },
-        {
-          new: true,
-        },
-      )
+      .findByIdAndUpdate(ideaId, query, {
+        new: true,
+      })
       .populate('metadata.templates');
 
     return idea;

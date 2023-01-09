@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useState, useCallback } from 'react'
 
-import { Th, Thead, Tr, Td, Tbody, Table, TableContainer, Input, Text, Box, Flex, Button, IconButton, Icon, HStack } from '@chakra-ui/react'
+import { Th, Thead, Tr, Td, Tbody, Table, TableContainer, Input, Text, Box, Flex, Button, IconButton, Icon, HStack, Menu, MenuList, MenuButton, MenuItem } from '@chakra-ui/react'
 import {
   createColumnHelper,
   flexRender,
@@ -24,6 +24,7 @@ import {
   useAddIdeaMetadataFieldMutation, 
   useAddIdeaMetadataTemplateMutation,
   useDeleteIdeaMetadataTemplateMutation,
+  useGetMetadataTemplatesQuery,
   AppIdeaMetadataFieldFragment,
 } from '@gql/operations'
 
@@ -226,8 +227,51 @@ export const MetadataEditor = ({ idea }: MetadataEditorProps) => {
               <Text p="xxsm" fontSize="xs" fontWeight="bold" color="blue.400">Add Row</Text>
             </Td>
           </Tr>
+          <Tr _hover={{
+              cursor: 'pointer',
+              bg: 'gray.50',
+          }}>
+            <Td colSpan={2}>
+              <AddTemplateRow ideaId={idea.id}/>
+            </Td>
+          </Tr>
         </Tbody>
       </Table>
     </TableContainer>
+  )
+}
+
+interface AddTemplateRowProps {
+  ideaId: string;
+}
+
+const AddTemplateRow = ({ 
+  ideaId,
+}: AddTemplateRowProps) => {
+  const [, addIdeaMetadataTemplateMutation] = useAddIdeaMetadataTemplateMutation()
+  const [response] = useGetMetadataTemplatesQuery()
+
+  const onClickItem = (metadataTemplateId: string) => {
+    addIdeaMetadataTemplateMutation({
+      input: {
+        ideaId,
+        metadataTemplateId,
+      }
+    })
+  }
+
+  return (
+    <Menu>
+      <MenuButton variant="unstyled" as={Button}>
+        <Text p="xxsm" fontSize="xs" fontWeight="bold" color="gray.400">Add Template</Text>
+      </MenuButton>
+      <MenuList>
+        {response.data?.metadataTemplates.map((template) => {
+         return (
+           <MenuItem onClick={() => onClickItem(template.id)}>{template.title}</MenuItem>
+         ) 
+        })}
+      </MenuList>
+    </Menu>
   )
 }
