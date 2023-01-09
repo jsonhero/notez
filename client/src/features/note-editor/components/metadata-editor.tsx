@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useState, useCallback } from 'react'
 
-import { Th, Thead, Tr, Td, Tbody, Table, TableContainer, Input, Text, Box, Flex, Button, IconButton, Icon } from '@chakra-ui/react'
+import { Th, Thead, Tr, Td, Tbody, Table, TableContainer, Input, Text, Box, Flex, Button, IconButton, Icon, HStack } from '@chakra-ui/react'
 import {
   createColumnHelper,
   flexRender,
@@ -22,7 +22,9 @@ import {
   useDeleteIdeaMetadataFieldMutation, 
   useUpdateIdeaMetadataFieldMutation, 
   useAddIdeaMetadataFieldMutation, 
-  AppIdeaMetadataFieldFragment 
+  useAddIdeaMetadataTemplateMutation,
+  useDeleteIdeaMetadataTemplateMutation,
+  AppIdeaMetadataFieldFragment,
 } from '@gql/operations'
 
 import { IdeaFieldCell } from '../../metadata-template-editor/components/table-editor/components'
@@ -121,8 +123,8 @@ interface MetadataEditorProps {
 export const MetadataEditor = ({ idea }: MetadataEditorProps) => {
 
   const [, addMetadataFieldMutation] = useAddIdeaMetadataFieldMutation()
-  const [, updateMetadataFieldMutation] = useUpdateIdeaMetadataFieldMutation()
   const [, deleteMetadataFieldMutation] = useDeleteIdeaMetadataFieldMutation()
+  const [, deleteIdeaMetadataTemplateMutation] = useDeleteIdeaMetadataTemplateMutation()
 
   const onAddRow = () => {
     addMetadataFieldMutation({
@@ -132,27 +134,11 @@ export const MetadataEditor = ({ idea }: MetadataEditorProps) => {
     })
   }
 
-  const onUpdateValue = (fieldId: string, value: any) => {
-    updateMetadataFieldMutation({
+  const onDeleteTemplate = (metadataTemplateId: string) => {
+    deleteIdeaMetadataTemplateMutation({
       input: {
         ideaId: idea.id,
-        fieldId: fieldId,
-        field: {
-          value,
-        }
-      }
-    })
-  }
-
-  const onUpdateField = (fieldId: string, name: string, type: string) => {
-    updateMetadataFieldMutation({
-      input: {
-        ideaId: idea.id,
-        fieldId: fieldId,
-        field: {
-          name,
-          type,
-        }
+        metadataTemplateId,
       }
     })
   }
@@ -221,7 +207,11 @@ export const MetadataEditor = ({ idea }: MetadataEditorProps) => {
                       flex: 1,
                       bg: 'gray.100',
                   }}>
-                    <Text color="gray.500" ml="xsm" fontSize="sm" fontWeight="bold">{row.original.template?.id ?  row.original.template.title : 'Local'}</Text>
+                    <HStack justify="space-between">
+                      <Text color="gray.500" ml="xsm" fontSize="sm" fontWeight="bold">{row.original.template?.id ?  row.original.template.title : 'Local'}</Text>
+
+                      {row.original.template?.id && <Button onClick={() => onDeleteTemplate(row.original.template?.id)} size="xs" variant="ghost">Remove</Button>}
+                    </HStack>
                   </Td>
                 </Tr>
                 {row.subRows.map((subRow: any, i) => <DataRow key={subRow.id} ideaId={idea.id} row={subRow} onDeleteField={onDeleteField} isLocal={row.original.context === 'local'} />)}
