@@ -82,7 +82,11 @@ export const IdeaTextFieldCell = ({
           fieldId: entry?.id,
           ideaId,
           field: {
-            value: text,
+            value: {
+              textInput: {
+                text,
+              }
+            }
           }
         }
       })
@@ -147,7 +151,11 @@ export const IdeaNumberFieldCell = ({
           fieldId: entry?.id,
           ideaId,
           field: {
-            value: number,
+            value: {
+              numberInput: {
+                number: parseInt(number),
+              }
+            },
           }
         }
       })

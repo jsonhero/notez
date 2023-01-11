@@ -112,7 +112,7 @@ export class IdeaResolver {
     const ideaId = fromGlobalId(input.ideaId).id;
     const { fieldId, metadataTemplateId } = fromIdeaFieldEntryId(input.fieldId);
 
-    let valueInput = null;
+    let valueInput = undefined;
 
     if (input.field.value?.dateInput) {
       valueInput = {
@@ -124,21 +124,14 @@ export class IdeaResolver {
     } else if (input.field.value?.numberInput) {
       valueInput = {
         value: {
-          date: input.field.value?.numberInput.number,
-        },
-        type: 'number',
-      };
-    } else if (input.field.value?.numberInput) {
-      valueInput = {
-        value: {
-          date: input.field.value.numberInput.number,
+          number: input.field.value?.numberInput.number,
         },
         type: 'number',
       };
     } else if (input.field.value?.textInput) {
       valueInput = {
         value: {
-          date: input.field.value.textInput.text,
+          text: input.field.value.textInput.text,
         },
         type: 'text',
       };
@@ -151,6 +144,8 @@ export class IdeaResolver {
         },
         type: 'reference',
       };
+    } else if (input.field.value === null) {
+      valueInput = null;
     }
 
     const field = await this.ideaService.updateMetadataField(

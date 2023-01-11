@@ -4,6 +4,7 @@
     "MetadataFieldValueUnion": [
       "MetadataFieldDateValue",
       "MetadataFieldNumberValue",
+      "MetadataFieldReferenceValue",
       "MetadataFieldTextValue"
     ],
     "Node": [
@@ -17,6 +18,7 @@
     "MetadataFieldValueUnion": [
       "MetadataFieldDateValue",
       "MetadataFieldNumberValue",
+      "MetadataFieldReferenceValue",
       "MetadataFieldTextValue"
     ],
     "Node": [

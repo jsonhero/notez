@@ -391,11 +391,16 @@ export class IdeaService {
     };
     const valueDefault = null;
 
-    await this.ideaModel.findByIdAndUpdate(ideaId, {
-      $push: {
-        'schema.fields': schemaDefault,
+    await this.ideaModel.updateOne(
+      {
+        _id: ideaId,
       },
-    });
+      {
+        $push: {
+          'metadata.schema.fields': schemaDefault,
+        },
+      },
+    );
 
     return {
       id: fieldId,
@@ -438,7 +443,7 @@ export class IdeaService {
       );
     }
 
-    if (props.schema) {
+    if (props.schema !== undefined) {
       const $setFields = {
         'metadata.schema.fields.$.updatedAt': new Date(),
       };
@@ -453,7 +458,7 @@ export class IdeaService {
       await this.ideaModel.updateOne(
         {
           _id: ideaId,
-          'schema.fields.fieldId': fieldId,
+          'metadata.schema.fields.fieldId': fieldId,
         },
         {
           $set: {
@@ -463,12 +468,12 @@ export class IdeaService {
       );
     }
 
-    if (props.valueInput) {
+    if (props.valueInput !== undefined) {
       let $value = null;
 
       let operation = {};
 
-      if (props.valueInput.type === 'reference') {
+      if (props.valueInput?.type === 'reference') {
         const newRef = constructRef(props.valueInput.value);
         $value = {
           referenceId: newRef.id,
@@ -480,7 +485,7 @@ export class IdeaService {
             references: newRef,
           },
         };
-      } else {
+      } else if (props.valueInput?.value) {
         $value = props.valueInput.value;
       }
 
@@ -497,13 +502,35 @@ export class IdeaService {
         },
       };
 
-      await this.ideaModel.updateOne(
+      const result = await this.ideaModel.updateOne(
         {
           _id: ideaId,
           'metadata.values.fieldId': fieldId,
         },
         operation,
       );
+
+      // Create record if it doesn't exist
+      if (result.modifiedCount === 0) {
+        const newValueField = {
+          fieldId,
+          type: currentSchemaField.type,
+          value: $value,
+          updatedAt: new Date(),
+          createdAt: new Date(),
+        };
+
+        await this.ideaModel.updateOne(
+          {
+            _id: ideaId,
+          },
+          {
+            $push: {
+              'metadata.values': newValueField,
+            },
+          },
+        );
+      }
     }
 
     const nextIdea = await this.ideaModel.findById(ideaId);
@@ -529,7 +556,7 @@ export class IdeaService {
       metadataTemplateId: metadataTemplateId,
       schema: nextSchemaField,
       input: {
-        type: valueField?.value?.type || 'text',
+        type: valueField?.type || 'text',
         value: valueField?.value,
         updatedAt: valueField?.updatedAt,
       },

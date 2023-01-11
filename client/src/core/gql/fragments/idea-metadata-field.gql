@@ -26,5 +26,13 @@ fragment AppIdeaMetadataField on MetadataGroupFieldEntry {
       type
       updatedAt
     }
+
+    ... on MetadataFieldReferenceValue {
+      reference {
+        ...AppIdeaReference
+      }
+      type
+      updatedAt
+    }
   }
 }

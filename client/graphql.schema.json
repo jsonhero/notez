@@ -253,6 +253,24 @@
             "args": []
           },
           {
+            "name": "toReferences",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "IdeaReference",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": []
+          },
+          {
             "name": "updatedAt",
             "type": {
               "kind": "NON_NULL",
@@ -289,6 +307,58 @@
                     "ofType": null
                   }
                 }
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "IdeaReference",
+        "fields": [
+          {
+            "name": "fieldId",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "id",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "toIdea",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Idea",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "type",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
               }
             },
             "args": []
@@ -378,6 +448,47 @@
       },
       {
         "kind": "OBJECT",
+        "name": "MetadataFieldReferenceValue",
+        "fields": [
+          {
+            "name": "reference",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "IdeaReference",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "type",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "updatedAt",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
         "name": "MetadataFieldTextValue",
         "fields": [
           {
@@ -427,6 +538,10 @@
           {
             "kind": "OBJECT",
             "name": "MetadataFieldNumberValue"
+          },
+          {
+            "kind": "OBJECT",
+            "name": "MetadataFieldReferenceValue"
           },
           {
             "kind": "OBJECT",

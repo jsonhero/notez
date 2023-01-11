@@ -1,0 +1,9 @@
+fragment AppIdeaReference on IdeaReference {
+  id
+  toIdea {
+    id
+    title
+  }
+  type
+  fieldId
+}

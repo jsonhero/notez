@@ -121,17 +121,34 @@ export type Idea = Node & {
   id: Scalars['ID'];
   metadata: IdeaMetadata;
   title?: Maybe<Scalars['String']>;
+  toReferences: Array<IdeaReference>;
   updatedAt: Scalars['DateTime'];
 };
 
 export type IdeaInput = {
   document?: InputMaybe<Scalars['JSONObject']>;
+  refAdds?: InputMaybe<Array<IdeaReferenceInput>>;
+  refIdsToDelete?: InputMaybe<Array<Scalars['ID']>>;
   title?: InputMaybe<Scalars['String']>;
 };
 
 export type IdeaMetadata = {
   __typename?: 'IdeaMetadata';
   groups: Array<MetadataGroup>;
+};
+
+export type IdeaReference = {
+  __typename?: 'IdeaReference';
+  fieldId: Scalars['String'];
+  id: Scalars['ID'];
+  toIdea: Idea;
+  type: Scalars['String'];
+};
+
+export type IdeaReferenceInput = {
+  fieldId?: InputMaybe<Scalars['String']>;
+  ideaId: Scalars['ID'];
+  type: Scalars['String'];
 };
 
 export type IdeaSearchInput = {
@@ -146,10 +163,19 @@ export type MetadataFieldDateValue = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type MetadataFieldDateValueInput = {
+  date: Scalars['DateTime'];
+};
+
+export type MetadataFieldIdeaReferenceValueInput = {
+  fieldId?: InputMaybe<Scalars['String']>;
+  ideaId: Scalars['ID'];
+  type: Scalars['String'];
+};
+
 export type MetadataFieldInput = {
-  name?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['String']>;
+  schema?: InputMaybe<MetadataFieldSchemaInput>;
+  value?: InputMaybe<MetadataFieldValueInput>;
 };
 
 export type MetadataFieldNumberValue = {
@@ -159,6 +185,22 @@ export type MetadataFieldNumberValue = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type MetadataFieldNumberValueInput = {
+  number: Scalars['Float'];
+};
+
+export type MetadataFieldReferenceValue = {
+  __typename?: 'MetadataFieldReferenceValue';
+  reference: IdeaReference;
+  type: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type MetadataFieldSchemaInput = {
+  name?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']>;
+};
+
 export type MetadataFieldTextValue = {
   __typename?: 'MetadataFieldTextValue';
   text: Scalars['String'];
@@ -166,7 +208,18 @@ export type MetadataFieldTextValue = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type MetadataFieldValueUnion = MetadataFieldDateValue | MetadataFieldNumberValue | MetadataFieldTextValue;
+export type MetadataFieldTextValueInput = {
+  text: Scalars['String'];
+};
+
+export type MetadataFieldValueInput = {
+  dateInput?: InputMaybe<MetadataFieldDateValueInput>;
+  numberInput?: InputMaybe<MetadataFieldNumberValueInput>;
+  referenceInput?: InputMaybe<MetadataFieldIdeaReferenceValueInput>;
+  textInput?: InputMaybe<MetadataFieldTextValueInput>;
+};
+
+export type MetadataFieldValueUnion = MetadataFieldDateValue | MetadataFieldNumberValue | MetadataFieldReferenceValue | MetadataFieldTextValue;
 
 export type MetadataGroup = {
   __typename?: 'MetadataGroup';
@@ -389,8 +442,10 @@ export type GraphCacheKeysConfig = {
   DeleteMetadataTemplatePayload?: (data: WithTypename<DeleteMetadataTemplatePayload>) => null | string,
   Idea?: (data: WithTypename<Idea>) => null | string,
   IdeaMetadata?: (data: WithTypename<IdeaMetadata>) => null | string,
+  IdeaReference?: (data: WithTypename<IdeaReference>) => null | string,
   MetadataFieldDateValue?: (data: WithTypename<MetadataFieldDateValue>) => null | string,
   MetadataFieldNumberValue?: (data: WithTypename<MetadataFieldNumberValue>) => null | string,
+  MetadataFieldReferenceValue?: (data: WithTypename<MetadataFieldReferenceValue>) => null | string,
   MetadataFieldTextValue?: (data: WithTypename<MetadataFieldTextValue>) => null | string,
   MetadataGroup?: (data: WithTypename<MetadataGroup>) => null | string,
   MetadataGroupFieldEntry?: (data: WithTypename<MetadataGroupFieldEntry>) => null | string,
@@ -448,10 +503,17 @@ export type GraphCacheResolvers = {
     id?: GraphCacheResolver<WithTypename<Idea>, Record<string, never>, Scalars['ID'] | string>,
     metadata?: GraphCacheResolver<WithTypename<Idea>, Record<string, never>, WithTypename<IdeaMetadata> | string>,
     title?: GraphCacheResolver<WithTypename<Idea>, Record<string, never>, Scalars['String'] | string>,
+    toReferences?: GraphCacheResolver<WithTypename<Idea>, Record<string, never>, Array<WithTypename<IdeaReference> | string>>,
     updatedAt?: GraphCacheResolver<WithTypename<Idea>, Record<string, never>, Scalars['DateTime'] | string>
   },
   IdeaMetadata?: {
     groups?: GraphCacheResolver<WithTypename<IdeaMetadata>, Record<string, never>, Array<WithTypename<MetadataGroup> | string>>
+  },
+  IdeaReference?: {
+    fieldId?: GraphCacheResolver<WithTypename<IdeaReference>, Record<string, never>, Scalars['String'] | string>,
+    id?: GraphCacheResolver<WithTypename<IdeaReference>, Record<string, never>, Scalars['ID'] | string>,
+    toIdea?: GraphCacheResolver<WithTypename<IdeaReference>, Record<string, never>, WithTypename<Idea> | string>,
+    type?: GraphCacheResolver<WithTypename<IdeaReference>, Record<string, never>, Scalars['String'] | string>
   },
   MetadataFieldDateValue?: {
     date?: GraphCacheResolver<WithTypename<MetadataFieldDateValue>, Record<string, never>, Scalars['DateTime'] | string>,
@@ -462,6 +524,11 @@ export type GraphCacheResolvers = {
     number?: GraphCacheResolver<WithTypename<MetadataFieldNumberValue>, Record<string, never>, Scalars['Float'] | string>,
     type?: GraphCacheResolver<WithTypename<MetadataFieldNumberValue>, Record<string, never>, Scalars['String'] | string>,
     updatedAt?: GraphCacheResolver<WithTypename<MetadataFieldNumberValue>, Record<string, never>, Scalars['DateTime'] | string>
+  },
+  MetadataFieldReferenceValue?: {
+    reference?: GraphCacheResolver<WithTypename<MetadataFieldReferenceValue>, Record<string, never>, WithTypename<IdeaReference> | string>,
+    type?: GraphCacheResolver<WithTypename<MetadataFieldReferenceValue>, Record<string, never>, Scalars['String'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<MetadataFieldReferenceValue>, Record<string, never>, Scalars['DateTime'] | string>
   },
   MetadataFieldTextValue?: {
     text?: GraphCacheResolver<WithTypename<MetadataFieldTextValue>, Record<string, never>, Scalars['String'] | string>,

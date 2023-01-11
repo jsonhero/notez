@@ -56,8 +56,9 @@ export const IdeaLocalFieldHeader = React.memo(({
         ideaId,
         fieldId: entry.id,
         field: {
-          name,
-          type: schemaType,
+          schema: {
+            name,
+          },
         },
       }
     })
@@ -70,8 +71,9 @@ export const IdeaLocalFieldHeader = React.memo(({
         ideaId,
         fieldId: entry.id,
         field: {
-          name,
-          type: selected,
+          schema: {
+            type: selected,
+          }
         },
       }
     })

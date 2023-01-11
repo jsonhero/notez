@@ -37,7 +37,9 @@ export const BaseEditableCell = ({ children, editableRef, ideaId, fieldEntry, is
           fieldId: fieldEntry?.id,
           ideaId,
           field: {
-            type: fieldEntry.schema.type,
+            schema: {
+              type: fieldEntry.schema.type,
+            },
             value: null,
           }
         }
