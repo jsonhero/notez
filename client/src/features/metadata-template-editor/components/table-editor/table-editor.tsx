@@ -163,7 +163,7 @@ export const TableEditor = ({
         </Thead>
         <Tbody>
           {table.getRowModel().rows.map((row, i) => {
-            return <IdeaDataRow key={row.id} row={row} />
+            return <IdeaDataRow key={row.id} row={row} metadataTemplateId={metadataTemplate.id} />
           })}
           <Tr display="flex" onClick={onAddRow} _hover={{
               cursor: 'pointer',

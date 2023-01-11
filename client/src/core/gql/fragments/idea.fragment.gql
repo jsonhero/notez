@@ -8,6 +8,7 @@ fragment AppIdea on Idea {
     }
   }
   createdAt
+  updatedAt
   __typename
 }
 

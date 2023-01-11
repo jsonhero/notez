@@ -16,10 +16,11 @@ export interface IdeaDataRowFields {
 }
 
 interface IdeaDataRowProps {
+  metadataTemplateId: string;
   row: Row<IdeaDataRowFields>;
 }
 
-export const IdeaDataRow = ({ row }: IdeaDataRowProps) => {
+export const IdeaDataRow = ({ row, metadataTemplateId }: IdeaDataRowProps) => {
   return (
     <Tr role="group" width="100%" display="flex" _hover={{
       bg: 'gray.50'
@@ -32,7 +33,7 @@ export const IdeaDataRow = ({ row }: IdeaDataRowProps) => {
           <Td key={cell.id} width={`${cell.column.getSize()}px`}>
             {
               cell.column.id === 'idea' ? (
-                <IdeaRefCell {...cell.getContext()} />
+                <IdeaRefCell idea={row.original.idea} metadataTemplateId={metadataTemplateId} />
               ) : 
                 <IdeaFieldCell entry={cell.getValue()} ideaId={row.original.idea.id} />
             }

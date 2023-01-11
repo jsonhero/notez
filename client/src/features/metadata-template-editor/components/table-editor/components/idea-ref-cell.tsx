@@ -10,16 +10,18 @@ import { GlobalStoreContext } from '@stores/global'
 import { IdeaDataRowFields } from './idea-data-row'
 import { BaseEditableCell } from './base-editable-cell'
 
-interface IdeaRefCellCellProps extends CellContext<IdeaDataRowFields, AppIdeaFragment> {}
+interface IdeaRefCellCellProps {
+  idea: AppIdeaFragment;
+  metadataTemplateId: string;
+}
 
 export const IdeaRefCell = React.memo(({
-  cell,
-  getValue,
+  idea,
+  metadataTemplateId
 }: IdeaRefCellCellProps) => {
   const [, updateIdeaMutation] = useUpdateIdeaMutation()
 
   const inputRef = useRef<HTMLInputElement>(null)  
-  const idea = getValue()
   const navigate = useNavigate()
   const globalStore = useContext(GlobalStoreContext)
 
@@ -49,6 +51,7 @@ export const IdeaRefCell = React.memo(({
     })
   }
 
+  // Base cell gets no rerender :s
   return (
     <BaseEditableCell ideaId={idea.id} editableRef={inputRef}>
       <Input
@@ -76,5 +79,5 @@ export const IdeaRefCell = React.memo(({
     </BaseEditableCell>
   )
 }, (prevProps, nextProps) => {
-  return prevProps.getValue().id === nextProps.getValue().id
+  return prevProps.idea.id === nextProps.idea.id && prevProps.metadataTemplateId === nextProps.metadataTemplateId
 })

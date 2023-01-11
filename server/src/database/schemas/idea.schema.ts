@@ -2,7 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 
 import { MetadataTemplate } from './metadata-template';
+import { IdeaReferenceSchema, IdeaReference } from './idea-reference.schema';
 
+// https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design
+// https://highlyscalable.wordpress.com/2012/03/01/nosql-data-modeling-techniques/
+// https://www.arangodb.com/graph-database/
+// https://terminusdb.com/
 @Schema()
 export class IdeaMetadata {
   id: string;
@@ -17,6 +22,7 @@ export class IdeaMetadata {
   schema: any;
 
   @Prop({
+    default: [],
     type: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -51,6 +57,11 @@ export class Idea {
 
   @Prop()
   updatedAt: Date;
+
+  @Prop({
+    type: [{ type: IdeaReferenceSchema }],
+  })
+  references: IdeaReference[];
 }
 
 export type IdeaDocument = mongoose.HydratedDocument<Idea>;

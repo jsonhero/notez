@@ -4,7 +4,6 @@ import { Inject, forwardRef } from '@nestjs/common';
 import { ResolvedGlobalId, fromGlobalId } from '@api/utils';
 import { Node } from '@api/graph';
 import { IdeaService } from '../idea';
-import { IdeaResolver } from '../idea/idea.resolver';
 import { MetadataTemplateService } from '../metadata-template';
 import { MetadataTemplateResolver } from '../metadata-template/metadata-template.resolver';
 
@@ -29,7 +28,7 @@ export class NodeResolver {
     switch (resolvedGlobalId.type) {
       case 'Idea':
         const idea = await this.ideaService.getIdeaById(resolvedGlobalId.id);
-        return IdeaResolver._mapIdeaDto(idea);
+        return this.ideaService._mapIdeaDto(idea);
       case 'MetadataTemplate':
         const metadataTemplate =
           await this.metadataTemplateService.getMetadataTemplateById(

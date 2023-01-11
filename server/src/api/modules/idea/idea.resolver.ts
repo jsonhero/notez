@@ -19,114 +19,9 @@ import {
   toIdeaFieldEntryId,
 } from '@api/utils';
 
-function resolveInputValueToDto(input: {
-  type: string;
-  value: any;
-  updatedAt: Date;
-}): any {
-  if (!input) return null;
-
-  if (input.type === 'text') {
-    return {
-      text: input.value || '',
-      updatedAt: input.updatedAt,
-      type: 'text',
-    };
-  } else if (input.type === 'number') {
-    return {
-      number: input.value || 0,
-      updatedAt: input.updatedAt,
-      type: 'number',
-    };
-  } else if (input.type === 'date') {
-    return {
-      date: input.value,
-      updatedAt: input.updatedAt,
-      type: 'date',
-    };
-  }
-
-  return null;
-}
-
 @Resolver(() => Graph.IdeaObject)
 export class IdeaResolver {
   constructor(private ideaService: IdeaService) {}
-
-  static _mapIdeaDto(ideaDoc: IdeaDocument): Graph.IdeaObject {
-    const groups = [];
-    if (ideaDoc.metadata.templates?.length) {
-      ideaDoc.metadata.templates.forEach((template) => {
-        const externalGroupFields = Object.entries(
-          template.schema?.fields || {},
-        )
-          // .filter((field) => field.type !== 'noteRef')
-          .map(([fieldId, field]: any) => {
-            const input = _.get(
-              ideaDoc.metadata.values,
-              `${template.pathId}.${fieldId}`,
-              null,
-            );
-            return {
-              id: toIdeaFieldEntryId(ideaDoc.id, template.id, fieldId),
-              schema: {
-                id: fieldId,
-                name: field.name,
-                type: field.type,
-                updatedAt: field.updatedAt,
-              },
-              value: resolveInputValueToDto(input),
-            };
-          });
-
-        groups.push({
-          context: 'external',
-          template,
-          fields: externalGroupFields,
-        });
-      });
-    }
-
-    // local always last
-    if (ideaDoc.metadata?.schema?.fields) {
-      const localGroupFields = Object.entries(
-        ideaDoc.metadata.schema.fields,
-      ).map(([fieldId, schema]: any) => {
-        const input = _.get(
-          ideaDoc.metadata.values,
-          `${ideaDoc.metadata.pathId}.${fieldId}`,
-          null,
-        );
-
-        return {
-          id: toIdeaFieldEntryId(ideaDoc.id, null, fieldId),
-          schema: {
-            id: fieldId,
-            ...schema,
-          },
-          value: resolveInputValueToDto(input),
-        };
-      });
-      groups.push({
-        context: 'local',
-        template: null,
-        fields: localGroupFields,
-      });
-    }
-
-    return {
-      id: ideaDoc.id,
-      title: ideaDoc.title,
-      document: ideaDoc.document,
-      metadata: {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        groups,
-      },
-      createdAt: ideaDoc.createdAt,
-      updatedAt: ideaDoc.updatedAt,
-    };
-  }
 
   @ResolveField()
   id(@Parent() idea: IdeaDocument): string {
@@ -147,7 +42,7 @@ export class IdeaResolver {
       ),
     });
 
-    return ideas.map(IdeaResolver._mapIdeaDto);
+    return Promise.all(ideas.map((idea) => this.ideaService._mapIdeaDto(idea)));
   }
 
   @Mutation(() => Graph.CreateIdeaPayload)
@@ -164,7 +59,7 @@ export class IdeaResolver {
     });
 
     return {
-      idea: IdeaResolver._mapIdeaDto(idea),
+      idea: await this.ideaService._mapIdeaDto(idea),
     };
   }
 
@@ -178,7 +73,7 @@ export class IdeaResolver {
     );
 
     return {
-      idea: IdeaResolver._mapIdeaDto(idea),
+      idea: await this.ideaService._mapIdeaDto(idea),
     };
   }
 
@@ -189,6 +84,10 @@ export class IdeaResolver {
     const ideaId = fromGlobalId(input.ideaId).id;
 
     const field = await this.ideaService.addMetadataField(ideaId);
+
+    const idea = await this.ideaService.getIdeaById(ideaId);
+    const resolvedIdea = await this.ideaService._mapIdeaDto(idea);
+
     return {
       field: {
         id: toIdeaFieldEntryId(ideaId, field.metadataTemplateId, field.id),
@@ -198,7 +97,10 @@ export class IdeaResolver {
           type: field.schema.type,
           updatedAt: field.schema.updatedAt,
         },
-        value: resolveInputValueToDto(field.input),
+        value: this.ideaService._resolveInputValueToDto(
+          field.input,
+          resolvedIdea.toReferences,
+        ),
       },
     };
   }
@@ -210,12 +112,60 @@ export class IdeaResolver {
     const ideaId = fromGlobalId(input.ideaId).id;
     const { fieldId, metadataTemplateId } = fromIdeaFieldEntryId(input.fieldId);
 
+    let valueInput = null;
+
+    if (input.field.value?.dateInput) {
+      valueInput = {
+        value: {
+          date: input.field.value.dateInput.date,
+        },
+        type: 'date',
+      };
+    } else if (input.field.value?.numberInput) {
+      valueInput = {
+        value: {
+          date: input.field.value?.numberInput.number,
+        },
+        type: 'number',
+      };
+    } else if (input.field.value?.numberInput) {
+      valueInput = {
+        value: {
+          date: input.field.value.numberInput.number,
+        },
+        type: 'number',
+      };
+    } else if (input.field.value?.textInput) {
+      valueInput = {
+        value: {
+          date: input.field.value.textInput.text,
+        },
+        type: 'text',
+      };
+    } else if (input.field.value?.referenceInput) {
+      valueInput = {
+        value: {
+          ideaId: input.field.value.referenceInput.ideaId,
+          type: input.field.value.referenceInput.type,
+          fieldId: input.field.value.referenceInput.fieldId,
+        },
+        type: 'reference',
+      };
+    }
+
     const field = await this.ideaService.updateMetadataField(
       ideaId,
       metadataTemplateId,
       fieldId,
-      input.field,
+      {
+        schema: input.field.schema,
+        valueInput: valueInput,
+      },
     );
+
+    const idea = await this.ideaService.getIdeaById(ideaId);
+    const resolvedIdea = await this.ideaService._mapIdeaDto(idea);
+
     return {
       field: {
         id: toIdeaFieldEntryId(ideaId, field.metadataTemplateId, field.id),
@@ -225,7 +175,10 @@ export class IdeaResolver {
           type: field.schema.type,
           updatedAt: field.schema.updatedAt,
         },
-        value: resolveInputValueToDto(field.input),
+        value: this.ideaService._resolveInputValueToDto(
+          field.input,
+          resolvedIdea.toReferences,
+        ),
       },
     };
   }
@@ -237,11 +190,7 @@ export class IdeaResolver {
     const ideaId = fromGlobalId(input.ideaId).id;
     const { fieldId, metadataTemplateId } = fromIdeaFieldEntryId(input.fieldId);
 
-    await this.ideaService.deleteMetadataField(
-      ideaId,
-      metadataTemplateId,
-      fieldId,
-    );
+    await this.ideaService.deleteMetadataField(ideaId, fieldId);
 
     return {
       clientMutationId: input.clientMutationId,
@@ -274,7 +223,7 @@ export class IdeaResolver {
 
     return {
       clientMutationId: input.clientMutationId,
-      idea: IdeaResolver._mapIdeaDto(idea),
+      idea: await this.ideaService._mapIdeaDto(idea),
     };
   }
 
@@ -292,7 +241,7 @@ export class IdeaResolver {
 
     return {
       clientMutationId: input.clientMutationId,
-      idea: IdeaResolver._mapIdeaDto(idea),
+      idea: await this.ideaService._mapIdeaDto(idea),
     };
   }
 }

@@ -24,14 +24,14 @@ export class MetadataTemplateResolver {
       id: mtDoc.id,
       title: mtDoc.title,
       schema: {
-        fields: Object.entries(mtDoc.schema?.fields || {}).map(
-          ([fieldId, field]: any) => {
-            return {
-              id: fieldId,
-              ...field,
-            };
-          },
-        ),
+        fields: (mtDoc.schema?.fields || []).map((schemaField: any) => {
+          return {
+            id: schemaField.fieldId,
+            name: schemaField.name,
+            type: schemaField.type,
+            updatedAt: schemaField.updatedAt,
+          };
+        }),
       },
       createdAt: mtDoc.createdAt,
       updatedAt: mtDoc.updatedAt,

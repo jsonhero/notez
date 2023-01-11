@@ -11,100 +11,16 @@ import { AutoMap } from '@automapper/classes';
 import { Node } from '@api/graph';
 
 import {
-  MetadataTemplate,
-  MetadataTemplateSchemaField,
-} from '../../metadata-template/graph';
+  IdeaMetadata,
+  MetadataGroupFieldEntry,
+  IdeaReference,
+  MetadataFieldDateValueInput,
+  MetadataFieldIdeaReferenceValueInput,
+  MetadataFieldNumberValueInput,
+  MetadataFieldTextValueInput,
+} from './idea-metadata.object';
 
 // Union values below
-@ObjectType()
-class MetadataFieldTextValue {
-  @Field()
-  text: string;
-
-  @Field()
-  type: string;
-
-  @Field()
-  updatedAt: Date;
-}
-
-@ObjectType()
-class MetadataFieldNumberValue {
-  @Field()
-  number: number;
-
-  @Field()
-  type: string;
-
-  @Field()
-  updatedAt: Date;
-}
-
-@ObjectType()
-class MetadataFieldDateValue {
-  @Field()
-  date: Date;
-
-  @Field()
-  type: string;
-
-  @Field()
-  updatedAt: Date;
-}
-
-export const MetadataFieldValueUnion = createUnionType({
-  name: 'MetadataFieldValueUnion',
-  resolveType: (input) => {
-    if (input.type === 'text') {
-      return MetadataFieldTextValue;
-    } else if (input.type === 'number') {
-      return MetadataFieldNumberValue;
-    } else if (input.type === 'date') {
-      return MetadataFieldDateValue;
-    }
-
-    return null;
-  },
-  types: () =>
-    [
-      MetadataFieldTextValue,
-      MetadataFieldNumberValue,
-      MetadataFieldDateValue,
-    ] as const,
-});
-
-@ObjectType()
-class MetadataGroupFieldEntry {
-  @Field(() => ID)
-  id: string;
-
-  @Field(() => MetadataTemplateSchemaField)
-  schema: MetadataTemplateSchemaField;
-
-  @Field(() => MetadataFieldValueUnion, { nullable: true })
-  value: typeof MetadataFieldValueUnion;
-}
-
-@ObjectType()
-class MetadataGroup {
-  @Field()
-  context: string;
-
-  @Field(() => MetadataTemplate, {
-    nullable: true,
-  })
-  template: MetadataTemplate | null;
-
-  @Field(() => [MetadataGroupFieldEntry])
-  fields: MetadataGroupFieldEntry[];
-}
-
-@ObjectType()
-class IdeaMetadata {
-  @Field(() => [MetadataGroup])
-  groups: MetadataGroup[];
-}
-
 @ObjectType('Idea', {
   implements: Node,
 })
@@ -131,6 +47,9 @@ export class IdeaObject implements Node {
   @AutoMap()
   @Field()
   updatedAt: Date;
+
+  @Field(() => [IdeaReference])
+  toReferences: IdeaReference[];
 }
 
 @InputType()
@@ -148,12 +67,30 @@ export class CreateIdeaPayload {
 }
 
 @InputType()
+export class IdeaReferenceInput {
+  @Field(() => ID)
+  ideaId: string;
+
+  @Field()
+  type: string;
+
+  @Field({ nullable: true })
+  fieldId: string;
+}
+
+@InputType()
 export class IdeaInput {
   @Field({ nullable: true })
   title: string;
 
   @Field(() => GraphQLJSONObject, { nullable: true })
   document: any;
+
+  @Field(() => [IdeaReferenceInput], { nullable: true })
+  refAdds: IdeaReferenceInput[];
+
+  @Field(() => [ID], { nullable: true })
+  refIdsToDelete: string[];
 }
 
 @InputType()
@@ -184,17 +121,40 @@ export class AddIdeaMetadataFieldPayload {
 }
 
 @InputType()
-class MetadataFieldInput {
+class MetadataFieldValueInput {
+  @Field(() => MetadataFieldTextValueInput, { nullable: true })
+  textInput: MetadataFieldTextValueInput;
+
+  @Field(() => MetadataFieldNumberValueInput, { nullable: true })
+  numberInput: MetadataFieldNumberValueInput;
+
+  @Field(() => MetadataFieldDateValueInput, { nullable: true })
+  dateInput: MetadataFieldDateValueInput;
+
+  @Field(() => MetadataFieldIdeaReferenceValueInput, { nullable: true })
+  referenceInput: MetadataFieldIdeaReferenceValueInput;
+}
+
+@InputType()
+class MetadataFieldSchemaInput {
   @Field({ nullable: true })
   name: string;
 
   @Field({ nullable: true })
   type: string;
+}
 
-  @Field({
+@InputType()
+class MetadataFieldInput {
+  @Field(() => MetadataFieldSchemaInput, {
     nullable: true,
   })
-  value: string;
+  schema: MetadataFieldSchemaInput;
+
+  @Field(() => MetadataFieldValueInput, {
+    nullable: true,
+  })
+  value: MetadataFieldValueInput;
 }
 
 @InputType()

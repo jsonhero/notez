@@ -15,7 +15,7 @@ import { ApiModule } from './api';
       strategyInitializer: classes(),
     }),
     ApiModule,
-    MongooseModule.forRoot('mongodb://localhost/note-1'),
+    MongooseModule.forRoot('mongodb://localhost/note-2'),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       debug: true,

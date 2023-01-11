@@ -29,10 +29,6 @@ export class MetadataTemplateService {
     private readonly metadataTemplateModel: Model<MetadataTemplateDocument>,
   ) {}
 
-  _generatePathId(): string {
-    return 'p_' + nanoid(10);
-  }
-
   _generateFieldId(): string {
     return 'f_' + nanoid(10);
   }
@@ -69,9 +65,8 @@ export class MetadataTemplateService {
   async createMetadataTemplate(): Promise<MetadataTemplateDocument> {
     const metadataTemplate = await this.metadataTemplateModel.create({
       title: null,
-      pathId: this._generatePathId(),
       schema: {
-        fields: {},
+        fields: [],
       },
     });
 
@@ -114,24 +109,37 @@ export class MetadataTemplateService {
   ): Promise<IMetadataTemplateField> {
     const updateFields = _.omit(field);
 
-    const fieldPath = `schema.fields.${fieldId}`;
+    const $setFields = {
+      'schema.fields.$.updatedAt': new Date(),
+    };
 
-    const metadataTemplate = await this.metadataTemplateModel.findByIdAndUpdate(
-      metadataTemplateId,
+    if (updateFields.name) {
+      $setFields['schema.fields.$.name'] = updateFields.name;
+    }
+
+    if (updateFields.type) {
+      $setFields['schema.fields.$.type'] = updateFields.type;
+    }
+
+    await this.metadataTemplateModel.updateOne(
       {
-        $set: {
-          [fieldPath]: {
-            ...updateFields,
-            updatedAt: new Date(),
-          },
-        },
+        _id: metadataTemplateId,
+        'schema.fields.fieldId': fieldId,
       },
       {
-        new: true,
+        $set: {
+          ...$setFields,
+        },
       },
     );
 
-    const _field = _.get(metadataTemplate, fieldPath);
+    const metadataTemplate = await this.metadataTemplateModel.findById(
+      metadataTemplateId,
+    );
+
+    const _field = metadataTemplate.schema.fields.find(
+      (field) => field.fieldId === fieldId,
+    );
 
     return {
       id: fieldId,
@@ -144,9 +152,8 @@ export class MetadataTemplateService {
   ): Promise<IMetadataTemplateField> {
     const fieldId = this._generateFieldId();
 
-    const fieldPath = `schema.fields.${fieldId}`;
-
     const fieldDefault = {
+      fieldId,
       type: 'text',
       name: '',
       updatedAt: new Date(),
@@ -154,8 +161,8 @@ export class MetadataTemplateService {
     };
 
     await this.metadataTemplateModel.findByIdAndUpdate(metadataTemplateId, {
-      $set: {
-        [fieldPath]: fieldDefault,
+      $push: {
+        'schema.fields': fieldDefault,
       },
     });
 
@@ -171,11 +178,11 @@ export class MetadataTemplateService {
     metadataTemplateId: string,
     fieldId: string,
   ): Promise<void> {
-    const fieldPath = `schema.fields.${fieldId}`;
-
     await this.metadataTemplateModel.findByIdAndUpdate(metadataTemplateId, {
-      $unset: {
-        [fieldPath]: 1,
+      $pull: {
+        'schema.fields': {
+          fieldId: fieldId,
+        },
       },
     });
   }
