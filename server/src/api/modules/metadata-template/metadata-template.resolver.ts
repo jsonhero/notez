@@ -117,11 +117,24 @@ export class MetadataTemplateResolver {
   async updateMetadataTemplateField(
     @Args('input') input: Graph.UpdateMetadataTemplateFieldInput,
   ): Promise<Graph.UpdateMetadataTemplateFieldPayload> {
+    const fieldInput: any = {};
+
+    if (input.field.extra?.referenceInput) {
+      fieldInput.extraInput = input.field.extra.referenceInput;
+    }
+
+    if (input.field.name) {
+      fieldInput.name = input.field.name;
+    }
+    if (input.field.type) {
+      fieldInput.type = input.field.type;
+    }
+
     const field =
       await this.metadataTemplateService.updateMetadataTemplateField(
         fromGlobalId(input.metadataTemplateId).id,
         input.fieldId,
-        input.field,
+        fieldInput,
       );
 
     return {

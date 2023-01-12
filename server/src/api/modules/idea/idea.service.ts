@@ -67,10 +67,10 @@ interface GetIdeas {
 
 function constructRef(refAdd: IdeaRefInput) {
   return {
-    id: new mongoObjectId(),
+    _id: new mongoObjectId().toString(),
     type: refAdd.type,
     idea: refAdd.ideaId,
-    fieldId: refAdd.fieldId,
+    fieldId: 'test',
   };
 }
 
@@ -115,15 +115,17 @@ export class IdeaService {
       };
     } else if (input.type === 'reference') {
       const matchedRef = references.find(
-        (ref) => ref.id === input.value.referenceId,
+        (ref) => ref.id === input.value?.referenceId,
       );
       return {
-        reference: {
-          id: matchedRef.id,
-          type: matchedRef.type,
-          toIdea: matchedRef.idea,
-          fieldId: matchedRef.fieldId,
-        },
+        reference: matchedRef
+          ? {
+              id: matchedRef.id,
+              type: matchedRef.type,
+              toIdea: matchedRef.toIdea,
+              fieldId: matchedRef.fieldId,
+            }
+          : null,
         updatedAt: input.updatedAt,
         type: 'reference',
       };
@@ -132,20 +134,52 @@ export class IdeaService {
     return null;
   }
 
-  async _mapIdeaDto(ideaDoc: IdeaDocument): Promise<Graph.IdeaObject> {
-    const resolvedReferences = await Promise.all(
-      // @ts-ignore
-      ideaDoc.references?.map(async (ref) => {
-        return {
-          // @ts-ignore
-          id: ref.id,
-          // @ts-ignore
-          toIdea: await this._mapIdeaDto(ref.idea),
-          type: ref.type,
-          fieldId: ref.fieldId,
-        };
-      }),
-    );
+  async _mapIdeaDto(
+    ideaDoc: IdeaDocument,
+    depth = 0,
+  ): Promise<Graph.IdeaObject> {
+    let resolvedToReferences = [];
+    let resolvedFromReferences = [];
+
+    // @ts-ignore
+    if (ideaDoc.fromReferences?.length) {
+      resolvedFromReferences = await Promise.all(
+        // @ts-ignore
+        ideaDoc.fromReferences.map(async (idea) => {
+          const fromIdeaRef = idea.references.find(
+            (ref) => ref.idea.toString() === ideaDoc.id,
+          );
+          const toIdea = await this._mapIdeaDto(idea, depth + 1);
+
+          return {
+            id: fromIdeaRef.id,
+            toIdea: toIdea,
+            type: fromIdeaRef.type,
+            fieldId: fromIdeaRef.fieldId,
+          };
+        }),
+      );
+    }
+
+    if (depth === 0 && ideaDoc.references?.length) {
+      resolvedToReferences = await Promise.all(
+        // @ts-ignore
+        (ideaDoc.references || [])
+          // Handle deleted refs
+          .filter((ref) => ref.idea?.id)
+          .map(async (ref) => {
+            // @ts-ignore
+            const toIdea = await this._mapIdeaDto(ref.idea, depth + 1);
+            return {
+              // @ts-ignore
+              id: ref.id,
+              toIdea: toIdea,
+              type: ref.type,
+              fieldId: ref.fieldId,
+            };
+          }),
+      );
+    }
 
     const groups = [];
     if (ideaDoc.metadata.templates?.length) {
@@ -166,7 +200,7 @@ export class IdeaService {
                   updatedAt: valueField.updatedAt,
                   value: valueField.value,
                 },
-                resolvedReferences,
+                resolvedToReferences,
               );
             }
 
@@ -211,7 +245,7 @@ export class IdeaService {
                 updatedAt: valueField.updatedAt,
                 value: valueField.value,
               },
-              resolvedReferences,
+              resolvedToReferences,
             );
           }
 
@@ -234,6 +268,8 @@ export class IdeaService {
       });
     }
 
+    console.log(ideaDoc.title, resolvedFromReferences, ':: from rfes');
+
     return {
       id: ideaDoc.id,
       title: ideaDoc.title,
@@ -243,7 +279,8 @@ export class IdeaService {
         // @ts-ignore
         groups,
       },
-      toReferences: resolvedReferences,
+      toReferences: resolvedToReferences,
+      fromReferences: resolvedFromReferences,
       createdAt: ideaDoc.createdAt,
       updatedAt: ideaDoc.updatedAt,
     };
@@ -257,7 +294,7 @@ export class IdeaService {
       },
     };
 
-    if (args.title !== undefined) {
+    if (args.title?.length) {
       filter.title = {
         $regex: args.title,
       };
@@ -284,7 +321,9 @@ export class IdeaService {
     const note = await this.ideaModel
       .findById(ideaId)
       .populate('metadata.templates')
-      .populate('references.idea');
+      .populate('references.idea')
+      .populate('fromReferences');
+    console.log(note, 'notey');
     return note;
   }
 
@@ -470,13 +509,14 @@ export class IdeaService {
 
     if (props.valueInput !== undefined) {
       let $value = null;
+      let newRef = null;
 
       let operation = {};
 
       if (props.valueInput?.type === 'reference') {
-        const newRef = constructRef(props.valueInput.value);
+        newRef = constructRef(props.valueInput.value);
         $value = {
-          referenceId: newRef.id,
+          referenceId: newRef._id,
         };
 
         operation = {
@@ -485,6 +525,29 @@ export class IdeaService {
             references: newRef,
           },
         };
+
+        const existingValueFieldRef = idea.metadata.values.find(
+          (valueField) => valueField.fieldId === fieldId,
+        );
+
+        if (
+          existingValueFieldRef?.type === 'reference' &&
+          existingValueFieldRef?.value?.referenceId
+        ) {
+          // Pull existing ref if exists
+          await this.ideaModel.updateOne(
+            {
+              _id: ideaId,
+            },
+            {
+              $pull: {
+                references: {
+                  _id: existingValueFieldRef.value.referenceId,
+                },
+              },
+            },
+          );
+        }
       } else if (props.valueInput?.value) {
         $value = props.valueInput.value;
       }
@@ -520,15 +583,26 @@ export class IdeaService {
           createdAt: new Date(),
         };
 
+        let newOperation: any = {
+          $push: {
+            'metadata.values': newValueField,
+          },
+        };
+
+        if (newRef !== null) {
+          newOperation = {
+            $push: {
+              'metadata.values': newValueField,
+              references: newRef,
+            },
+          };
+        }
+
         await this.ideaModel.updateOne(
           {
             _id: ideaId,
           },
-          {
-            $push: {
-              'metadata.values': newValueField,
-            },
-          },
+          newOperation,
         );
       }
     }

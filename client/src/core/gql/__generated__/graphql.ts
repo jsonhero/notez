@@ -118,6 +118,7 @@ export type Idea = Node & {
   __typename?: 'Idea';
   createdAt: Scalars['DateTime'];
   document?: Maybe<Scalars['JSONObject']>;
+  fromReferences: Array<IdeaReference>;
   id: Scalars['ID'];
   metadata: IdeaMetadata;
   title?: Maybe<Scalars['String']>;
@@ -191,7 +192,7 @@ export type MetadataFieldNumberValueInput = {
 
 export type MetadataFieldReferenceValue = {
   __typename?: 'MetadataFieldReferenceValue';
-  reference: IdeaReference;
+  reference?: Maybe<IdeaReference>;
   type: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
@@ -235,6 +236,10 @@ export type MetadataGroupFieldEntry = {
   value?: Maybe<MetadataFieldValueUnion>;
 };
 
+export type MetadataSchemaExtraInput = {
+  referenceInput?: InputMaybe<SchemaExtraReferenceInput>;
+};
+
 export type MetadataTemplate = Node & {
   __typename?: 'MetadataTemplate';
   createdAt: Scalars['DateTime'];
@@ -242,11 +247,6 @@ export type MetadataTemplate = Node & {
   schema: MetadataTemplateSchema;
   title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
-};
-
-export type MetadataTemplateFieldInput = {
-  name: Scalars['String'];
-  type: Scalars['String'];
 };
 
 export type MetadataTemplateInput = {
@@ -260,10 +260,17 @@ export type MetadataTemplateSchema = {
 
 export type MetadataTemplateSchemaField = {
   __typename?: 'MetadataTemplateSchemaField';
+  extra?: Maybe<SchemaExtraUnion>;
   id: Scalars['ID'];
   name: Scalars['String'];
   type: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+};
+
+export type MetadataTemplateSchemaFieldInput = {
+  extra?: InputMaybe<MetadataSchemaExtraInput>;
+  name: Scalars['String'];
+  type: Scalars['String'];
 };
 
 export type MetadataTemplateSearchInput = {
@@ -385,6 +392,17 @@ export type QueryNodesArgs = {
   ids: Array<Scalars['ID']>;
 };
 
+export type SchemaExtraReference = {
+  __typename?: 'SchemaExtraReference';
+  metadataTemplates: Array<MetadataTemplate>;
+};
+
+export type SchemaExtraReferenceInput = {
+  metadataTemplateIds: Array<Scalars['ID']>;
+};
+
+export type SchemaExtraUnion = SchemaExtraReference;
+
 export type UpdateIdeaInput = {
   idea: IdeaInput;
   ideaId: Scalars['ID'];
@@ -407,7 +425,7 @@ export type UpdateIdeaPayload = {
 };
 
 export type UpdateMetadataTemplateFieldInput = {
-  field: MetadataTemplateFieldInput;
+  field: MetadataTemplateSchemaFieldInput;
   fieldId: Scalars['ID'];
   metadataTemplateId: Scalars['ID'];
 };
@@ -452,6 +470,7 @@ export type GraphCacheKeysConfig = {
   MetadataTemplate?: (data: WithTypename<MetadataTemplate>) => null | string,
   MetadataTemplateSchema?: (data: WithTypename<MetadataTemplateSchema>) => null | string,
   MetadataTemplateSchemaField?: (data: WithTypename<MetadataTemplateSchemaField>) => null | string,
+  SchemaExtraReference?: (data: WithTypename<SchemaExtraReference>) => null | string,
   UpdateIdeaMetadataFieldPayload?: (data: WithTypename<UpdateIdeaMetadataFieldPayload>) => null | string,
   UpdateIdeaPayload?: (data: WithTypename<UpdateIdeaPayload>) => null | string,
   UpdateMetadataTemplateFieldPayload?: (data: WithTypename<UpdateMetadataTemplateFieldPayload>) => null | string,
@@ -500,6 +519,7 @@ export type GraphCacheResolvers = {
   Idea?: {
     createdAt?: GraphCacheResolver<WithTypename<Idea>, Record<string, never>, Scalars['DateTime'] | string>,
     document?: GraphCacheResolver<WithTypename<Idea>, Record<string, never>, Scalars['JSONObject'] | string>,
+    fromReferences?: GraphCacheResolver<WithTypename<Idea>, Record<string, never>, Array<WithTypename<IdeaReference> | string>>,
     id?: GraphCacheResolver<WithTypename<Idea>, Record<string, never>, Scalars['ID'] | string>,
     metadata?: GraphCacheResolver<WithTypename<Idea>, Record<string, never>, WithTypename<IdeaMetadata> | string>,
     title?: GraphCacheResolver<WithTypename<Idea>, Record<string, never>, Scalars['String'] | string>,
@@ -556,10 +576,14 @@ export type GraphCacheResolvers = {
     fields?: GraphCacheResolver<WithTypename<MetadataTemplateSchema>, Record<string, never>, Array<WithTypename<MetadataTemplateSchemaField> | string>>
   },
   MetadataTemplateSchemaField?: {
+    extra?: GraphCacheResolver<WithTypename<MetadataTemplateSchemaField>, Record<string, never>, WithTypename<SchemaExtraUnion> | string>,
     id?: GraphCacheResolver<WithTypename<MetadataTemplateSchemaField>, Record<string, never>, Scalars['ID'] | string>,
     name?: GraphCacheResolver<WithTypename<MetadataTemplateSchemaField>, Record<string, never>, Scalars['String'] | string>,
     type?: GraphCacheResolver<WithTypename<MetadataTemplateSchemaField>, Record<string, never>, Scalars['String'] | string>,
     updatedAt?: GraphCacheResolver<WithTypename<MetadataTemplateSchemaField>, Record<string, never>, Scalars['DateTime'] | string>
+  },
+  SchemaExtraReference?: {
+    metadataTemplates?: GraphCacheResolver<WithTypename<SchemaExtraReference>, Record<string, never>, Array<WithTypename<MetadataTemplate> | string>>
   },
   UpdateIdeaMetadataFieldPayload?: {
     field?: GraphCacheResolver<WithTypename<UpdateIdeaMetadataFieldPayload>, Record<string, never>, WithTypename<MetadataGroupFieldEntry> | string>

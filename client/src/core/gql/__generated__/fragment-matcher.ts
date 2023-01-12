@@ -10,6 +10,9 @@
     "Node": [
       "Idea",
       "MetadataTemplate"
+    ],
+    "SchemaExtraUnion": [
+      "SchemaExtraReference"
     ]
   }
 };
@@ -24,6 +27,9 @@
     "Node": [
       "Idea",
       "MetadataTemplate"
+    ],
+    "SchemaExtraUnion": [
+      "SchemaExtraReference"
     ]
   }
 };

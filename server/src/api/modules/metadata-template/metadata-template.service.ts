@@ -5,21 +5,29 @@ import { Model, FilterQuery } from 'mongoose';
 import { nanoid } from 'nanoid';
 
 import { MetadataTemplate, MetadataTemplateDocument } from '@database/schemas';
+import * as Graph from './graph';
 
 interface IMetadataTemplateField {
   id: string;
   name: string;
   type: string;
   updatedAt: Date;
+  extra: any;
+}
+
+interface SchemaExtraReference {
+  metadataTemplateIds: string[];
 }
 
 interface IUpdateMetadataTemplateField {
   name?: string;
   type?: string;
+  extraInput: { type: 'reference'; extra: SchemaExtraReference };
 }
 
 interface IGetMetadataTemplates {
   title?: string;
+  metadataTemplateIds?: string[];
 }
 
 @Injectable()
@@ -33,6 +41,46 @@ export class MetadataTemplateService {
     return 'f_' + nanoid(10);
   }
 
+  async _resolveSchemaField(schemaField: IMetadataTemplateField) {
+    let extra = null;
+    if (schemaField.type === 'reference' && schemaField.extra) {
+      const templateIds: string[] = schemaField.extra.metadataTemplateIds;
+      const metadataTemplates = await this.getMetadataTemplates({
+        metadataTemplateIds: templateIds,
+      });
+      extra = {
+        metadataTemplates,
+      };
+    }
+
+    return {
+      id: schemaField.id,
+      name: schemaField.name,
+      type: schemaField.type,
+      updatedAt: schemaField.updatedAt,
+      extra,
+    };
+  }
+
+  async _mapMetadataTemplateDto(
+    mtDoc: MetadataTemplateDocument,
+  ): Promise<Graph.MetadataTemplate> {
+    const resolvedFields = await Promise.all(
+      (mtDoc.schema?.fields || []).map((field) =>
+        this._resolveSchemaField(field),
+      ),
+    );
+    return {
+      id: mtDoc.id,
+      title: mtDoc.title,
+      schema: {
+        fields: resolvedFields,
+      },
+      createdAt: mtDoc.createdAt,
+      updatedAt: mtDoc.updatedAt,
+    };
+  }
+
   async getMetadataTemplates(
     args: IGetMetadataTemplates,
   ): Promise<MetadataTemplateDocument[]> {
@@ -41,6 +89,12 @@ export class MetadataTemplateService {
     if (args.title !== undefined) {
       filter.title = {
         $regex: args.title,
+      };
+    }
+
+    if (args.metadataTemplateIds?.length) {
+      filter.id = {
+        $in: [args.metadataTemplateIds],
       };
     }
 
@@ -121,6 +175,10 @@ export class MetadataTemplateService {
       $setFields['schema.fields.$.type'] = updateFields.type;
     }
 
+    if (updateFields.extraInput) {
+      $setFields['schema.fields.$.extra'] = updateFields.extraInput.extra;
+    }
+
     await this.metadataTemplateModel.updateOne(
       {
         _id: metadataTemplateId,
@@ -171,6 +229,7 @@ export class MetadataTemplateService {
       type: fieldDefault.type,
       name: fieldDefault.name,
       updatedAt: fieldDefault.updatedAt,
+      extra: null,
     };
   }
 

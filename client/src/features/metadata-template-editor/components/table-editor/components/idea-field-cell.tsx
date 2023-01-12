@@ -1,8 +1,27 @@
 import React, { useState, useMemo, useRef } from 'react'
 import { CellContext } from '@tanstack/react-table'
-import { HStack, Input } from '@chakra-ui/react'
+import { 
+  HStack,
+  VStack,
+  Input,
+  Button,
+  Box,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  Text,
+} from '@chakra-ui/react'
 
-import { AppIdeaMetadataFieldFragment, MetadataFieldTextValue, MetadataFieldNumberValue, useUpdateIdeaMetadataFieldMutation } from '@gql/operations'
+import { 
+  AppIdeaMetadataFieldFragment,
+  MetadataFieldTextValue,
+  MetadataFieldNumberValue,
+  MetadataFieldReferenceValue,
+  useUpdateIdeaMetadataFieldMutation ,
+  useGetMetadataTemplatesQuery,
+  useGetIdeasQuery,
+  AppIdeaFragment,
+} from '@gql/operations'
 
 
 import { IdeaDataRowFields} from './idea-data-row'
@@ -38,6 +57,19 @@ export const IdeaFieldCell = React.memo((props: IdeaFieldCellProps) => {
 
     return (
       <IdeaNumberFieldCell {...props} value={null} />
+    )
+  }
+
+  if (entry?.value?.__typename === 'MetadataFieldReferenceValue' || (entry?.schema.type === 'reference' && !entry.value)) {
+
+    if (entry?.value?.__typename === 'MetadataFieldReferenceValue') {
+      return (
+        <IdeaReferenceFieldCell {...props} value={entry?.value}  />
+      )
+    }
+
+    return (
+      <IdeaReferenceFieldCell {...props} value={null} />
     )
   }
 
@@ -184,6 +216,107 @@ export const IdeaNumberFieldCell = ({
         onChange={onChange} 
         onBlur={onBlur} 
       />
+    </BaseEditableCell>
+  )
+}
+
+
+
+interface IdeaReferenceFieldCellProps {
+  ideaId: string;
+  entry: AppIdeaMetadataFieldFragment | null;
+  value: MetadataFieldReferenceValue | null;
+}
+
+export const IdeaReferenceFieldCell = ({
+  ideaId,
+  entry,
+  value,
+}: IdeaReferenceFieldCellProps) => {
+  const inputRef = useRef<HTMLInputElement>(null)  
+
+  const [, updateIdeaMetadataFieldMutation] = useUpdateIdeaMetadataFieldMutation()
+  const [search, setSearch] = useState<string>('')
+
+  const [response] = useGetIdeasQuery({
+    pause: search.length === 0,
+    variables: {
+      input: {
+        title: search,
+      }
+    }
+  })
+
+  const hasSchemaTypeConflict = useMemo(() => {
+    return entry?.schema.type !== 'reference'
+  }, [entry?.schema.type])
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value)
+  }
+  
+  const onClickIdea = (idea: AppIdeaFragment) => {
+    // // Make this better if value is null (field jsut added to schema)
+    if (entry?.id) {
+      updateIdeaMetadataFieldMutation({
+        input: {
+          fieldId: entry?.id,
+          ideaId,
+          field: {
+            value: {
+              referenceInput: {
+                ideaId: idea.id,
+                type: 'metadata',
+              }
+            },
+          }
+        }
+      })
+    }
+  }
+
+  return (
+    <BaseEditableCell ideaId={ideaId} fieldEntry={entry} isInvalid={hasSchemaTypeConflict} editableRef={inputRef}>
+      <Popover initialFocusRef={inputRef} placement="bottom">
+        <PopoverTrigger>
+          <Button
+            variant="unstyled"
+            w="100%"
+            size="xs"
+            sx={{
+              fontWeight: 'bold',
+              m: '0px',
+              p: 'xs',
+              outline: 'none',
+              border: 'none',
+            }}
+            _focusVisible={{
+              outline: 'none',
+              border: 'none',
+            }}
+            isDisabled={hasSchemaTypeConflict}
+          >
+            <Text>{value?.reference?.toIdea.title}</Text>
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <Input 
+            ref={inputRef} 
+            value={search} 
+            onChange={onChange} 
+          />
+          <Box p="xsm">
+            <VStack align="flex-start">
+              {response.data?.ideas.map((idea) => (
+                <Button key={idea.id} variant="ghost" w="100%" onClick={() => onClickIdea(idea)}>
+                  {idea.title || "Untitled"}
+                </Button>
+              ))}
+            </VStack>
+          </Box>
+        </PopoverContent>
+
+      </Popover>
     </BaseEditableCell>
   )
 }

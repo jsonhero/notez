@@ -4,6 +4,7 @@ import { HStack, Icon, Input, Button, Popover, PopoverTrigger, PopoverContent, T
 } from '@chakra-ui/react'
 import { HeaderContext } from '@tanstack/react-table'
 import { BsTextLeft, BsCalendarWeek } from 'react-icons/bs'
+import { VscReferences } from 'react-icons/vsc'
 import { BiHash } from 'react-icons/bi'
 import { DeleteIcon } from '@chakra-ui/icons'
 import { HiOutlineCalendar } from 'react-icons/hi'
@@ -23,6 +24,7 @@ const SchemaTypeIcon = ({ type }: SchemaTypeIconProps) => {
     if (type === 'text') return BsTextLeft
     else if (type === 'number') return BiHash
     else if (type === 'date') return HiOutlineCalendar
+    else if (type === 'reference') return VscReferences
   }
 
   return <Icon boxSize="16px" as={getIcon()} />
@@ -130,6 +132,7 @@ export const IdeaFieldHeader = React.memo(({
                 <MenuItemOption value="text">Text</MenuItemOption>
                 <MenuItemOption value="number">Number</MenuItemOption>
                 <MenuItemOption value="date">Date</MenuItemOption>
+                <MenuItemOption value="reference">Reference</MenuItemOption>
               </MenuOptionGroup>
             </MenuList>
           </Menu>

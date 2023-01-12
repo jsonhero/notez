@@ -6,10 +6,7 @@ import {
   Parent,
   ResolveField,
 } from '@nestjs/graphql';
-
 import * as _ from 'lodash';
-import * as Graph from './graph';
-import { IdeaService } from './idea.service';
 
 import { IdeaDocument } from '@database/schemas';
 import {
@@ -19,9 +16,16 @@ import {
   toIdeaFieldEntryId,
 } from '@api/utils';
 
+import * as Graph from './graph';
+import { IdeaService } from './idea.service';
+import { MetadataTemplateService } from '../metadata-template';
+
 @Resolver(() => Graph.IdeaObject)
 export class IdeaResolver {
-  constructor(private ideaService: IdeaService) {}
+  constructor(
+    private ideaService: IdeaService,
+    private metadataTemplateService: MetadataTemplateService,
+  ) {}
 
   @ResolveField()
   id(@Parent() idea: IdeaDocument): string {
@@ -96,6 +100,7 @@ export class IdeaResolver {
           name: field.schema.name,
           type: field.schema.type,
           updatedAt: field.schema.updatedAt,
+          extra: null,
         },
         value: this.ideaService._resolveInputValueToDto(
           field.input,
@@ -138,7 +143,7 @@ export class IdeaResolver {
     } else if (input.field.value?.referenceInput) {
       valueInput = {
         value: {
-          ideaId: input.field.value.referenceInput.ideaId,
+          ideaId: fromGlobalId(input.field.value.referenceInput.ideaId).id,
           type: input.field.value.referenceInput.type,
           fieldId: input.field.value.referenceInput.fieldId,
         },
@@ -169,6 +174,7 @@ export class IdeaResolver {
           name: field.schema.name,
           type: field.schema.type,
           updatedAt: field.schema.updatedAt,
+          extra: null,
         },
         value: this.ideaService._resolveInputValueToDto(
           field.input,

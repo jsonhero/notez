@@ -1,7 +1,14 @@
-import { ObjectType, Field, ID, InputType } from '@nestjs/graphql';
+import {
+  ObjectType,
+  Field,
+  ID,
+  InputType,
+  createUnionType,
+} from '@nestjs/graphql';
 import { AutoMap } from '@automapper/classes';
 
 import { Node } from '@api/graph';
+import { SchemaExtraUnion } from '../../idea/graph';
 
 @ObjectType()
 export class MetadataTemplateSchemaField {
@@ -13,6 +20,9 @@ export class MetadataTemplateSchemaField {
 
   @Field()
   type: string;
+
+  @Field(() => SchemaExtraUnion, { nullable: true })
+  extra: typeof SchemaExtraUnion;
 
   @Field()
   updatedAt: Date;
@@ -94,12 +104,27 @@ export class UpdateMetadataTemplatePayload {
 }
 
 @InputType()
-export class MetadataTemplateFieldInput {
+export class SchemaExtraReferenceInput {
+  @Field(() => [ID])
+  metadataTemplateIds: string[];
+}
+
+@InputType()
+export class MetadataSchemaExtraInput {
+  @Field(() => SchemaExtraReferenceInput, { nullable: true })
+  referenceInput: SchemaExtraReferenceInput;
+}
+
+@InputType()
+export class MetadataTemplateSchemaFieldInput {
   @Field()
   name: string;
 
   @Field()
   type: string;
+
+  @Field(() => MetadataSchemaExtraInput, { nullable: true })
+  extra: MetadataSchemaExtraInput;
 }
 
 @InputType()
@@ -110,8 +135,8 @@ export class UpdateMetadataTemplateFieldInput {
   @Field(() => ID)
   fieldId: string;
 
-  @Field(() => MetadataTemplateFieldInput)
-  field: MetadataTemplateFieldInput;
+  @Field(() => MetadataTemplateSchemaFieldInput)
+  field: MetadataTemplateSchemaFieldInput;
 }
 
 @ObjectType()

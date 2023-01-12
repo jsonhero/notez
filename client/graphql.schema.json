@@ -222,6 +222,24 @@
             "args": []
           },
           {
+            "name": "fromReferences",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "IdeaReference",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": []
+          },
+          {
             "name": "id",
             "type": {
               "kind": "NON_NULL",
@@ -453,12 +471,9 @@
           {
             "name": "reference",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "IdeaReference",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "IdeaReference",
+              "ofType": null
             },
             "args": []
           },
@@ -727,6 +742,15 @@
         "kind": "OBJECT",
         "name": "MetadataTemplateSchemaField",
         "fields": [
+          {
+            "name": "extra",
+            "type": {
+              "kind": "UNION",
+              "name": "SchemaExtraUnion",
+              "ofType": null
+            },
+            "args": []
+          },
           {
             "name": "id",
             "type": {
@@ -1230,6 +1254,41 @@
           }
         ],
         "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "SchemaExtraReference",
+        "fields": [
+          {
+            "name": "metadataTemplates",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "MetadataTemplate",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "UNION",
+        "name": "SchemaExtraUnion",
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "SchemaExtraReference"
+          }
+        ]
       },
       {
         "kind": "OBJECT",

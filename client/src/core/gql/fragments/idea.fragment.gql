@@ -7,6 +7,12 @@ fragment AppIdea on Idea {
       ...AppIdeaMetadataGroup
     }
   }
+  toReferences {
+    ...AppIdeaReference
+  }
+  fromReferences {
+    ...AppIdeaReference
+  }
   createdAt
   updatedAt
   __typename

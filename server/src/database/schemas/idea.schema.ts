@@ -37,6 +37,9 @@ const IdeaMetadataSchema = SchemaFactory.createForClass(IdeaMetadata);
 
 @Schema({
   timestamps: true,
+  toObject: {
+    virtuals: true,
+  },
 })
 export class Idea {
   id: string;
@@ -67,3 +70,9 @@ export class Idea {
 export type IdeaDocument = mongoose.HydratedDocument<Idea>;
 
 export const IdeaSchema = SchemaFactory.createForClass(Idea);
+
+IdeaSchema.virtual('fromReferences', {
+  ref: Idea.name,
+  localField: '_id',
+  foreignField: 'references.idea',
+});

@@ -99,7 +99,7 @@ class MetadataFieldDateValue {
 
 @ObjectType()
 class MetadataFieldReferenceValue {
-  @Field(() => IdeaReference)
+  @Field(() => IdeaReference, { nullable: true })
   reference: IdeaReference;
 
   @Field()
@@ -164,3 +164,21 @@ export class IdeaMetadata {
   @Field(() => [MetadataGroup])
   groups: MetadataGroup[];
 }
+
+@ObjectType()
+export class SchemaExtraReference {
+  @Field(() => [MetadataTemplate])
+  metadataTemplates: MetadataTemplate[];
+}
+
+export const SchemaExtraUnion = createUnionType({
+  name: 'SchemaExtraUnion',
+  resolveType: (input) => {
+    if (input.type === 'reference') {
+      return SchemaExtraReference;
+    }
+
+    return null;
+  },
+  types: () => [SchemaExtraReference] as const,
+});

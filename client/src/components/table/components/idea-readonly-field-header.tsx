@@ -7,6 +7,7 @@ import { BsTextLeft, BsCalendarWeek } from 'react-icons/bs'
 import { BiHash } from 'react-icons/bi'
 import { DeleteIcon } from '@chakra-ui/icons'
 import { HiOutlineCalendar } from 'react-icons/hi'
+import { VscReferences } from 'react-icons/vsc'
 
 import { 
   AppMetadataTemplateSchemaFieldFragment,
@@ -24,6 +25,7 @@ const SchemaTypeIcon = ({ type }: SchemaTypeIconProps) => {
     if (type === 'text') return BsTextLeft
     else if (type === 'number') return BiHash
     else if (type === 'date') return HiOutlineCalendar
+    else if (type === 'reference') return VscReferences
   }
 
   return <Icon boxSize="16px" as={getIcon()} />

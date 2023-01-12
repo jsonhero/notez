@@ -119,6 +119,7 @@ export type Idea = Node & {
   __typename?: 'Idea';
   createdAt: Scalars['DateTime'];
   document?: Maybe<Scalars['JSONObject']>;
+  fromReferences: Array<IdeaReference>;
   id: Scalars['ID'];
   metadata: IdeaMetadata;
   title?: Maybe<Scalars['String']>;
@@ -192,7 +193,7 @@ export type MetadataFieldNumberValueInput = {
 
 export type MetadataFieldReferenceValue = {
   __typename?: 'MetadataFieldReferenceValue';
-  reference: IdeaReference;
+  reference?: Maybe<IdeaReference>;
   type: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
@@ -236,6 +237,10 @@ export type MetadataGroupFieldEntry = {
   value?: Maybe<MetadataFieldValueUnion>;
 };
 
+export type MetadataSchemaExtraInput = {
+  referenceInput?: InputMaybe<SchemaExtraReferenceInput>;
+};
+
 export type MetadataTemplate = Node & {
   __typename?: 'MetadataTemplate';
   createdAt: Scalars['DateTime'];
@@ -243,11 +248,6 @@ export type MetadataTemplate = Node & {
   schema: MetadataTemplateSchema;
   title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
-};
-
-export type MetadataTemplateFieldInput = {
-  name: Scalars['String'];
-  type: Scalars['String'];
 };
 
 export type MetadataTemplateInput = {
@@ -261,10 +261,17 @@ export type MetadataTemplateSchema = {
 
 export type MetadataTemplateSchemaField = {
   __typename?: 'MetadataTemplateSchemaField';
+  extra?: Maybe<SchemaExtraUnion>;
   id: Scalars['ID'];
   name: Scalars['String'];
   type: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+};
+
+export type MetadataTemplateSchemaFieldInput = {
+  extra?: InputMaybe<MetadataSchemaExtraInput>;
+  name: Scalars['String'];
+  type: Scalars['String'];
 };
 
 export type MetadataTemplateSearchInput = {
@@ -386,6 +393,17 @@ export type QueryNodesArgs = {
   ids: Array<Scalars['ID']>;
 };
 
+export type SchemaExtraReference = {
+  __typename?: 'SchemaExtraReference';
+  metadataTemplates: Array<MetadataTemplate>;
+};
+
+export type SchemaExtraReferenceInput = {
+  metadataTemplateIds: Array<Scalars['ID']>;
+};
+
+export type SchemaExtraUnion = SchemaExtraReference;
+
 export type UpdateIdeaInput = {
   idea: IdeaInput;
   ideaId: Scalars['ID'];
@@ -408,7 +426,7 @@ export type UpdateIdeaPayload = {
 };
 
 export type UpdateMetadataTemplateFieldInput = {
-  field: MetadataTemplateFieldInput;
+  field: MetadataTemplateSchemaFieldInput;
   fieldId: Scalars['ID'];
   metadataTemplateId: Scalars['ID'];
 };
@@ -428,13 +446,13 @@ export type UpdateMetadataTemplatePayload = {
   template: MetadataTemplate;
 };
 
-export type AppIdeaMetadataFieldFragment = { __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null };
+export type AppIdeaMetadataFieldFragment = { __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference?: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } | null } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null };
 
 export type AppIdeaReferenceFragment = { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } };
 
-export type AppIdeaFragment = { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, updatedAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> }> } };
+export type AppIdeaFragment = { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, updatedAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference?: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } | null } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> }> }, toReferences: Array<{ __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } }>, fromReferences: Array<{ __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } }> };
 
-export type AppIdeaMetadataGroupFragment = { __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> };
+export type AppIdeaMetadataGroupFragment = { __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference?: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } | null } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> };
 
 export type AppMetadataTemplateSchemaFieldFragment = { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any };
 
@@ -445,14 +463,14 @@ export type AddIdeaMetadataFieldMutationVariables = Exact<{
 }>;
 
 
-export type AddIdeaMetadataFieldMutation = { __typename?: 'Mutation', addIdeaMetadataField: { __typename?: 'AddIdeaMetadataFieldPayload', field: { __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null } } };
+export type AddIdeaMetadataFieldMutation = { __typename?: 'Mutation', addIdeaMetadataField: { __typename?: 'AddIdeaMetadataFieldPayload', field: { __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference?: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } | null } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null } } };
 
 export type AddIdeaMetadataTemplateMutationVariables = Exact<{
   input: AddIdeaMetadataTemplateInput;
 }>;
 
 
-export type AddIdeaMetadataTemplateMutation = { __typename?: 'Mutation', addIdeaMetadataTemplate: { __typename?: 'AddIdeaMetadataTemplatePayload', idea: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, updatedAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> }> } } } };
+export type AddIdeaMetadataTemplateMutation = { __typename?: 'Mutation', addIdeaMetadataTemplate: { __typename?: 'AddIdeaMetadataTemplatePayload', idea: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, updatedAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference?: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } | null } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> }> }, toReferences: Array<{ __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } }>, fromReferences: Array<{ __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } }> } } };
 
 export type AddMetadataTemplateFieldMutationVariables = Exact<{
   input: AddMetadataTemplateFieldInput;
@@ -466,7 +484,7 @@ export type CreateIdeaMutationVariables = Exact<{
 }>;
 
 
-export type CreateIdeaMutation = { __typename?: 'Mutation', createIdea: { __typename?: 'CreateIdeaPayload', idea: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, updatedAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> }> } } } };
+export type CreateIdeaMutation = { __typename?: 'Mutation', createIdea: { __typename?: 'CreateIdeaPayload', idea: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, updatedAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference?: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } | null } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> }> }, toReferences: Array<{ __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } }>, fromReferences: Array<{ __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } }> } } };
 
 export type CreateMetadataTemplateMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -478,7 +496,7 @@ export type DeleteIdeaMetadataTemplateMutationVariables = Exact<{
 }>;
 
 
-export type DeleteIdeaMetadataTemplateMutation = { __typename?: 'Mutation', deleteIdeaMetadataTemplate: { __typename?: 'DeleteIdeaMetadataTemplatePayload', idea: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, updatedAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> }> } } } };
+export type DeleteIdeaMetadataTemplateMutation = { __typename?: 'Mutation', deleteIdeaMetadataTemplate: { __typename?: 'DeleteIdeaMetadataTemplatePayload', idea: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, updatedAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference?: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } | null } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> }> }, toReferences: Array<{ __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } }>, fromReferences: Array<{ __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } }> } } };
 
 export type DeleteIdeaMutationVariables = Exact<{
   input: DeleteIdeaInput;
@@ -513,14 +531,14 @@ export type UpdateIdeaMutationVariables = Exact<{
 }>;
 
 
-export type UpdateIdeaMutation = { __typename?: 'Mutation', updateIdea: { __typename?: 'UpdateIdeaPayload', idea: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, updatedAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> }> } } } };
+export type UpdateIdeaMutation = { __typename?: 'Mutation', updateIdea: { __typename?: 'UpdateIdeaPayload', idea: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, updatedAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference?: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } | null } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> }> }, toReferences: Array<{ __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } }>, fromReferences: Array<{ __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } }> } } };
 
 export type UpdateIdeaMetadataFieldMutationVariables = Exact<{
   input: UpdateIdeaMetadataFieldInput;
 }>;
 
 
-export type UpdateIdeaMetadataFieldMutation = { __typename?: 'Mutation', updateIdeaMetadataField: { __typename?: 'UpdateIdeaMetadataFieldPayload', field: { __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null } } };
+export type UpdateIdeaMetadataFieldMutation = { __typename?: 'Mutation', updateIdeaMetadataField: { __typename?: 'UpdateIdeaMetadataFieldPayload', field: { __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference?: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } | null } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null } } };
 
 export type UpdateMetadataTemplateFieldMutationVariables = Exact<{
   input: UpdateMetadataTemplateFieldInput;
@@ -541,7 +559,7 @@ export type GetIdeasQueryVariables = Exact<{
 }>;
 
 
-export type GetIdeasQuery = { __typename?: 'Query', ideas: Array<{ __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, updatedAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> }> } }> };
+export type GetIdeasQuery = { __typename?: 'Query', ideas: Array<{ __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, updatedAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference?: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } | null } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> }> }, toReferences: Array<{ __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } }>, fromReferences: Array<{ __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } }> }> };
 
 export type GetMetadataTemplatesQueryVariables = Exact<{
   input?: InputMaybe<MetadataTemplateSearchInput>;
@@ -555,7 +573,7 @@ export type GetNodeQueryVariables = Exact<{
 }>;
 
 
-export type GetNodeQuery = { __typename?: 'Query', node?: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, updatedAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> }> } } | { __typename: 'MetadataTemplate', id: string, title?: string | null, schema: { __typename?: 'MetadataTemplateSchema', fields: Array<{ __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }> } } | null };
+export type GetNodeQuery = { __typename?: 'Query', node?: { __typename: 'Idea', id: string, title?: string | null, document?: any | null, createdAt: any, updatedAt: any, metadata: { __typename?: 'IdeaMetadata', groups: Array<{ __typename?: 'MetadataGroup', context: string, template?: { __typename?: 'MetadataTemplate', id: string, title?: string | null } | null, fields: Array<{ __typename?: 'MetadataGroupFieldEntry', id: string, schema: { __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }, value?: { __typename: 'MetadataFieldDateValue', date: any, type: string, updatedAt: any } | { __typename: 'MetadataFieldNumberValue', number: number, type: string, updatedAt: any } | { __typename: 'MetadataFieldReferenceValue', type: string, updatedAt: any, reference?: { __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } } | null } | { __typename: 'MetadataFieldTextValue', text: string, type: string, updatedAt: any } | null }> }> }, toReferences: Array<{ __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } }>, fromReferences: Array<{ __typename?: 'IdeaReference', id: string, type: string, fieldId: string, toIdea: { __typename?: 'Idea', id: string, title?: string | null } }> } | { __typename: 'MetadataTemplate', id: string, title?: string | null, schema: { __typename?: 'MetadataTemplateSchema', fields: Array<{ __typename?: 'MetadataTemplateSchemaField', id: string, name: string, type: string, updatedAt: any }> } } | null };
 
 export const AppIdeaReferenceFragmentDoc = gql`
     fragment AppIdeaReference on IdeaReference {
@@ -626,11 +644,18 @@ export const AppIdeaFragmentDoc = gql`
       ...AppIdeaMetadataGroup
     }
   }
+  toReferences {
+    ...AppIdeaReference
+  }
+  fromReferences {
+    ...AppIdeaReference
+  }
   createdAt
   updatedAt
   __typename
 }
-    ${AppIdeaMetadataGroupFragmentDoc}`;
+    ${AppIdeaMetadataGroupFragmentDoc}
+${AppIdeaReferenceFragmentDoc}`;
 export const AppMetadataTemplateSchemaFieldFragmentDoc = gql`
     fragment AppMetadataTemplateSchemaField on MetadataTemplateSchemaField {
   id

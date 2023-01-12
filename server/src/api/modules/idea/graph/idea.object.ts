@@ -50,6 +50,9 @@ export class IdeaObject implements Node {
 
   @Field(() => [IdeaReference])
   toReferences: IdeaReference[];
+
+  @Field(() => [IdeaReference])
+  fromReferences: IdeaReference[];
 }
 
 @InputType()

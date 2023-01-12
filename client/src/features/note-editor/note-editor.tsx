@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react'
-import { Box, CircularProgress } from '@chakra-ui/react'
+import { Box, CircularProgress, Text } from '@chakra-ui/react'
 import { observer } from 'mobx-react-lite'
 
 import { GlobalStoreContext } from '@stores/global'
@@ -44,6 +44,26 @@ const NoteEditorActive = React.memo(({ ideaId }: NoteEditorActiveProps) => {
             <TitleEditor idea={response.data.node} />
             <MetadataEditor idea={response.data.node} />
             <DocumentEditor idea={response.data.node} />
+            <Box>
+            <Text fontWeight="bold">To Refs:</Text>
+              {response.data.node.toReferences.map((ref) => {
+                return (
+                  <Box key={ref.id}>
+                    {ref.toIdea.title}
+                  </Box>
+                )
+              })}
+            </Box>
+            <Box>
+              <Text fontWeight="bold">From Refs:</Text>
+              {response.data.node.fromReferences.map((ref) => {
+                return (
+                  <Box key={ref.id}>
+                    {ref.toIdea.title}
+                  </Box>
+                )
+              })}
+            </Box>
           </>
         )
       }
