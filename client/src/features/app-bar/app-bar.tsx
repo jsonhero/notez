@@ -24,6 +24,13 @@ export const AppBar = () => {
               }).toString()
             })
           }}>Tables</Button>
+          <Button variant="ghost" onClick={() => {
+            navigate({
+              search: createSearchParams({
+                tab: 'graph'
+              }).toString()
+            })
+          }}>Graph</Button>
         </HStack>
       </Box>
     </Box>
