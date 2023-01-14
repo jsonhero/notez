@@ -7,7 +7,7 @@ export const AppBar = () => {
   const navigate = useNavigate()
   
   return (
-    <Box bg="gray.900" w="100%" h="100%" borderBottom="1px solid" borderColor="gray.700">
+    <Box bg="#191919" w="100%" h="100%" borderBottom="1px solid" borderColor="#292929">
       <Box p="md">
         {/* <HStack>
           <Button variant="ghost" onClick={() => {

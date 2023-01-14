@@ -10,7 +10,7 @@ export const Menubar = () => {
   const navigate = useNavigate()
 
   return (
-    <Box height="100%" bg="gray.900" borderRight="1px solid" borderColor="gray.700">
+    <Box height="100%" bg="#191919" borderRight="1px solid" borderColor="#292929">
       <VStack pt="sm">
         <Box>
           <IconButton bg="transparent" aria-label='Ideas' icon={<Icon fill="white" as={VscFiles} />} onClick={() => {

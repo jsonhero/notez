@@ -23,7 +23,7 @@ interface IdeaDataRowProps {
 export const IdeaDataRow = ({ row, metadataTemplateId }: IdeaDataRowProps) => {
   return (
     <Tr role="group" width="100%" display="flex" _hover={{
-      bg: 'gray.50'
+      bg: '#191919'
     }}>
       <Td border="none">
         <RowUtilsCell ideaId={row.original.idea.id} />

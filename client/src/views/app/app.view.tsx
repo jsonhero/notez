@@ -31,7 +31,7 @@ export const AppView = () => {
         <Sidebar />
       </GridItem>
       <GridItem area="main">
-        <Box p="xxl" bg="blackAlpha.700" w='100%' h="100%">
+        <Box p="xxl" bg="#101010" w='100%' h="100%">
           {searchParams.get('tab') === 'table' && <MetadataTemplateEditor />}
           {searchParams.get('tab') === 'idea' &&  <NoteEditor />}
           {searchParams.get('tab') === 'graph' &&  <GraphViewer />}

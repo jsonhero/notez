@@ -12,7 +12,7 @@ export const Sidebar = () => {
   const [searchParams] = useSearchParams()
 
   return (
-    <Box h="100vh" bg="blackAlpha.400" w="100%" borderRight="1px solid" borderColor="gray.700">
+    <Box h="100vh" bg="#191919" w="100%" borderRight="1px solid" borderColor="#292929">
       {searchParams.get('tab') === 'table' ? <TableView /> : <IdeaView />}
     </Box>
   )
