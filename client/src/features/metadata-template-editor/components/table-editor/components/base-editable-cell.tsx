@@ -55,11 +55,16 @@ export const BaseEditableCell = ({ children, editableRef, ideaId, fieldEntry, is
         <HStack 
           role="group"
           borderRadius="0px"
-          border={isInvalid ? '1px solid' : 'none'}
-          borderColor={isInvalid ? 'red' : 'blue'}
+          sx={{
+            outlineOffset: '0px',
+            outlineWidth: '1px',
+            outlineStyle: isInvalid ? 'solid' : 'none',
+            outlineColor: isInvalid ? 'red' : 'blue',
+            position: 'relative',
+          }}
           _focusWithin={{
-            border: '1px solid',
-            borderColor: isInvalid ? 'red' : 'blue'
+            outlineStyle: 'solid',
+            zIndex: 300,
           }} 
           h="100%"
           w="100%"

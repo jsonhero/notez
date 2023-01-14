@@ -118,7 +118,7 @@ export const TableEditor = ({
     getCoreRowModel: getCoreRowModel(),
   })
   return (
-    <TableContainer ml="-30px" pb="200px">
+    <TableContainer ml="-30px" pb="200px" overflowX={"initial"} overflowY="initial">
       <Table size="zero" variant="simple" width="100%">
         <Thead>
           {table.getHeaderGroups().map(headerGroup => (

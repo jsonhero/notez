@@ -10,8 +10,6 @@ import { useGetIdeasQuery } from '@gql/operations'
 
 export const GraphViewer = () => {
 
-  const [response, refetchIdeas] = useGetIdeasQuery()
-
   const Fa2: React.FC = () => {
     const { start, kill, isRunning } = useWorkerLayoutForce({});
 

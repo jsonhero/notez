@@ -7,6 +7,7 @@ import { AppBar } from '@features/app-bar'
 import { NoteEditor } from '@features/note-editor'
 import { MetadataTemplateEditor } from '@features/metadata-template-editor'
 import { GraphViewer } from '@features/graph-viewer'
+import { Menubar } from '@features/menubar'
 
 export const AppView = () => {
   const [searchParams] = useSearchParams()
@@ -14,22 +15,25 @@ export const AppView = () => {
   return (
     <Grid 
       templateAreas={`
-        "header header"
-        "sidebar main"`
+        "header header header"
+        "menubar sidebar main"`
       }
-      gridTemplateColumns="300px auto"
-      gridTemplateRows="80px auto"
+      gridTemplateColumns="50px 300px auto"
+      gridTemplateRows="48px auto"
     >
       <GridItem area="header">
         <AppBar />
+      </GridItem>
+      <GridItem area="menubar">
+        <Menubar />
       </GridItem>
       <GridItem area="sidebar">
         <Sidebar />
       </GridItem>
       <GridItem area="main">
-        <Box p="xxl" bg="#FFFFFF" w='100%' h="100%">
+        <Box p="xxl" bg="blackAlpha.700" w='100%' h="100%">
           {searchParams.get('tab') === 'table' && <MetadataTemplateEditor />}
-          {searchParams.get('tab') === 'note' &&  <NoteEditor />}
+          {searchParams.get('tab') === 'idea' &&  <NoteEditor />}
           {searchParams.get('tab') === 'graph' &&  <GraphViewer />}
         </Box>
       </GridItem>

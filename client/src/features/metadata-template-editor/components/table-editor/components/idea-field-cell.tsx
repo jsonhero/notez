@@ -10,6 +10,7 @@ import {
   PopoverTrigger,
   PopoverContent,
   Text,
+  useDisclosure
 } from '@chakra-ui/react'
 
 import { 
@@ -234,12 +235,14 @@ export const IdeaReferenceFieldCell = ({
   value,
 }: IdeaReferenceFieldCellProps) => {
   const inputRef = useRef<HTMLInputElement>(null)  
+  const { isOpen, onToggle, onClose } = useDisclosure()
+
 
   const [, updateIdeaMetadataFieldMutation] = useUpdateIdeaMetadataFieldMutation()
   const [search, setSearch] = useState<string>('')
 
   const [response] = useGetIdeasQuery({
-    pause: search.length === 0,
+    pause: !isOpen,
     variables: {
       input: {
         title: search,
@@ -277,7 +280,12 @@ export const IdeaReferenceFieldCell = ({
 
   return (
     <BaseEditableCell ideaId={ideaId} fieldEntry={entry} isInvalid={hasSchemaTypeConflict} editableRef={inputRef}>
-      <Popover initialFocusRef={inputRef} placement="bottom">
+      <Popover 
+        initialFocusRef={inputRef} 
+        placement="bottom"
+        isOpen={isOpen}
+        onClose={onClose}
+      >
         <PopoverTrigger>
           <Button
             variant="unstyled"
@@ -295,6 +303,7 @@ export const IdeaReferenceFieldCell = ({
               border: 'none',
             }}
             isDisabled={hasSchemaTypeConflict}
+            onClick={onToggle}
           >
             <Text>{value?.reference?.toIdea.title}</Text>
           </Button>

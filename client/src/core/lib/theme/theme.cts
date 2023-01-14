@@ -21,6 +21,10 @@ import { extendTheme } from '@chakra-ui/react'
 // }
 
 const customTheme = {
+  config: {
+    initialColorMode: 'dark',
+    useSystemColorMode: false,
+  },
   space: {
     xxsm: '4px',
     xxsmall: '4px',

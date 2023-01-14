@@ -4,6 +4,7 @@ import { DeleteIcon } from '@chakra-ui/icons'
 import { useSearchParams } from 'react-router-dom'
 import { BsThreeDots } from 'react-icons/bs'
 
+import { AiOutlineFileAdd } from 'react-icons/ai'
 import { GlobalStoreContext  } from '@stores/global'
 import { useGetIdeasQuery, useCreateIdeaMutation, useDeleteIdeaMutation, useCreateMetadataTemplateMutation, useGetMetadataTemplatesQuery, useDeleteMetadataTemplateMutation } from '@gql/operations'
 
@@ -11,7 +12,7 @@ export const Sidebar = () => {
   const [searchParams] = useSearchParams()
 
   return (
-    <Box h="100vh" bg="app.gray" w="100%">
+    <Box h="100vh" bg="blackAlpha.400" w="100%" borderRight="1px solid" borderColor="gray.700">
       {searchParams.get('tab') === 'table' ? <TableView /> : <IdeaView />}
     </Box>
   )
@@ -53,9 +54,16 @@ const IdeaView = () => {
   return (
     <Box p="small">
       <Box mb="lg">
-        <Button onClick={onClickCreateIdea}>
-          Create Idea
-        </Button>
+        <HStack>
+          <Box>
+            <IconButton 
+              aria-label='Create' 
+              icon={<Icon as={AiOutlineFileAdd} />} 
+              size="sm"
+              onClick={onClickCreateIdea}
+            />
+          </Box>
+        </HStack>
       </Box>
       <VStack spacing="xsm" align="flex-start">
         {response.data?.ideas.map((idea) => (
@@ -64,7 +72,7 @@ const IdeaView = () => {
             sx={{
               w: '100%',
               justifyContent: 'space-between',
-              bg: idea.id === globalStore.selectedIdeaId ? "gray.200" : 'initial',
+              bg: idea.id === globalStore.selectedIdeaId ? "gray.700" : 'initial',
               borderRadius: '4px'
             }}
             role="group"
@@ -123,14 +131,21 @@ const TableView = () => {
   return (
     <Box p="medium">
       <Box mb="lg">
-        <Button onClick={onClickCreateMetadataTemplate}>
-          Create Table
-        </Button>
+        <HStack>
+          <Box>
+            <IconButton 
+              aria-label='Create' 
+              icon={<Icon as={AiOutlineFileAdd} />} 
+              size="sm"
+              onClick={onClickCreateMetadataTemplate}
+            />
+          </Box>
+        </HStack>
       </Box>
       <VStack spacing="xsm" align="flex-start">
         {response.data?.metadataTemplates.map((metadataTemplate) => (
           <HStack key={metadataTemplate.id} justify="space-between" w="100%" role="group" 
-            bg={metadataTemplate.id === globalStore.selectedMetadataTemplateId ? "gray.200" : 'initial'}
+            bg={metadataTemplate.id === globalStore.selectedMetadataTemplateId ? "gray.700" : 'initial'}
           >
             <Button justifyContent="flex-start" w="100%" onClick={() => onClickMetadataTemplate(metadataTemplate.id)} variant="ghost" p="0px" m="0px">
               <Text pl="sm">

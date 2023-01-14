@@ -61,7 +61,7 @@ const RowUtilsCell = React.memo(({ ideaId }: RowUtilsCellProps) => {
     <Box width="30px">
       <Box display="none" _groupHover={{ display: 'initial' }}>
         <Menu isLazy={true}>
-          <MenuButton as={IconButton} sx={{ p: 0, m: 0}} size="xs" aria-label='Delete Note' icon={<DragHandleIcon />} />
+          <MenuButton height="20px" as={IconButton} sx={{ p: 0, m: 0}} size="xs" aria-label='Delete Note' icon={<DragHandleIcon />} />
           <MenuList>
             <MenuItem icon={<DeleteIcon />} onClick={() => deleteIdeaMutation({
               input: {

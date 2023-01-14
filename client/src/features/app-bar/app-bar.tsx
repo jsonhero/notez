@@ -7,13 +7,13 @@ export const AppBar = () => {
   const navigate = useNavigate()
   
   return (
-    <Box bg="#E3E7EF" w="100%" h="100%">
+    <Box bg="gray.900" w="100%" h="100%" borderBottom="1px solid" borderColor="gray.700">
       <Box p="md">
-        <HStack>
+        {/* <HStack>
           <Button variant="ghost" onClick={() => {
             navigate({
               search: createSearchParams({
-                tab: 'note'
+                tab: 'idea'
               }).toString()
             })
           }}>Notes</Button>
@@ -31,7 +31,7 @@ export const AppBar = () => {
               }).toString()
             })
           }}>Graph</Button>
-        </HStack>
+        </HStack> */}
       </Box>
     </Box>
   )
