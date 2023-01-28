@@ -49,7 +49,10 @@ const customTheme = {
   components: {
     Table: {
       variants: {
-        metadatatemplate: {
+        ghost: {
+          td: {
+            border: 'none'
+          }
         },
       },
       sizes: {

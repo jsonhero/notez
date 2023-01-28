@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Box, Grid, GridItem, useDisclosure } from '@chakra-ui/react'
 import { useSearchParams } from 'react-router-dom'
 
+import { observer } from 'mobx-react-lite'
+import { GlobalStoreContext } from '@stores/global'
 import { Sidebar } from '@features/sidebar'
 import { AppBar } from '@features/app-bar'
 import { NoteEditor } from '@features/note-editor'
@@ -10,14 +12,13 @@ import { GraphViewer } from '@features/graph-viewer'
 import { Menubar } from '@features/menubar'
 import { SecondaryBar } from '@features/secondarybar'
 
-export const AppView = () => {
+export const AppView = observer(() => {
   const [searchParams] = useSearchParams()
   const { isOpen, onOpen, onClose, onToggle } = useDisclosure({
     defaultIsOpen: true,
   })
 
-
-
+  const globalStore = useContext(GlobalStoreContext)
 
   return (
     <Grid 
@@ -25,7 +26,7 @@ export const AppView = () => {
         "header header header header"
         "menubar sidebar main secondarybar"`
       }
-      gridTemplateColumns="50px min-content auto min-content"
+      gridTemplateColumns="40px min-content 1fr min-content"
       gridTemplateRows="48px auto"
     >
       <GridItem area="header">
@@ -34,7 +35,7 @@ export const AppView = () => {
       <GridItem area="menubar">
         <Menubar />
       </GridItem>
-      <GridItem area="sidebar" width={isOpen ? "280px" : '10px' } onClick={() => onToggle()}>
+      <GridItem area="sidebar" width={globalStore.leftBarExpanded ? "275px" : "0px"} overflowX="hidden">
         <Sidebar />
       </GridItem>
       <GridItem area="main">
@@ -44,9 +45,9 @@ export const AppView = () => {
           {searchParams.get('tab') === 'graph' &&  <GraphViewer />}
         </Box>
       </GridItem>
-      <GridItem area="secondarybar">
+      <GridItem area="secondarybar" width={globalStore.rightBarExpanded ? "275px" : "0px"} overflowX="hidden">
         <SecondaryBar />
       </GridItem>
     </Grid>
   )
-}
+})

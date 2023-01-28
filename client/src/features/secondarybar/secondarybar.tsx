@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 
 import { GlobalStoreContext } from '@stores/global'
 import { useGetNodeQuery } from '@gql/operations'
+import { MetadataEditor } from './components'
 
 export const SecondaryBar = observer(() => {
   const globalStore = useContext(GlobalStoreContext)
@@ -42,6 +43,12 @@ const SecondaryContent = ({ ideaId }: SecondaryContentProps) => {
 
   return (
     <Box p="sm">
+      <Box>
+        <Text fontSize="14px">Metadata</Text>
+        <Box w="100%" mb="xl">
+          <MetadataEditor idea={response.data.node} />
+        </Box>
+      </Box>
       <Box>
         <Text fontSize="sm" fontWeight="bold" mb="xsm">{`References ->`}</Text>
         <VStack align="flex-start">

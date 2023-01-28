@@ -23,6 +23,7 @@ fragment AppIdeaMetadataGroup on MetadataGroup {
   template {
     id
     title
+    unicodeIcon
   }
   fields {
     ...AppIdeaMetadataField
