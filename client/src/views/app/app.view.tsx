@@ -35,7 +35,11 @@ export const AppView = observer(() => {
       <GridItem area="menubar">
         <Menubar />
       </GridItem>
-      <GridItem area="sidebar" width={globalStore.leftBarExpanded ? "275px" : "0px"} overflowX="hidden">
+      <GridItem area="sidebar" sx={{
+        width: globalStore.leftBarExpanded ? "275px" : "0px",
+        overflowX: 'hidden',
+        transition: '250ms width',
+      }}>
         <Sidebar />
       </GridItem>
       <GridItem area="main">
@@ -45,7 +49,11 @@ export const AppView = observer(() => {
           {searchParams.get('tab') === 'graph' &&  <GraphViewer />}
         </Box>
       </GridItem>
-      <GridItem area="secondarybar" width={globalStore.rightBarExpanded ? "275px" : "0px"} overflowX="hidden">
+      <GridItem area="secondarybar" sx={{
+        width: globalStore.rightBarExpanded ? "275px" : "0px",
+        overflowX: 'hidden',
+        transition: '250ms width',
+      }}>
         <SecondaryBar />
       </GridItem>
     </Grid>
