@@ -44,26 +44,6 @@ const NoteEditorActive = React.memo(({ ideaId }: NoteEditorActiveProps) => {
             <TitleEditor idea={response.data.node} />
             <MetadataEditor idea={response.data.node} />
             <DocumentEditor idea={response.data.node} />
-            <Box mt="xxl">
-            <Text fontWeight="bold">To Refs:</Text>
-              {response.data.node.toReferences.map((ref) => {
-                return (
-                  <Box key={ref.id}>
-                    {ref.toIdea.title}
-                  </Box>
-                )
-              })}
-            </Box>
-            <Box>
-              <Text fontWeight="bold">From Refs:</Text>
-              {response.data.node.fromReferences.map((ref) => {
-                return (
-                  <Box key={ref.id}>
-                    {ref.toIdea.title}
-                  </Box>
-                )
-              })}
-            </Box>
           </>
         )
       }

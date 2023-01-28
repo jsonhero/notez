@@ -1,6 +1,7 @@
 fragment AppMetadataTemplate on MetadataTemplate {
   id
   title
+  unicodeIcon
   schema {
     fields {
       ...AppMetadataTemplateSchemaField

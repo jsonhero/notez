@@ -695,6 +695,14 @@
             "args": []
           },
           {
+            "name": "unicodeIcon",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          },
+          {
             "name": "updatedAt",
             "type": {
               "kind": "NON_NULL",

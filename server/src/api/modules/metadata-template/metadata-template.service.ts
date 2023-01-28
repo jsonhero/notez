@@ -73,6 +73,7 @@ export class MetadataTemplateService {
     return {
       id: mtDoc.id,
       title: mtDoc.title,
+      unicodeIcon: mtDoc.unicodeIcon,
       schema: {
         fields: resolvedFields,
       },
@@ -122,6 +123,8 @@ export class MetadataTemplateService {
       schema: {
         fields: [],
       },
+      // Chick egg icon
+      unicodeIcon: '1f423',
     });
 
     return metadataTemplate;
@@ -136,7 +139,8 @@ export class MetadataTemplateService {
   async updateMetadataTemplate(
     metadataTemplateId: string,
     fields: {
-      title: string;
+      title?: string;
+      unicodeIcon?: string;
     },
   ): Promise<MetadataTemplateDocument> {
     const updateFields = _.omit(fields);

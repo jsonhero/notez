@@ -52,7 +52,7 @@ const IdeaView = () => {
   }
 
   return (
-    <Box p="small">
+    <Box p="xsmall">
       <Box mb="lg">
         <HStack>
           <Box>

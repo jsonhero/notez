@@ -23,6 +23,7 @@ export class MetadataTemplateResolver {
     return {
       id: mtDoc.id,
       title: mtDoc.title,
+      unicodeIcon: mtDoc.unicodeIcon,
       schema: {
         fields: (mtDoc.schema?.fields || []).map((schemaField: any) => {
           return {

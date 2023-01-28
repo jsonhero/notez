@@ -13,6 +13,9 @@ export class MetadataTemplate {
   @Prop()
   pathId: string;
 
+  @Prop()
+  unicodeIcon: string;
+
   @Prop({ type: mongoose.Schema.Types.Mixed })
   schema: any;
 

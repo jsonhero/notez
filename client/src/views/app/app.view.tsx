@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Grid, GridItem } from '@chakra-ui/react'
+import { Box, Grid, GridItem, useDisclosure } from '@chakra-ui/react'
 import { useSearchParams } from 'react-router-dom'
 
 import { Sidebar } from '@features/sidebar'
@@ -8,17 +8,24 @@ import { NoteEditor } from '@features/note-editor'
 import { MetadataTemplateEditor } from '@features/metadata-template-editor'
 import { GraphViewer } from '@features/graph-viewer'
 import { Menubar } from '@features/menubar'
+import { SecondaryBar } from '@features/secondarybar'
 
 export const AppView = () => {
   const [searchParams] = useSearchParams()
+  const { isOpen, onOpen, onClose, onToggle } = useDisclosure({
+    defaultIsOpen: true,
+  })
+
+
+
 
   return (
     <Grid 
       templateAreas={`
-        "header header header"
-        "menubar sidebar main"`
+        "header header header header"
+        "menubar sidebar main secondarybar"`
       }
-      gridTemplateColumns="50px 300px auto"
+      gridTemplateColumns="50px min-content auto min-content"
       gridTemplateRows="48px auto"
     >
       <GridItem area="header">
@@ -27,7 +34,7 @@ export const AppView = () => {
       <GridItem area="menubar">
         <Menubar />
       </GridItem>
-      <GridItem area="sidebar">
+      <GridItem area="sidebar" width={isOpen ? "280px" : '10px' } onClick={() => onToggle()}>
         <Sidebar />
       </GridItem>
       <GridItem area="main">
@@ -36,6 +43,9 @@ export const AppView = () => {
           {searchParams.get('tab') === 'idea' &&  <NoteEditor />}
           {searchParams.get('tab') === 'graph' &&  <GraphViewer />}
         </Box>
+      </GridItem>
+      <GridItem area="secondarybar">
+        <SecondaryBar />
       </GridItem>
     </Grid>
   )

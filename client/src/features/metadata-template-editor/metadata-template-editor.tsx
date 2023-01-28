@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 
 import { GlobalStoreContext } from '@stores/global'
 import { useGetNodeQuery } from '@gql/operations'
-import { TitleEditor, TableEditor } from './components'
+import { TitleEditor, TableEditor, IconPicker } from './components'
 
 export const MetadataTemplateEditor = observer(() => {
   const globalStore = useContext(GlobalStoreContext)
@@ -41,6 +41,7 @@ const MetadataTemplateEditorActive = ({ metadataTemplateId }: MetadataTemplateEd
           <CircularProgress isIndeterminate color='blue.300' />
         ) : (
           <>
+            <IconPicker metadataTemplate={response.data.node} />
             <TitleEditor metadataTemplate={response.data.node} />
             <TableEditor metadataTemplate={response.data.node} />
           </>

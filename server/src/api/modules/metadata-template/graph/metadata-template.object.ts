@@ -46,6 +46,9 @@ export class MetadataTemplate implements Node {
   @Field({ nullable: true })
   title: string;
 
+  @Field({ nullable: true })
+  unicodeIcon: string;
+
   @Field(() => MetadataTemplateSchema)
   schema: MetadataTemplateSchema;
 
@@ -84,8 +87,11 @@ export class DeleteMetadataTemplatePayload {
 
 @InputType()
 export class MetadataTemplateInput {
-  @Field()
+  @Field({ nullable: true })
   title: string;
+
+  @Field({ nullable: true })
+  unicodeIcon: string;
 }
 
 @InputType()

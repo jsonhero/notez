@@ -246,11 +246,13 @@ export type MetadataTemplate = Node & {
   id: Scalars['ID'];
   schema: MetadataTemplateSchema;
   title?: Maybe<Scalars['String']>;
+  unicodeIcon?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
 
 export type MetadataTemplateInput = {
-  title: Scalars['String'];
+  title?: InputMaybe<Scalars['String']>;
+  unicodeIcon?: InputMaybe<Scalars['String']>;
 };
 
 export type MetadataTemplateSchema = {
@@ -570,6 +572,7 @@ export type GraphCacheResolvers = {
     id?: GraphCacheResolver<WithTypename<MetadataTemplate>, Record<string, never>, Scalars['ID'] | string>,
     schema?: GraphCacheResolver<WithTypename<MetadataTemplate>, Record<string, never>, WithTypename<MetadataTemplateSchema> | string>,
     title?: GraphCacheResolver<WithTypename<MetadataTemplate>, Record<string, never>, Scalars['String'] | string>,
+    unicodeIcon?: GraphCacheResolver<WithTypename<MetadataTemplate>, Record<string, never>, Scalars['String'] | string>,
     updatedAt?: GraphCacheResolver<WithTypename<MetadataTemplate>, Record<string, never>, Scalars['DateTime'] | string>
   },
   MetadataTemplateSchema?: {
